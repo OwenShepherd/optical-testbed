@@ -19,4 +19,4 @@ and then you can open "ASEN-4018-EnvSensors.ino" located in the root directory
 using the Arduino IDE.
 
 
-NOTE: THE CODE HAS YET TO REFINED AND TESTED ON AN ACTUAL BOARD.  USE CAUTION.
+NOTE: THE CODE HAS YET TO REFINED AND TESTED ON AN ACTUAL BOARD.
