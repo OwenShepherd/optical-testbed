@@ -40,7 +40,7 @@ void sdInitialize() {
 
 }
 
-void sdWrite() {
+void sdWrite(String data) {
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
@@ -49,7 +49,7 @@ void sdWrite() {
   // if the file opened okay, write to it:
   if (myFile) {
     Serial.print("Writing to test.txt...");
-    myFile.println("testing 1, 2, 3.");
+    myFile.println(data);
     // close the file:
     myFile.close();
     Serial.println("done.");
@@ -90,10 +90,12 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
+  String dataWrite = "testing 1,2,3.";
+
 
   sdInitialize();
 
-  sdWrite();
+  sdWrite(dataWrite);
 
   
 }
