@@ -3,10 +3,11 @@
 
  This example shows how to read and write data to and from an SD card file
  The circuit:
- * SD card attached to SPI bus as follows:
- ** MOSI - pin 11
+  * SD card attached to SPI bus as follows:
+ ** MOSI - pin 11, pin 7 on Teensy with audio board
  ** MISO - pin 12
- ** CLK - pin 13
+ ** CLK - pin 13, pin 14 on Teensy with audio board
+ ** CS - pin 4, pin 10 on Teensy with audio board
 
  created   Nov 2010
  by David A. Mellis
@@ -22,16 +23,11 @@
 #include "SdFat.h"
 SdFat SD;
 
-#define SD_CS_PIN SS
+#define SD_CS_PIN 4
 File myFile;
 
-void setup() {
-  // Open serial communications and wait for port to open:
-  Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
 
+void sdInitialize() {
 
   Serial.print("Initializing SD card...");
 
@@ -39,7 +35,12 @@ void setup() {
     Serial.println("initialization failed!");
     return;
   }
+
   Serial.println("initialization done.");
+
+}
+
+void sdWrite() {
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
@@ -72,6 +73,29 @@ void setup() {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
+
+
+  
+}
+
+
+
+
+
+
+void setup() {
+  // Open serial communications and wait for port to open:
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+
+
+  sdInitialize();
+
+  sdWrite();
+
+  
 }
 
 void loop() {
