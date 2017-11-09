@@ -36,13 +36,54 @@ int CS=10;
 #define FIFO_CTL  0x38  //FIFO control
 #define FIFO_STATUS 0x39  //FIFO status
 
+
+// Creating an accelerometer struct for storing acceleration readings
+struct ACCELS {
+  double xg;
+  double yg;
+  double zg;
+};
+
+
+
+
 //This buffer will hold values read from the ADXL345 registers.
 unsigned char values[10];
 char output[20];
+
 //These variables will be used to hold the x,y and z axis accelerometer values.
 int x,y,z;
-double xg, yg, zg;
 char tapType=0;
+
+ACCELS ADXLRead () {
+  
+  //Reading 6 bytes of data starting at register DATAX0 will retrieve the x,y and z acceleration values from the ADXL345.
+  //The results of the read operation will get stored to the values[] buffer.
+  readRegister(DATAX0, 6, values);
+
+  //The ADXL345 gives 10-bit acceleration values, but they are stored as bytes (8-bits). To get the full value, two bytes must be combined for each axis.
+  //The X value is stored in values[0] and values[1].
+  x = tenBitTwosComplementToDecimal((((uint16_t)values[1]<<8)|(uint16_t)values[0]) & 1023);
+  //The Y value is stored in values[2] and values[3].
+  y = tenBitTwosComplementToDecimal((((uint16_t)values[3]<<8)|(uint16_t)values[2]) & 1023);
+  //The Z value is stored in values[4] and values[5].
+  z = tenBitTwosComplementToDecimal((((uint16_t)values[5]<<8)|(uint16_t)values[4]) & 1023);
+  
+  //Convert the accelerometer value to G's. 
+  //With 10 bits measuring over a +/-4g range we can find how to convert by using the equation:
+  // Gs = Measurement Value * (G-range/(2^10)) or Gs = Measurement Value * (8/1024)
+  double xg = x * 0.00390625;
+  double yg = y * 0.00390625;
+  double zg = z * 0.00390625;
+
+  ACCELS gReadings = {xg, yg, zg};
+
+  return ACCELS;
+
+  
+}
+
+
 
 void setup(){ 
   //Initiate an SPI communication instance.
@@ -77,31 +118,16 @@ int16_t tenBitTwosComplementToDecimal(uint16_t x)
 }
 
 void loop(){
-  //Reading 6 bytes of data starting at register DATAX0 will retrieve the x,y and z acceleration values from the ADXL345.
-  //The results of the read operation will get stored to the values[] buffer.
-  readRegister(DATAX0, 6, values);
 
-  //The ADXL345 gives 10-bit acceleration values, but they are stored as bytes (8-bits). To get the full value, two bytes must be combined for each axis.
-  //The X value is stored in values[0] and values[1].
-  x = tenBitTwosComplementToDecimal((((uint16_t)values[1]<<8)|(uint16_t)values[0]) & 1023);
-  //The Y value is stored in values[2] and values[3].
-  y = tenBitTwosComplementToDecimal((((uint16_t)values[3]<<8)|(uint16_t)values[2]) & 1023);
-  //The Z value is stored in values[4] and values[5].
-  z = tenBitTwosComplementToDecimal((((uint16_t)values[5]<<8)|(uint16_t)values[4]) & 1023);
+  // Read accelerations from specified register
+  ACCELS gReadings = ADXLRead(); 
   
-  //Convert the accelerometer value to G's. 
-  //With 10 bits measuring over a +/-4g range we can find how to convert by using the equation:
-  // Gs = Measurement Value * (G-range/(2^10)) or Gs = Measurement Value * (8/1024)
-  xg = x * 0.00390625;
-  yg = y * 0.00390625;
-  zg = z * 0.00390625;
-  
-      Serial.print((float)xg,2);
-      Serial.print("g,");
-      Serial.print((float)yg,2);
-      Serial.print("g,");
-      Serial.print((float)zg,2);
-      Serial.println("g");
+  Serial.print((float)gReadings.xg,2);
+  Serial.print("g,");
+  Serial.print((float)gReadings.yg,2);
+  Serial.print("g,");
+  Serial.print((float)gReadings.zg,2);
+  Serial.println("g");
   /*for(unsigned char i = 0; i < 6; i++)
   {
     Serial.print(values[i]);
