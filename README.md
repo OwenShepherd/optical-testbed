@@ -25,3 +25,4 @@ Links:
 https://www.arduino.cc/en/Main/Software -- Arduino IDE download
 https://www.pjrc.com/teensy/td_download.html -- TeensyDuino Download
 https://github.com/greiman/SdFat -- SDFat Repository and Example Locations
+https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches -- Some Git Branching Basics
