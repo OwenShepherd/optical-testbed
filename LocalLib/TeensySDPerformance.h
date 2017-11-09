@@ -1,9 +1,5 @@
-
-
-
-
-
-
+#ifndef TEENSYSDPERFORMANCE_H
+#define TEENSYSDPERFORMANCE_H
 
 bool sdBusy();
 
@@ -18,3 +14,5 @@ void runTest();
 void perfSetup();
 
 void perfLoop();
+
+#endif

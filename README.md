@@ -19,4 +19,9 @@ and then you can open "ASEN-4018-EnvSensors.ino" located in the root directory
 using the Arduino IDE.
 
 
-NOTE: THE CODE HAS YET TO REFINED AND TESTED ON AN ACTUAL BOARD.
+NOTE: THE CODE HAS YET TO BE REFINED AND TESTED ON AN ACTUAL BOARD.
+
+Links:
+https://www.arduino.cc/en/Main/Software -- Arduino IDE download
+https://www.pjrc.com/teensy/td_download.html -- TeensyDuino Download
+https://github.com/greiman/SdFat -- SDFat Repository and Example Locations
