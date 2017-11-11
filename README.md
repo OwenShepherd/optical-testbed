@@ -1,29 +1,33 @@
-Info: ASEN 4018 - Senior Projects
-Team: AWESoME (SWRI)
+# ASEN 4018 - Senior Projects Microcontroller Code
+## Team: AWESoME (SWRI)
+
+### Software Used
+* Arduino IDE 1.8.5
+* SDFat Version 1.0.3
+* TeensyDuino Version 1.40
 
 
-Arduino IDE Version: 1.8.5
+### Installation
+Download and install the Arduino IDE along with the TeensyDuino
+addon.  Then, download SDFat Version 1.0.3 using the library manager in the IDE,
+and then you can open "ASEN-4018-EnvSensors.ino" located in the root directory
+using the Arduino IDE.  
 
-3rd-Party Libraries Required for the Arduino IDE: SDFat Version 1.0.3
+To use the custom libraries made for the project, either
+copy the folders in "LocalLib" to the Arduino libraries folder at the root of
+your sketches directory or (what I did for easier git integration): create
+shortcuts to the folders in "LocalLib" and place those shortcuts in the Arduino
+libraries folder.  
 
-Extra software required: TeensyDuino Version 1.40
 
-Filesystem info:  Function details (.h) and their implementations (.cpp) are
+### Filesystem Info
+Function details (.h) and their implementations (.cpp) are
 located in their respective header and implementation files within "LocalLib/".
 The current functions provide ADXL reading, SD Performance estimates, and SD
 implementations.
 
-Installation: Download and install the Arduino IDE along with the TeensyDuino
-addon.  Then, download SDFat Version 1.0.3 using the library manager in the IDE,
-and then you can open "ASEN-4018-EnvSensors.ino" located in the root directory
-using the Arduino IDE.  To use the custom libraries made for the project, either
-copy the folders in "LocalLib" to the Arduino libraries folder at the root of
-your sketches directory or (what I did for easier git integration): create
-shortcuts to the folders in "LocalLib" and place those shortcuts in the Arduino
-libraries folder.
 
-Links:
-https://www.arduino.cc/en/Main/Software -- Arduino IDE download
-https://www.pjrc.com/teensy/td_download.html -- TeensyDuino Download
-https://github.com/greiman/SdFat -- SDFat Repository and Example Locations
-https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches -- Some Git Branching Basics
+### Software Download
+* [Arduino IDE](https://www.arduino.cc/en/Main/Software)  
+* [TeensyDuino](https://www.pjrc.com/teensy/td_download.html)  
+* [SDFat Repository](https://github.com/greiman/SdFat)  
