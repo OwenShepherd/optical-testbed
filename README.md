@@ -16,10 +16,11 @@ implementations.
 Installation: Download and install the Arduino IDE along with the TeensyDuino
 addon.  Then, download SDFat Version 1.0.3 using the library manager in the IDE,
 and then you can open "ASEN-4018-EnvSensors.ino" located in the root directory
-using the Arduino IDE.
-
-
-NOTE: THE CODE HAS YET TO BE REFINED AND TESTED ON AN ACTUAL BOARD.
+using the Arduino IDE.  To use the custom libraries made for the project, either
+copy the folders in "LocalLib" to the Arduino libraries folder at the root of
+your sketches directory or (what I did for easier git integration): create
+shortcuts to the folders in "LocalLib" and place those shortcuts in the Arduino
+libraries folder.
 
 Links:
 https://www.arduino.cc/en/Main/Software -- Arduino IDE download
