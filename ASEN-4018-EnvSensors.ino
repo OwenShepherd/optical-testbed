@@ -1,4 +1,4 @@
-#include "LocalLib/TeensySDPerformance.h"
+#include "TeensySDPerformance.h"
 
 void setup() {
 

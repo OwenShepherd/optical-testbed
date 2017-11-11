@@ -167,6 +167,6 @@ void errorHalt(const char* msg) {
   }
 }
 
-void sdBusy() {
+bool sdBusy() {
   return useEx ? sdEx.card()->isBusy() : sd.card()->isBusy();
 }
