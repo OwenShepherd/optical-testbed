@@ -24,7 +24,21 @@ libraries folder.
 Function details (.h) and their implementations (.cpp) are
 located in their respective header and implementation files within "LocalLib/".
 The current functions provide ADXL reading, SD Performance estimates, and SD
-implementations.
+implementations.  
+
+### Examples
+To test Teensy SD read / write performance:
+```
+#include "TeensySDPerformance.h"
+
+void setup() {
+  perfSetup();
+}
+
+void loop() {
+  perfLoop();
+}  
+```
 
 
 ### Software Download
