@@ -19,13 +19,13 @@
 
  */
 
-#include <SPI.h>
-//#include <SD.h>
-#include "SdFat.h"
-SdFat SD;
+#ifndef TEENSYSDWRITE_H
+#define TEENSYSDWRITE_H
 
 void sdSetup();
 
 void sdInitialize();
 
 void sdWrite(String);
+
+#endif

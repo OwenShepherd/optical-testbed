@@ -1,11 +1,5 @@
-// Simple performance test for Teensy 3.5/3.6 SDHC.
-// Demonstrates yield() efficiency.
-
-// Warning SdFatSdio and SdFatSdioEX normally should
-// not both be used in a program.
-// Each has its own cache and member variables.
-
 #include "SdFat.h"
+#include "TeensySDPerformance.h"
 
 // 32 KiB buffer.
 const size_t BUF_DIM = 32768;
@@ -173,6 +167,6 @@ void errorHalt(const char* msg) {
   }
 }
 
-void sdBusy() {
+bool sdBusy() {
   return useEx ? sdEx.card()->isBusy() : sd.card()->isBusy();
 }

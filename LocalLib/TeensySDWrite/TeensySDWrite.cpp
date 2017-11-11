@@ -1,6 +1,12 @@
+#include <SPI.h>
+#include "SdFat.h"
 #include "TeensySDWrite.h"
 #define SD_CS_PIN 4
+
+
 File myFile;
+SdFat SD;
+
 
 void sdSetup() {
   // Open serial communications and wait for port to open:
