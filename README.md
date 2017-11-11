@@ -6,6 +6,11 @@
 * SDFat Version 1.0.3
 * TeensyDuino Version 1.40
 
+### Software Downloads
+* [Arduino IDE](https://www.arduino.cc/en/Main/Software)  
+* [TeensyDuino](https://www.pjrc.com/teensy/td_download.html)  
+* [SDFat Repository](https://github.com/greiman/SdFat)  
+
 
 ### Installation
 Download and install the Arduino IDE along with the TeensyDuino
@@ -41,7 +46,4 @@ void loop() {
 ```
 
 
-### Software Download
-* [Arduino IDE](https://www.arduino.cc/en/Main/Software)  
-* [TeensyDuino](https://www.pjrc.com/teensy/td_download.html)  
-* [SDFat Repository](https://github.com/greiman/SdFat)  
+
