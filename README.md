@@ -44,6 +44,3 @@ void loop() {
   perfLoop();
 }  
 ```
-
-
-

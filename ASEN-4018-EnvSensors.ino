@@ -1,8 +1,11 @@
-#include "TeensySDPerformance.h"
+#include "temp.h"
+
+
+
 
 void setup() {
 
-  perfSetup();
+  tempSetup();
 
 
 }
@@ -10,6 +13,6 @@ void setup() {
 
 void loop() {
 
-  perfLoop();
+  tempLoop();
 
 }
