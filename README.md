@@ -44,3 +44,16 @@ void loop() {
   perfLoop();
 }  
 ```
+
+To read temperature from pin 1 on the Teeny:
+```
+#include "temp.h"
+
+void setup() {
+  tempSetup();
+}
+
+void loop() {
+  tempLoop();
+}
+```
