@@ -37,7 +37,6 @@ void sdWrite(String data, String FILENAME) {
     myFile.println(data);
     // close the file:
     myFile.close();
-    Serial.println("done.");
   } else {
     // if the file didn't open, print an error:
     Serial.println("error opening");
