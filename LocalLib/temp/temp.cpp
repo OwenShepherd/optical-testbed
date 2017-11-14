@@ -21,5 +21,5 @@ void tempLoop() {
   Serial.println("DONE");
   Serial.print(" Temperature is: ");
   Serial.print(sensors.getTempCByIndex(0));
-  delay(1000);
+  //delay(1000);
 }
