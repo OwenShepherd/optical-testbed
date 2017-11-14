@@ -3,6 +3,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <TimeLib.h>
+#include <string>
 
 #define ONE_WIRE_BUS 1
 
@@ -12,16 +13,17 @@ DallasTemperature sensors(&oneWire);
 
 char dataBuff[100];
 char timeBuff[100];
-int counter = 0;
+int counter = 1;
 int retVal = 0;
+bool FLUSH;
 
-void tempSetup() {
+void tempSetup(String FILENAME) {
   setSyncProvider(getTeensy3Time);
   Serial.begin(9600);
-  sdSetup();
+  sdInitialize(FILENAME);
   sensors.begin();
 }
-void tempLoop(String filename) {
+void tempLoop() {
   if (Serial.available()) {
     time_t t = processSyncMessage();
     if (t != 0) {
@@ -46,8 +48,9 @@ void tempLoop(String filename) {
   Serial.print(" ");
   Serial.print(year());
 */
+  FLUSH = (counter%1024==0);
   uint32_t t = micros();
-  sdWrite(dataBuff,filename);
+  sdWrite(dataBuff,FLUSH);
   t = micros()-t;
   Serial.printf("Temp Write Time: %d\n",t);
   counter++;

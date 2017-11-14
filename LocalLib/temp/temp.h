@@ -4,9 +4,9 @@
 #include <string>
 #include <TimeLib.h>
 
-void tempSetup();
+void tempSetup(String);
 
-void tempLoop(String);
+void tempLoop();
 
 void printDigits(int);
 

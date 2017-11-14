@@ -24,10 +24,10 @@
 #include <Arduino.h>
 #include <string>
 
-void sdSetup();
+//void sdSetup();
 
-void sdInitialize();
+void sdInitialize(String);
 
-void sdWrite(String, String);
+void sdWrite(String, bool);
 
 #endif
