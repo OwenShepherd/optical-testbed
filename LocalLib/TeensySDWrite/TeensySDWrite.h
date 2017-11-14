@@ -21,11 +21,13 @@
 
 #ifndef TEENSYSDWRITE_H
 #define TEENSYSDWRITE_H
+#include <Arduino.h>
+#include <string>
 
 void sdSetup();
 
 void sdInitialize();
 
-void sdWrite(String);
+void sdWrite(String, String);
 
 #endif
