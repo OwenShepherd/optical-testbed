@@ -1,18 +1,16 @@
 #include "temp.h"
+#include <string>
 
-
-
+String filename = "TemperatureReadings.csv";
 
 void setup() {
-
   tempSetup();
-
-
+  
 }
-
 
 void loop() {
-
-  tempLoop();
-
+  // nothing happens after setup
+  tempLoop(filename);
 }
+
+

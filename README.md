@@ -5,6 +5,7 @@
 * Arduino IDE 1.8.5
 * SDFat Version 1.0.3
 * TeensyDuino Version 1.40
+* DallasTemperature Version 3.7.6
 
 ### Software Downloads
 * [Arduino IDE](https://www.arduino.cc/en/Main/Software)  
@@ -14,9 +15,9 @@
 
 ### Installation
 Download and install the Arduino IDE along with the TeensyDuino
-addon.  Then, download SDFat Version 1.0.3 using the library manager in the IDE,
-and then you can open "ASEN-4018-EnvSensors.ino" located in the root directory
-using the Arduino IDE.  
+addon.  Then, download SDFat Version 1.0.3 and DallasTemperature using the
+library manager in the IDE, and then you can open "ASEN-4018-EnvSensors.ino"
+located in the root directory using the Arduino IDE.  
 
 To use the custom libraries made for the project, either
 copy the folders in "LocalLib" to the Arduino libraries folder at the root of
@@ -45,15 +46,19 @@ void loop() {
 }  
 ```
 
-To read temperature from pin 1 on the Teeny:
+To read temperature from pin 1 on the Teensy and save it to the SD card:
 ```
 #include "temp.h"
+#include <string>
+
+String filename = "TemperatureReadings.csv";
 
 void setup() {
   tempSetup();
+
 }
 
 void loop() {
-  tempLoop();
+  tempLoop(filename);
 }
 ```
