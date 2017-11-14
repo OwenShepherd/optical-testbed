@@ -34,6 +34,7 @@ implementations.
 
 ### External Resources
 * [Speeding UP SD Writes](https://forum.arduino.cc/index.php?topic=49649.0)
+* [Low-Latency Logger Example](https://github.com/greiman/SdFat/tree/master/examples/LowLatencyLogger)
 
 ### Examples
 To test Teensy SD read / write performance:
