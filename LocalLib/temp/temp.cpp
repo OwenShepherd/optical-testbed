@@ -46,7 +46,10 @@ void tempLoop(String filename) {
   Serial.print(" ");
   Serial.print(year());
 */
-  sdWrite(String(dataBuff),filename);
+  uint32_t t = micros();
+  sdWrite(dataBuff,filename);
+  t = micros()-t;
+  Serial.printf("Temp Write Time: %d\n",t);
   counter++;
 }
 

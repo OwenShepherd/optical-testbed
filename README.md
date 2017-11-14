@@ -32,6 +32,9 @@ located in their respective header and implementation files within "LocalLib/".
 The current functions provide ADXL reading, SD Performance estimates, and SD
 implementations.  
 
+### External Resources
+* [Speeding UP SD Writes](https://forum.arduino.cc/index.php?topic=49649.0)
+
 ### Examples
 To test Teensy SD read / write performance:
 ```
