@@ -1,15 +1,14 @@
-#include "TeensySDPerformance.h"
+#include "temp.h"
+#include <string>
+
+String filename = "TemperatureReadings8.csv";
 
 void setup() {
-
-  perfSetup();
-
-
+  tempSetup(filename);
+  
 }
 
-
 void loop() {
-
-  perfLoop();
-
+  // nothing happens after setup
+  tempLoop();
 }
