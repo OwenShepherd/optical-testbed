@@ -1,153 +1,288 @@
-//Add the SPI library so we can communicate with the ADXL345 sensor
-#include <SPI.h>
 
-//Assign the Chip Select signal to pin 10.
-int CS=10;
+/*
+ * This is a high speed data logger. It acquires data and stores it on an SD 
+ * card. In my tests using a Teensy 3.6 and a SanDisk Ultra 16GB SDHC micro SD 
+ * card, I was able to sample an analog pin at 25 kHz.
+ * 
+ * It relies on the beta version of the SdFat library written by Bill Greiman,
+ * which is available at https://github.com/greiman/SdFat-beta. I have tested
+ * this sketch with revision ffbccb0 of SdFat-beta. This code was inpired by 
+ * SdFat's LowLatencyLogger and TeensySdioDemo examples. It uses the same
+ * binary file format as LowLatencyLogger, but with a bigger block size.
+ * 
+ * Here is how the code works. We have four buffers that are used to store the
+ * data. The main loop is very simple: it checks to see if there are any full 
+ * buffers, and if there are, it writes them to the SD card. When is the data 
+ * acquired? Data is acquired in the function yield(), which is called 
+ * whenever the Teensy is not busy with something else. yield() is called by 
+ * the main loop whenever there is nothing to write to the SD card. yield() is 
+ * also called by the SdFat library whenever it is waiting for the SD card.
+ */
+//Include libraries
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
-//ADXL345 Register Addresses
-#define  DEVID   0x00  //Device ID Register
-#define THRESH_TAP  0x1D  //Tap Threshold
-#define OFSX    0x1E  //X-axis offset
-#define OFSY    0x1F  //Y-axis offset
-#define OFSZ    0x20  //Z-axis offset
-#define DURATION  0x21  //Tap Duration
-#define LATENT    0x22  //Tap latency
-#define WINDOW    0x23  //Tap window
-#define THRESH_ACT  0x24  //Activity Threshold
-#define THRESH_INACT  0x25  //Inactivity Threshold
-#define TIME_INACT  0x26  //Inactivity Time
-#define ACT_INACT_CTL 0x27  //Axis enable control for activity and inactivity detection
-#define THRESH_FF 0x28  //free-fall threshold
-#define TIME_FF   0x29  //Free-Fall Time
-#define TAP_AXES  0x2A  //Axis control for tap/double tap
-#define ACT_TAP_STATUS  0x2B  //Source of tap/double tap
-#define BW_RATE   0x2C  //Data rate and power mode control
-#define POWER_CTL 0x2D  //Power Control Register
-#define INT_ENABLE  0x2E  //Interrupt Enable Control
-#define INT_MAP   0x2F  //Interrupt Mapping Control
-#define INT_SOURCE  0x30  //Source of interrupts
-#define DATA_FORMAT 0x31  //Data format control
-#define DATAX0    0x32  //X-Axis Data 0
-#define DATAX1    0x33  //X-Axis Data 1
-#define DATAY0    0x34  //Y-Axis Data 0
-#define DATAY1    0x35  //Y-Axis Data 1
-#define DATAZ0    0x36  //Z-Axis Data 0
-#define DATAZ1    0x37  //Z-Axis Data 1
-#define FIFO_CTL  0x38  //FIFO control
-#define FIFO_STATUS 0x39  //FIFO status
+// Data wire is plugged into pin 2 on the Arduino
+#define ONE_WIRE_BUS 1
 
-//This buffer will hold values read from the ADXL345 registers.
-unsigned char values[10];
-char output[20];
-//These variables will be used to hold the x,y and z axis accelerometer values.
-int x,y,z;
-double xg, yg, zg;
-char tapType=0;
+// Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
+OneWire oneWire(ONE_WIRE_BUS);
+// Pass our oneWire reference to Dallas Temperature. 
+DallasTemperature sensors(&oneWire);
 
-void setup(){ 
-  //Initiate an SPI communication instance.
-  SPI.begin();
-  //Configure the SPI connection for the ADXL345.
-  SPI.setDataMode(SPI_MODE3);
-  //Create a serial connection to display the data on the terminal.
+
+#include "SdFat.h"
+
+// Pin to record
+const int SENSOR_PIN = A0;
+
+// Pin with LED, which flashes whenever data is written to card, and does a 
+// slow blink when recording has stopped.
+const int LED_PIN = 13;
+
+// 16 KiB buffer.
+const size_t BUF_DIM = 16384;
+
+// Sampling rate
+const uint32_t sampleIntervalMicros = 1000000;
+// 40 us interval = 25 kHz
+
+// Use total of four buffers.
+const uint8_t BUFFER_BLOCK_COUNT = 4;
+
+// Number of data points per record
+const uint8_t ADC_DIM = 1;
+
+// Format for one data record
+struct data_t {
+  uint32_t time;
+  uint32_t adc[ADC_DIM];
+};
+// Warning! The Teensy allocates memory in chunks of 4 bytes!
+// sizeof(data_t) will always be a multiple of 4. For example, the following
+// data record will have a size of 12 bytes, not 9:
+// struct data_t {
+//   uint32_t time; // 4 bytes
+//   uint8_t  adc[5]; // 5 bytes
+// }
+
+// Use SdFatSdio (not SdFatSdioEX) because SdFatSdio spends more time in
+// yield(). For more information, see the TeensySdioDemo example from the 
+// SdFat library. 
+SdFatSdio sd;
+
+File file;
+
+// Number of data records in a block.
+const uint16_t DATA_DIM = (BUF_DIM - 4)/sizeof(data_t);
+
+//Compute fill so block size is BUF_DIM bytes.  FILL_DIM may be zero.
+const uint16_t FILL_DIM = BUF_DIM - 4 - DATA_DIM*sizeof(data_t);
+
+// Format for one block of data
+struct block_t {
+  uint16_t count;
+  uint16_t overrun;
+  data_t data[DATA_DIM];
+  uint8_t fill[FILL_DIM];
+};
+
+// Intialize all buffers
+block_t block[BUFFER_BLOCK_COUNT];
+
+// Initialize full queue
+const uint8_t QUEUE_DIM = BUFFER_BLOCK_COUNT + 1;
+
+// Index of last queue location.
+const uint8_t QUEUE_LAST = QUEUE_DIM - 1;
+
+block_t* curBlock = 0;
+
+block_t* emptyStack[BUFFER_BLOCK_COUNT];
+uint8_t emptyTop;
+uint8_t minTop;
+
+block_t* fullQueue[QUEUE_DIM];
+uint8_t fullHead = 0;
+uint8_t fullTail = 0;
+
+uint32_t nextSampleMicros = 0;
+bool fileIsClosing = false;
+bool collectingData = false;
+bool isSampling = false;
+bool justSampled = false;
+
+//-----------------------------------------------------------------------------
+void setup() {
   Serial.begin(9600);
-  
-  //Set up the Chip Select pin to be an output from the Arduino.
-  pinMode(CS, OUTPUT);
-  //Before communication starts, the Chip Select pin needs to be set high.
-  digitalWrite(CS, HIGH);
-  
-  //Put the ADXL345 into +/- 2G range by writing the value 0x00 to the DATA_FORMAT register.
-  writeRegister(DATA_FORMAT, 0x00);
-  
-  // disable interrupts
-  writeRegister(INT_ENABLE, 0x00);  
+  tempSetup();
+  while (!Serial) {
+  }
 
-  writeRegister(BW_RATE, 0x0E);
+  pinMode(LED_PIN, OUTPUT);
+
+  // Put all the buffers on the empty stack.
+  for (int i = 0; i < BUFFER_BLOCK_COUNT; i++) {
+    emptyStack[i] = &block[i - 1];
+  }
+  emptyTop = BUFFER_BLOCK_COUNT;
+
+  sd.begin();
+  if (!file.open("TeensyDemo.bin", O_RDWR | O_CREAT)) {
+    error("open failed");
+  }
   
-  //Put the ADXL345 into Measurement Mode by writing 0x08 to the POWER_CTL register.
-  writeRegister(POWER_CTL, 0x08); //Measurement mode
-  readRegister(INT_SOURCE, 1, values); //Clear the interrupts from the INT_SOURCE register.
+  Serial.print("Block size: ");
+  Serial.println(BUF_DIM);
+  Serial.print("Record size: ");
+  Serial.println(sizeof(data_t));
+  Serial.print("Records per block: ");
+  Serial.println(DATA_DIM);
+  Serial.print("Record bytes per block: ");
+  Serial.println(DATA_DIM*sizeof(data_t));
+  Serial.print("Fill bytes per block: ");
+  Serial.println(FILL_DIM);
+  Serial.println("Recording. Enter any key to stop.");
+  delay(100);
+  collectingData=true;
+  nextSampleMicros = micros() + sampleIntervalMicros;
+}
+//-----------------------------------------------------------------------------
+void loop() {
+  // Write the block at the tail of the full queue to the SD card
+  if (fullHead == fullTail) { // full queue is empty
+    if (fileIsClosing){
+      file.close();
+      Serial.println("File complete.");
+      blinkForever();
+    } else {
+      yield(); // acquire data etc.
+    }
+  } else { // full queue not empty
+    // write buffer at the tail of the full queue and return it to the top of
+    // the empty stack.
+    digitalWrite(LED_PIN, HIGH);
+    block_t* pBlock = fullQueue[fullTail];
+    fullTail = fullTail < QUEUE_LAST ? fullTail + 1 : 0;
+    if ((int)BUF_DIM != file.write(pBlock, BUF_DIM)) {
+      error("write failed");
+    }
+    emptyStack[emptyTop++] = pBlock;
+    digitalWrite(LED_PIN, LOW);
+  }
+
+  fileIsClosing = Serial.available();
+}
+//-----------------------------------------------------------------------------
+void yield(){
+  // This does the data collection. It is called whenever the teensy is not
+  // doing something else. The SdFat library will call this when it is waiting
+  // for the SD card to do its thing, and the loop() function will call this
+  // when there is nothing to be written to the SD card.
+
+  if (!collectingData || isSampling)
+    return;
+
+  isSampling = true;
+
+  // If file is closing, add the current buffer to the head of the full queue
+  // and skip data collection.
+  if (fileIsClosing) {
+    if (curBlock != 0) {
+      putCurrentBlock();
+    }
+    collectingData = false;
+    return;
+  }
+  
+  // If we don't have a buffer for data, get one from the top of the empty 
+  // stack.
+  if (curBlock == 0) {
+    curBlock = getEmptyBlock();
+  }
+
+  // If it's time, record one data sample.
+  if (micros() >= nextSampleMicros) {
+    if (justSampled) {
+      error("rate too fast");
+    }
+    acquireData(&curBlock->data[curBlock->count++]);
+    nextSampleMicros += sampleIntervalMicros;
+    justSampled = true;
+  } else {
+    justSampled = false;
+  }
+
+  // If the current buffer is full, move it to the head of the full queue. We
+  // will get a new buffer at the beginning of the next yield() call.
+  if (curBlock->count == DATA_DIM) {
+    putCurrentBlock();
+  }
+
+  isSampling = false;
 }
 
-int16_t tenBitTwosComplementToDecimal(uint16_t x)
+
+void tempSetup()
 {
-  boolean negative = (x & (1 << 9)) != 0;
-  if(negative)
-    return x | ~((1 << 10) - 1);
-   return (int16_t)x;
+  //Serial.begin(9600); //Begin serial communication
+  Serial.println("Arduino Digital Temperature // Serial Monitor Version"); //Print a message
+  sensors.begin();
 }
 
-void loop(){
-  //Reading 6 bytes of data starting at register DATAX0 will retrieve the x,y and z acceleration values from the ADXL345.
-  //The results of the read operation will get stored to the values[] buffer.
-  readRegister(DATAX0, 6, values);
+int tempLoop()
+{ 
+  // Send the command to get temperatures
+  sensors.requestTemperatures();  
+  //Serial.print("Temperature is: ");
+  return (int) sensors.getTempCByIndex(0); // Why "byIndex"? You can have more than one IC on the same bus. 0 refers to the first IC on the wire
+  //Update value every 1 sec.
+}
 
-  //The ADXL345 gives 10-bit acceleration values, but they are stored as bytes (8-bits). To get the full value, two bytes must be combined for each axis.
-  //The X value is stored in values[0] and values[1].
-  x = tenBitTwosComplementToDecimal((((uint16_t)values[1]<<8)|(uint16_t)values[0]) & 1023);
-  //The Y value is stored in values[2] and values[3].
-  y = tenBitTwosComplementToDecimal((((uint16_t)values[3]<<8)|(uint16_t)values[2]) & 1023);
-  //The Z value is stored in values[4] and values[5].
-  z = tenBitTwosComplementToDecimal((((uint16_t)values[5]<<8)|(uint16_t)values[4]) & 1023);
-  
-  //Convert the accelerometer value to G's. 
-  //With 10 bits measuring over a +/-4g range we can find how to convert by using the equation:
-  // Gs = Measurement Value * (G-range/(2^10)) or Gs = Measurement Value * (8/1024)
-  xg = x * 0.00390625;
-  yg = y * 0.00390625;
-  zg = z * 0.00390625;
-  
-      Serial.print((float)xg,2);
-      Serial.print("g,");
-      Serial.print((float)yg,2);
-      Serial.print("g,");
-      Serial.print((float)zg,2);
-      Serial.println("g");
-  /*for(unsigned char i = 0; i < 6; i++)
-  {
-    Serial.print(values[i]);
-    Serial.print(",");
+
+//-----------------------------------------------------------------------------
+block_t* getEmptyBlock() {
+  /*
+   * Takes a block form the top of the empty stack and returns it
+   */
+  block_t* blk = 0;
+  if (emptyTop > 0) { // if there is a buffer in the empty stack
+    blk = emptyStack[--emptyTop];
+    blk->count = 0;
+  } else { // no buffers in empty stack
+    error("All buffers in use");
   }
-  Serial.println();*/
-  delay(100); 
+  return blk;
 }
-
-//This function will write a value to a register on the ADXL345.
-//Parameters:
-//  char registerAddress - The register to write a value to
-//  char value - The value to be written to the specified register.
-void writeRegister(char registerAddress, unsigned char value){
-  //Set Chip Select pin low to signal the beginning of an SPI packet.
-  digitalWrite(CS, LOW);
-  //Transfer the register address over SPI.
-  SPI.transfer(registerAddress);
-  //Transfer the desired register value over SPI.
-  SPI.transfer(value);
-  //Set the Chip Select pin high to signal the end of an SPI packet.
-  digitalWrite(CS, HIGH);
+//-----------------------------------------------------------------------------
+void putCurrentBlock() {
+  /*
+   * Put the current block at the head of the queue to be written to card
+   */
+  fullQueue[fullHead] = curBlock;
+  fullHead = fullHead < QUEUE_LAST ? fullHead + 1 : 0;
+  curBlock = 0;
 }
-
-//This function will read a certain number of registers starting from a specified address and store their values in a buffer.
-//Parameters:
-//  char registerAddress - The register addresse to start the read sequence from.
-//  int numBytes - The number of registers that should be read.
-//  char * values - A pointer to a buffer where the results of the operation should be stored.
-void readRegister(char registerAddress, int numBytes, unsigned char * values){
-  //Since we're performing a read operation, the most significant bit of the register address should be set.
-  char address = 0x80 | registerAddress;
-  //If we're doing a multi-byte read, bit 6 needs to be set as well.
-  if(numBytes > 1)address = address | 0x40;
-  
-  //Set the Chip select pin low to start an SPI packet.
-  digitalWrite(CS, LOW);
-  //Transfer the starting register address that needs to be read.
-  SPI.transfer(address);
-  //Continue to read registers until we've read the number specified, storing the results to the input buffer.
-  for(int i=0; i<numBytes; i++){
-    values[i] = SPI.transfer(0x00);
+//-----------------------------------------------------------------------------
+void error(String msg) {
+  Serial.print("ERROR: ");
+  Serial.println(msg);
+  blinkForever();
+}
+//-----------------------------------------------------------------------------
+void acquireData(data_t* data){
+  data->time = micros();
+  data->adc[0] = tempLoop();
+  Serial.println(data->adc[0]);
+}
+//-----------------------------------------------------------------------------
+void blinkForever() {
+  while (1) {
+    digitalWrite(LED_PIN, HIGH);
+    delay(1000);
+    digitalWrite(LED_PIN, LOW);
+    delay(1000);
   }
-  //Set the Chips Select pin high to end the SPI packet.
-  digitalWrite(CS, HIGH);
 }
+
 
