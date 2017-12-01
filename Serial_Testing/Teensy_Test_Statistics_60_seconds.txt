@@ -1,11 +1,2 @@
-Data Rate Statistics:
-
-Time Elapsed: 60.002360343933105
-Bytes Read: 65283000
-Data Rate: 1088.007198813485 kbps
-Filename: Teensy_Test_60_seconds.txt
-
-Error Statistics:
-
-Error Flags: 0
-Count of Every Third Char: 21760999
+Time Elapsed,Bytes Read,Data Rate,Filename,Flags,Char Count
+60.002360343933105,65283000,1088.007198813485,Teensy_Test_60_seconds.txt,0,21760999
