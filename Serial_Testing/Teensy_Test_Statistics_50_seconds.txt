@@ -1,0 +1,11 @@
+Data Rate Statistics:
+
+Time Elapsed: 50.00297570228577
+Bytes Read: 54373000
+Data Rate: 1087.3952847073153 kbps
+Filename: Teensy_Test_50_seconds.txt
+
+Error Statistics:
+
+Error Flags: 0
+Count of Every Third Char: 18124333
