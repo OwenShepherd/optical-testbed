@@ -18,21 +18,20 @@ import time
 
 inputs = ""
 Baud = 100 # Baud rate (note on the Teensy this doesn't change Serial rates)
+maxLatency = 0
 
 
-testTime = 60 # Total time you desire to test the Teensy
+testTime = 12 # Total time you desire to test the Teensy
 Port = 'COM3' # USB port ID that the Teensy is plugged in to
 
 # Directory to store the file and the filename are defined here, change for your
 # own filesystem
-directory = "C:\\Users\\sheph\\Documents\\Arduino\\ASEN-4018-EnvSensors\\"
+directory = "C:\\Users\\sheph\\Documents\\Arduino\\ASEN-4018-EnvSensors\\Serial_Testing\\"
 fName = "Teensy_Test_"+str(testTime)+"_seconds.txt"
 fileName = directory+fName
 fileName2 = directory+"Teensy_Test_Statistics_"+str(testTime)+"_seconds.txt"
 
 f = open(fileName,'w+')
-
-
 
 start = time.time()
 end = time.time()
@@ -42,9 +41,14 @@ byteCounter = 0
 # Here we read the serial port in 1000 byte blocks and writes to the above specified file
 with serial.Serial(Port, Baud) as ser:
     while ((end-start)<testTime):
-        x = ser.read(1000)
+        startLatency = time.time()
+        x = ser.read(100)
+        endLatency = time.time()
+        currTime = endLatency-startLatency
+        if (currTime > maxLatency):
+            maxLatency = currTime
         f.write(x.decode("utf-8"))
-        byteCounter = byteCounter+1000
+        byteCounter = byteCounter+100
         end = time.time()
 
 f.close
@@ -131,12 +135,11 @@ print("Error Flags: "+ str(flags))
 print("Count of Every Third Char: "+ str(totalCounter))
 
 f2 = open(fileName2,'w')
-f2.write("Data Rate Statistics:\n")
-f2.write("\nTime Elapsed: " + str(timeElapsed))
-f2.write("\nBytes Read: " + str(byteCounter))
-f2.write("\nData Rate: " + str(byteCounter/timeElapsed/1000) + " kbps")
-f2.write("\nFilename: "+ fName)
-f2.write("\n\nError Statistics:\n")
-f2.write("\nError Flags: "+ str(flags))
-f2.write("\nCount of Every Third Char: "+ str(totalCounter))
+f2.write("Time Elapsed,Bytes Read,Data Rate,Filename,Flags,Char Count")
+f2.write("\n" + str(timeElapsed) + ",")
+f2.write(str(byteCounter) + ",")
+f2.write(str(byteCounter/timeElapsed/1000) + ",")
+f2.write(fName+",")
+f2.write(str(flags)+",")
+f2.write(str(totalCounter)+",")
 f2.close()

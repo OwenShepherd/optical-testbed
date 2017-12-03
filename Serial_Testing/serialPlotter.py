@@ -6,7 +6,7 @@ counter = 0
 directory = "C:\\Users\\sheph\\Documents\\Arduino\\ASEN-4018-EnvSensors\\Serial_Testing\\"
 preFileName = "Teensy_Test_Statistics_"
 postFileName = "_seconds.txt"
-testTimes = [10,20,30,40,50,60]
+testTimes = [1,5,8,10,12,20,30,40,50,60]
 
 timeData = []
 byteData = []
@@ -38,9 +38,10 @@ for ttime in testTimes:
 
 
 
-plt.plot(timeData,rateData)
-plt.ylabel('Data Rate')
-plt.xlabel('Time Data')
+plt.plot(timeData,rateData,color='red')
+plt.title("Average Data Rate vs. Elapsed Time")
+plt.ylabel('Average Data Rate [kBps]')
+plt.xlabel('Elapsed Time [s]')
 axes = plt.gca()
 axes.set_xlim([0,65])
 axes.set_ylim([0,1200])
