@@ -22,8 +22,9 @@ located in the root directory using the Arduino IDE.
 To use the custom libraries made for the project, either
 copy the folders in "LocalLib" to the Arduino libraries folder at the root of
 your sketches directory or (what I did for easier git integration): create
-shortcuts to the folders in "LocalLib" and place those shortcuts in the Arduino
-libraries folder.  
+symbolic links to the folders in "LocalLib" and place those shortcuts in the Arduino
+libraries folder.  NOTE: This was mostly developed in Ubuntu; creating 
+symbolic links in Windows may not be as straightforward.
 
 
 ### Filesystem Info
