@@ -1,0 +1,2 @@
+Time Elapsed,Bytes Read,Data Rate,Filename,Flags,Char Count
+60.002360343933105,65283000,1088.007198813485,Teensy_Test_60_seconds.txt,0,21760999
