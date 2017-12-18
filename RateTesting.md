@@ -62,3 +62,13 @@ latter holds some statistics about the data transfer.
 After the raw file has been created, it is also error-checked to ensure that
 the Teensy and Python are indeed capable of correctly handling the speeds
 required.
+
+###SPI Data Testing
+The directory "SPI_Testing" contains code for testing some of the Teensy 3.6s
+SPI timing.  In particular, the time it takes for the Teensy to read from a 
+SPI device, and the time it takes for the Teensy to switch between reading 
+two SPI devices.
+
+Similar filename changes to those done in the above "Serial Data Testing" must
+also be done to the "SPITests.py" file in order for the program to run correctly.
+In addition, the Teensy-side code is hosted under "SPI_Sketch.ino".
