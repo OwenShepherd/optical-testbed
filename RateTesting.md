@@ -63,7 +63,7 @@ After the raw file has been created, it is also error-checked to ensure that
 the Teensy and Python are indeed capable of correctly handling the speeds
 required.
 
-###SPI Data Testing
+### SPI Data Testing
 The directory "SPI_Testing" contains code for testing some of the Teensy 3.6s
 SPI timing.  In particular, the time it takes for the Teensy to read from a 
 SPI device, and the time it takes for the Teensy to switch between reading 
