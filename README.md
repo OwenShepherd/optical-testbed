@@ -8,7 +8,11 @@ Full interfacing with the ASI120MM has not been established currently.
 
 ### Installation / Setup
 Please first ensure that python and pip have been installed and added to your
-environment variables path.  Now, try just a simple python import:
+environment variables path.  Now, install win32com via pip using the command:
+```
+pip install pywin32
+```
+Now, try just a simple python import:
 ```
 import win32com.client
 ```
