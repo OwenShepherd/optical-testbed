@@ -21,3 +21,32 @@ Some attempts have been made to interface with the ASI120MM via INDI, kstars, Py
 and other methods.  Some progress has been made, but connecting to the camera and
 taking photos via scripting or any GUI has not been achieved.  Other than that,
 just hours of troubleshooting....
+
+
+## Filesystem Organization
+Here lies the overall planned file-structure for the experiment's software.  Follow
+whatever current convention this README has, and be aware that the file structure
+may change over time.
+```
+EXAMPLE_EXPERIMENT
+├── 2018_02_03_13_48_41_STATE1
+├── 2018_02_03_13_50_55_STATE2
+├── 2018_02_03_13_52_13_STATE3
+├── 2018_02_03_13_54_32_STATE4
+│   ├── data_RCWS
+│   │   ├── img_RCWS_aft.png
+│   │   ├── img_RCWS_fore.png
+│   │   └── zernikes_RCWS.csv
+│   ├── data_SHA
+│   │   ├── img_SHA_aft.png
+│   │   ├── img_SHA_fore.png
+│   │   ├── spt_SHA_aft.png
+│   │   ├── spt_SHA_fore.png
+│   │   ├── wft_SHA_aft.png
+│   │   ├── wft_SHA_fore.png
+│   │   └── zernikes_SHA.csv
+│   ├── env_data.csv
+│   ├── state_parameters.csv
+│   └── zernikes_model.csv
+└── experiment_schedule.csv
+```
