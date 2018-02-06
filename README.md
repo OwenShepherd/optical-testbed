@@ -1,4 +1,6 @@
 # ASEN-4018-Automation
+Team Website: [Team AWESoMe](https://www.colorado.edu/aerospace/current-students/undergraduates/senior-design-projects/past-senior-projects/2017-2018/apparatus)  
+
 A collection of my information / attempts at working software necessary for automating different tasks of the testbed.
 
 ## Windows Documentation
