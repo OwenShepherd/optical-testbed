@@ -7,17 +7,9 @@ python by connecting python to .NET via the COM platform has been successful.
 Full interfacing with the ASI120MM has not been established currently.
 
 ### Installation / Setup
-Please first ensure that python and pip have been installed and added to your
-environment variables path.  Now, install win32com via pip using the command:
-```
-pip install pywin32
-```
-Now, try just a simple python import:
-```
-import win32com.client
-```
-If this import fails because the module "win32api" cannot be found follow the
-steps [here](https://github.com/michaelgundlach/pyspeech/issues/23) to correct such issues.
+The project was created using Visual Studio and thus requires visual studio for
+working on.  In addition, you must install the [ASI120MM Drivers](http://astronomy-imaging-camera.com/software/),
+specifically the "ASI Cameras Driver" first.  Then install the "ASCOM Platform 6.3" from [here](https://ascom-standards.org/Downloads/Index.htm).  Then go [here](https://ascom-standards.org/Downloads/PlatDevComponents.htm) and install the "ASCOM Platform Developer Components".  Finally, install the "ASI Cameras ASCOM Driver" from [here](http://astronomy-imaging-camera.com/software/).  Now you may run the visual studio "program.cs" and connect to the ASI120MM camera.  So far the camera may take an image with a set exposure, but produces an "int[*,*]" that I am not sure how to convert to an image file.  I'm getting close though...
 
 ### ASCOM References
 The two RCWS cameras (ASI120MM & QHY...) both interface with Windows using ASCOM.  Some
