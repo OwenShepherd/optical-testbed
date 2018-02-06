@@ -19,6 +19,11 @@ import win32com.client
 If this import fails because the module "win32api" cannot be found follow the
 steps [here](https://github.com/michaelgundlach/pyspeech/issues/23) to correct such issues.
 
+### ASCOM References
+The two RCWS cameras (ASI120MM & QHY...) both interface with Windows using ASCOM.  Some
+references on how to use ASCOM with VS:
+- [ASCOM Standards](http://www.ascom-standards.org/Help/Developer/html/7d9253c2-fdfd-4c0d-8225-a96bddb49731.htm)
+
 
 ## Ubuntu Documentation
 Some attempts have been made to interface with the ASI120MM via INDI, kstars, PyINDI,
@@ -54,4 +59,3 @@ EXAMPLE_EXPERIMENT
 │   └── zernikes_model.csv
 └── experiment_schedule.csv
 ```
-test
