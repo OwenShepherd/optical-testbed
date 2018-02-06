@@ -1,0 +1,15 @@
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.ASI120MM.Test.exe.config
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.ASI120MM.Test.exe
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.ASI120MM.Test.pdb
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.DeviceInterfaces.dll
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.DriverAccess.dll
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.Utilities.dll
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.Exceptions.dll
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.DeviceInterfaces.xml
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.DriverAccess.xml
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.Utilities.xml
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\bin\Debug\ASCOM.Exceptions.xml
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\obj\x86\Debug\ASI120MM.csprojResolveAssemblyReference.cache
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\obj\x86\Debug\ASI120MM.csproj.CoreCompileInputs.cache
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\obj\x86\Debug\ASCOM.ASI120MM.Test.exe
+C:\Users\sheph\source\repos\ASI120MM\ASI120MM\obj\x86\Debug\ASCOM.ASI120MM.Test.pdb
