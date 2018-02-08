@@ -10,10 +10,12 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.InteropServices;
 using ASCOM.DriverAccess;
 
 
@@ -27,6 +29,8 @@ namespace ASCOM
 
             // Put the driver name here.  You can figure out the driver name by uncommenting the below code
             string driverID = "ASCOM.ASICamera2.Camera";
+            double exposureTime = 0.01; // Sets the exposure time in seconds.
+            bool lightImage = true; // Sets the ASI to take a light or dark image
 
             // Uncomment the code that's required
 #if UseChooser
@@ -63,6 +67,8 @@ namespace ASCOM
                 Console.WriteLine("  CanSetCCDTemperature = " + C.CanSetCCDTemperature);
                 Console.WriteLine("  CanStopExposure = " + C.CanStopExposure);
                 Console.WriteLine("  CCDTemperature = " + C.CCDTemperature);
+                Console.WriteLine("  ExposureMax = " + C.ExposureMax);
+                Console.WriteLine("  ExposureMin = " + C.ExposureMin);
                 if (C.CanGetCoolerPower)
                     Console.WriteLine("  CoolerPower = " + C.CoolerPower);
                 Console.WriteLine("  ElectronsPerADU = " + C.ElectronsPerADU);
@@ -71,8 +77,9 @@ namespace ASCOM
                 //Console.WriteLine("  HeatSinkTemperature = " + C.HeatSinkTemperature);
                 if (C.CanPulseGuide)
                     Console.WriteLine("  IsPulseGuiding = " + C.IsPulseGuiding);
-                Console.Write("  Take 15 second image");
-                C.StartExposure(1.0, true);
+                Console.Write("  Take " + exposureTime+ " second image");
+                C.StartExposure(exposureTime, lightImage);
+
                 while (!C.ImageReady)
                 {
                     Console.Write(".");
@@ -83,16 +90,67 @@ namespace ASCOM
                 Console.WriteLine("  CameraState = " + C.CameraState.ToString());
                 //Console.WriteLine("  LastExposureDuration = " + C.LastExposureDuration);
                 //Console.WriteLine("  LastExposureStartTime = " + C.LastExposureStartTime);
-                int[] imgArray = (int[])C.ImageArray;
+                //int[] imgArray = (int[])C.ImageArray;
+                int[,] arr = new int[C.CameraXSize, C.CameraYSize];
+                arr = (int[,])C.ImageArray;
+                Type type = arr.GetType();
+                Console.WriteLine(type.Name);
                 
 
-                using (Image image = Image.FromStream(new MemoryStream(imgArray)))
+                int width = C.CameraXSize; // read from file
+                int height = C.CameraYSize; // read from file
+                /*
+                using (StreamWriter outfile = new StreamWriter(@"C:\Users\sheph\Documents\Classes\output.csv"))
                 {
-                    image.Save("output.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);  // Or Png
-                }
+                    for (int x = 0; x < width; x++)
+                    {
+                        string content = "";
+                        for (int y = 0; y < height; y++)
+                        {
+                            content += arr[x,y].ToString() + ",";
+                        }
+                        //trying to write data to csv
+                        outfile.WriteLine(content);
+                    }
 
+
+                }
+                */ 
+                /*
+                var bitmap = new Bitmap(width, height, PixelFormat.Format16bppGrayScale);
                 
-                Console.WriteLine("  Array is " + (imgArray.GetUpperBound(0) + 1) + " by " + (imgArray.GetUpperBound(1) + 1));
+                for (int y = 0; y < height; y++)
+                    for (int x = 0; x < width; x++)
+                    {
+                        double temp = arr[x,y] *255.0/65535; // read from array
+                        int red = (int)temp;
+                        int green = red; // read from array
+                        int blue = green; // read from array
+                        bitmap.SetPixel(x, y, Color.FromArgb(0, red, green, blue));
+                    }
+                
+                */
+                Bitmap theImage = new Bitmap(width,height);
+
+                var data = theImage.LockBits(
+                    new Rectangle(0, 0, theImage.Width, theImage.Height),
+                    ImageLockMode.ReadWrite,
+                    theImage.PixelFormat
+                    );
+                
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        Marshal.WriteInt16(data.Scan0, 0, (short)arr[x, y]);
+                    }
+                }
+                string filename = "C:\\Users\\sheph\\Documents\\Arduino\\ASEN-4018-Automation\\test.jpg";
+                theImage.UnlockBits(data);
+                theImage.Save(filename, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+
+
                 C.Connected = false;
                 C.Dispose();
             }

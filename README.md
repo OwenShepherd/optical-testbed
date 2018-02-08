@@ -4,9 +4,9 @@ Team Website: [Team AWESoMe](https://www.colorado.edu/aerospace/current-students
 A collection of my information / attempts at working software necessary for automating different tasks of the testbed.
 
 ## Windows Documentation
-Currently, interfacing via scripts has not been completed yet.  Although testing
-python by connecting python to .NET via the COM platform has been successful.
-Full interfacing with the ASI120MM has not been established currently.
+Currently, we have sucessfully interfaced with the ASI120MM via C# scripts and the ASCOM drivers.
+We are able to change exposure times and various other camera parameters.  Next, I'll try and
+tackle the motorized stages.
 
 ### Installation / Setup
 The project was created using Visual Studio and thus requires visual studio for
@@ -17,6 +17,9 @@ specifically the "ASI Cameras Driver" first.  Then install the "ASCOM Platform 6
 The two RCWS cameras (ASI120MM & QHY...) both interface with Windows using ASCOM.  Some
 references on how to use ASCOM with VS:
 - [ASCOM Standards](http://www.ascom-standards.org/Help/Developer/html/7d9253c2-fdfd-4c0d-8225-a96bddb49731.htm)
+
+In addition, the ASCOM library provides a camera object that has an instance variable "imgArray" that stores the
+pixel data.  For the ASI, the data is stored as 16bpp Grey Scale.
 
 
 ## Ubuntu Documentation
