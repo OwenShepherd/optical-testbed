@@ -21,6 +21,12 @@ using ASCOM.DriverAccess;
 
 namespace ASCOM
 {
+    public class ASEN_RCWS : Camera
+    {
+
+    }
+
+
     class Program
     {
         
@@ -52,32 +58,7 @@ namespace ASCOM
             {
                 Camera C = new Camera(progID);
                 C.Connected = true;
-                Console.WriteLine("  Connected to " + progID);
-                Console.WriteLine("  Description = " + C.Description);
-                Console.WriteLine("  Pixel size = " + C.PixelSizeX + " * " + C.PixelSizeY);
-                Console.WriteLine("  Camera size = " + C.CameraXSize + " * " + C.CameraYSize);
-                Console.WriteLine("  Max Bin = " + C.MaxBinX + " * " + C.MaxBinY);
-                Console.WriteLine("  Bin = " + C.BinX + " * " + C.BinY);
-                Console.WriteLine("  MaxADU = " + C.MaxADU);
-                Console.WriteLine("  CameraState = " + C.CameraState.ToString());
-                Console.WriteLine("  CanAbortExposure = " + C.CanAbortExposure);
-                Console.WriteLine("  CanAsymmetricBin = " + C.CanAsymmetricBin);
-                Console.WriteLine("  CanGetCoolerPower = " + C.CanGetCoolerPower);
-                Console.WriteLine("  CanPulseGuide = " + C.CanPulseGuide);
-                Console.WriteLine("  CanSetCCDTemperature = " + C.CanSetCCDTemperature);
-                Console.WriteLine("  CanStopExposure = " + C.CanStopExposure);
-                Console.WriteLine("  CCDTemperature = " + C.CCDTemperature);
-                Console.WriteLine("  ExposureMax = " + C.ExposureMax);
-                Console.WriteLine("  ExposureMin = " + C.ExposureMin);
-                if (C.CanGetCoolerPower)
-                    Console.WriteLine("  CoolerPower = " + C.CoolerPower);
-                Console.WriteLine("  ElectronsPerADU = " + C.ElectronsPerADU);
-                Console.WriteLine("  FullWellCapacity = " + C.FullWellCapacity);
-                Console.WriteLine("  HasShutter = " + C.HasShutter);
-                //Console.WriteLine("  HeatSinkTemperature = " + C.HeatSinkTemperature);
-                if (C.CanPulseGuide)
-                    Console.WriteLine("  IsPulseGuiding = " + C.IsPulseGuiding);
-                Console.Write("  Take " + exposureTime+ " second image");
+                
                 C.StartExposure(exposureTime, lightImage);
 
                 while (!C.ImageReady)
