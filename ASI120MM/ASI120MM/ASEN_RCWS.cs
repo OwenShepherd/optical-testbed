@@ -1,31 +1,30 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
 using ASCOM.DriverAccess;
 
-namespace ASEN_RCWS
+
+namespace ASEN
 {
     class ASEN_RCWS : Camera
     {
         public string ID;
         public int width;
         public int height;
+        public int[,] imgArray;
         
-        public ASEN_RCWS(string driverID, int exposure) : base(driverID) {
+        public ASEN_RCWS(string driverID) : base(driverID) {
 
             // Using the API to create an instance of the camera class
             // And setting instance variable "ID" to the user-supplied camera ID
             this.ID = driverID;
+            // An exception will be thrown here if the camera is not connected
+            this.Connected = true;
+
             this.width = this.CameraXSize;
             this.height = this.CameraYSize;
         }
 
-        public ushort[,] capture(int exposureTime, bool IS_LIGHT_IMAGE)
+        public int[,] Capture(double exposureTime, bool IS_LIGHT_IMAGE)
         {
             // Starting the exposure
             this.StartExposure(exposureTime, IS_LIGHT_IMAGE);
@@ -39,17 +38,16 @@ namespace ASEN_RCWS
 
             Console.WriteLine("Exposure Complete.  Downloading.");
 
-            ushort[,] arr = new ushort[width, height];
-            arr = (ushort[,])this.ImageArray;
+            int[,] arr = new int[width, height];
+            arr = (int[,])this.ImageArray;
+            this.imgArray = arr;
 
             return arr;
 
         }
 
-        public void initializeCamera()
+        public void InitializeCamera()
         {
-            // An exception will be thrown here if the camera is not connected
-            this.Connected = true;
 
             // This block simply prints out various camera parameters.  We can change
             // this at any time to reflect what we want
@@ -72,7 +70,29 @@ namespace ASEN_RCWS
             Console.WriteLine("  ExposureMin = " + this.ExposureMin);
         }
 
-        public void disconnect()
+        // Saving to CSV
+        /*
+        public void saveImage()
+        {
+            using (StreamWriter outfile = new StreamWriter(@".\output.csv"))
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    string content = "";
+                    for (int y = 0; y < height; y++)
+                    {
+                        content += imgArray[x, y].ToString() + ",";
+                    }
+                    //trying to write data to csv
+                    outfile.WriteLine(content);
+                }
+
+
+            }
+        }
+        */
+
+        public void Disconnect()
         {
             this.Connected = false;
             this.Dispose();
