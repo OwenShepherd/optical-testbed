@@ -28,6 +28,14 @@ and other methods.  Some progress has been made, but connecting to the camera an
 taking photos via scripting or any GUI has not been achieved.  Other than that,
 just hours of troubleshooting....
 
+## Using the ASEN namespace
+
+### ASEN_RCWS class
+The ASEN_RCWS class can be used to take images and save them in a very simple
+way.  Currently, it has only been tested with the ASI, but should be able to
+easily extend to the QHY if necessary.  To use the class, follow the current
+example shown in the "program.cs" file for using the ASI120MM.
+
 
 ## Filesystem Organization
 Here lies the overall planned file-structure for the experiment's software.  Follow
