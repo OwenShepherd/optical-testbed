@@ -17,10 +17,14 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using ASCOM.DriverAccess;
+using ASEN;
+
+
 
 
 namespace ASCOM
 {
+
     class Program
     {
         
@@ -32,129 +36,14 @@ namespace ASCOM
             double exposureTime = 0.01; // Sets the exposure time in seconds.
             bool lightImage = true; // Sets the ASI to take a light or dark image
 
-            // Uncomment the code that's required
-#if UseChooser
-            // choose the device
-            string id = ASCOM.DriverAccess.Camera.Choose("");
-            if (string.IsNullOrEmpty(id))
-                return;
-            // create this device
-            Console.WriteLine("ID: " + id);
-            ASCOM.DriverAccess.Camera device = new ASCOM.DriverAccess.Camera(id);
-#else
-            // this can be replaced by this code, it avoids the chooser and creates the driver class directly.
-            //ASCOM.DriverAccess.Camera device = new ASCOM.DriverAccess.Camera(driverID);
-#endif
-            #region Camera
-            Console.WriteLine("\r\nCamera:");
-            string progID = driverID;
-            if (progID != "")
-            {
-                Camera C = new Camera(progID);
-                C.Connected = true;
-                Console.WriteLine("  Connected to " + progID);
-                Console.WriteLine("  Description = " + C.Description);
-                Console.WriteLine("  Pixel size = " + C.PixelSizeX + " * " + C.PixelSizeY);
-                Console.WriteLine("  Camera size = " + C.CameraXSize + " * " + C.CameraYSize);
-                Console.WriteLine("  Max Bin = " + C.MaxBinX + " * " + C.MaxBinY);
-                Console.WriteLine("  Bin = " + C.BinX + " * " + C.BinY);
-                Console.WriteLine("  MaxADU = " + C.MaxADU);
-                Console.WriteLine("  CameraState = " + C.CameraState.ToString());
-                Console.WriteLine("  CanAbortExposure = " + C.CanAbortExposure);
-                Console.WriteLine("  CanAsymmetricBin = " + C.CanAsymmetricBin);
-                Console.WriteLine("  CanGetCoolerPower = " + C.CanGetCoolerPower);
-                Console.WriteLine("  CanPulseGuide = " + C.CanPulseGuide);
-                Console.WriteLine("  CanSetCCDTemperature = " + C.CanSetCCDTemperature);
-                Console.WriteLine("  CanStopExposure = " + C.CanStopExposure);
-                Console.WriteLine("  CCDTemperature = " + C.CCDTemperature);
-                Console.WriteLine("  ExposureMax = " + C.ExposureMax);
-                Console.WriteLine("  ExposureMin = " + C.ExposureMin);
-                if (C.CanGetCoolerPower)
-                    Console.WriteLine("  CoolerPower = " + C.CoolerPower);
-                Console.WriteLine("  ElectronsPerADU = " + C.ElectronsPerADU);
-                Console.WriteLine("  FullWellCapacity = " + C.FullWellCapacity);
-                Console.WriteLine("  HasShutter = " + C.HasShutter);
-                //Console.WriteLine("  HeatSinkTemperature = " + C.HeatSinkTemperature);
-                if (C.CanPulseGuide)
-                    Console.WriteLine("  IsPulseGuiding = " + C.IsPulseGuiding);
-                Console.Write("  Take " + exposureTime+ " second image");
-                C.StartExposure(exposureTime, lightImage);
+            ASEN_RCWS C = new ASEN_RCWS(driverID);
 
-                while (!C.ImageReady)
-                {
-                    Console.Write(".");
-                    //U.WaitForMilliseconds(300);
-                    System.Threading.Thread.Sleep(300);
-                }
-                Console.WriteLine("\r\n  Exposure complete, ready for download.");
-                Console.WriteLine("  CameraState = " + C.CameraState.ToString());
-                //Console.WriteLine("  LastExposureDuration = " + C.LastExposureDuration);
-                //Console.WriteLine("  LastExposureStartTime = " + C.LastExposureStartTime);
-                //int[] imgArray = (int[])C.ImageArray;
-                int[,] arr = new int[C.CameraXSize, C.CameraYSize];
-                arr = (int[,])C.ImageArray;
-                Type type = arr.GetType();
-                Console.WriteLine(type.Name);
-                
+            C.InitializeCamera();
 
-                int width = C.CameraXSize; // read from file
-                int height = C.CameraYSize; // read from file
-                /*
-                using (StreamWriter outfile = new StreamWriter(@"C:\Users\sheph\Documents\Classes\output.csv"))
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        string content = "";
-                        for (int y = 0; y < height; y++)
-                        {
-                            content += arr[x,y].ToString() + ",";
-                        }
-                        //trying to write data to csv
-                        outfile.WriteLine(content);
-                    }
+            C.Capture(exposureTime, lightImage);
 
+            C.Disconnect();
 
-                }
-                */ 
-                /*
-                var bitmap = new Bitmap(width, height, PixelFormat.Format16bppGrayScale);
-                
-                for (int y = 0; y < height; y++)
-                    for (int x = 0; x < width; x++)
-                    {
-                        double temp = arr[x,y] *255.0/65535; // read from array
-                        int red = (int)temp;
-                        int green = red; // read from array
-                        int blue = green; // read from array
-                        bitmap.SetPixel(x, y, Color.FromArgb(0, red, green, blue));
-                    }
-                
-                */
-                Bitmap theImage = new Bitmap(width,height);
-
-                var data = theImage.LockBits(
-                    new Rectangle(0, 0, theImage.Width, theImage.Height),
-                    ImageLockMode.ReadWrite,
-                    theImage.PixelFormat
-                    );
-                
-                for (int x = 0; x < width; x++)
-                {
-                    for (int y = 0; y < height; y++)
-                    {
-                        Marshal.WriteInt16(data.Scan0, 0, (short)arr[x, y]);
-                    }
-                }
-                string filename = "C:\\Users\\sheph\\Documents\\Arduino\\ASEN-4018-Automation\\test.jpg";
-                theImage.UnlockBits(data);
-                theImage.Save(filename, System.Drawing.Imaging.ImageFormat.Jpeg);
-
-
-
-                C.Connected = false;
-                C.Dispose();
-            }
-            #endregion
-        }
+           }
     }
 }
