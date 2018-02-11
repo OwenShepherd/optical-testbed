@@ -36,6 +36,9 @@ way.  Currently, it has only been tested with the ASI, but should be able to
 easily extend to the QHY if necessary.  To use the class, follow the current
 example shown in the "program.cs" file for using the ASI120MM.
 
+### ASEN_KDC Class
+Don't use this class yet.  I haven't tested any of it...
+
 
 ## Filesystem Organization
 Here lies the overall planned file-structure for the experiment's software.  Follow
