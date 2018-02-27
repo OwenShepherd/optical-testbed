@@ -47,7 +47,9 @@ Add these references to the program (if they are not already included):
 
 In addition, the following native C DLLs need to be copied to the executable folder:
 - ThorLabs.MotionControl.KCube.DCServo.dll
-- ThorLabs.MotionControl.DeviceManager.dll 
+- ThorLabs.MotionControl.DeviceManager.dll
+
+These DLL files may be found in the References_DLL/KDC101 folder.
 
 
 ## Filesystem Organization
