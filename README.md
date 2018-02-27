@@ -37,7 +37,17 @@ easily extend to the QHY if necessary.  To use the class, follow the current
 example shown in the "program.cs" file for using the ASI120MM.
 
 ### ASEN_KDC Class
-Don't use this class yet.  I haven't tested any of it...
+In order for the current test code for the KDC101 to work, you must do the
+following.
+
+Add these references to the program (if they are not already included):
+- Thorlabs.MotionControl.KCube.DCServoCLI.dll
+- Thorlabs.MotionControl.DeviceManagerCLI.dll
+- Thorlabs.MotionControl.GenericMotorCLI.dll
+
+In addition, the following native C DLLs need to be copied to the executable folder:
+- ThorLabs.MotionControl.KCube.DCServo.dll
+- ThorLabs.MotionControl.DeviceManager.dll 
 
 
 ## Filesystem Organization
