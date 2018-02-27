@@ -102,26 +102,39 @@ namespace KDC_Console_net_managed
                 }
             }
 
-            // start the device polling
+            // start the device polling.
+            // Polling requests a status update every specified number of milliseconds.
             device.StartPolling(250);
+
             // needs a delay so that the current enabled state can be obtained
+            // ????
             Thread.Sleep(500);
+
             // enable the channel otherwise any move is ignored 
             device.EnableDevice();
+
             // needs a delay to give time for the device to be enabled
             Thread.Sleep(500);
 
             // call GetMotorConfiguration on the device to initialize the DeviceUnitConverter object required for real world unit parameters
+            // Sets up proper unit conversion for the correct device.  Only call this function ONCE
             MotorConfiguration motorSettings = device.LoadMotorConfiguration(serialNo);
+
+            // Simply retrieves the "motor device settings"
             KCubeDCMotorSettings currentDeviceSettings = device.MotorDeviceSettings as KCubeDCMotorSettings;
 
             // display info about device
+
+            // Retrieves a device info block
             DeviceInfo deviceInfo = device.GetDeviceInfo();
+
             Console.WriteLine("Device {0} = {1}", deviceInfo.SerialNumber, deviceInfo.Name);
 
             Home_Method1(device);
             // or 
             //Home_Method2(device);
+
+            // This command I'm not really sure about
             bool homed = device.Status.IsHomed;
 
             // if a position is requested
@@ -130,15 +143,20 @@ namespace KDC_Console_net_managed
                 // update velocity if required using real world methods
                 if (velocity != 0)
                 {
+                    // Retrieves the "velocity parameters" in real world units
                     VelocityParameters velPars = device.GetVelocityParams();
+
+                    // Restricts the velocity allowed to be the user-defined velocity
                     velPars.MaxVelocity = velocity;
                     device.SetVelocityParams(velPars);
                 }
 
+                // Moves the device to the desired "real world" position
                 Move_Method1(device, position);
                 // or
                 // Move_Method2(device, position);
 
+                // Retrieves the position actually achieved by the motor
                 Decimal newPos = device.Position;
                 Console.WriteLine("Device Moved to {0}", newPos);
             }
@@ -149,6 +167,7 @@ namespace KDC_Console_net_managed
             Console.ReadKey();
         }
 
+        // Simply sets the motor to its "home" position
         public static void Home_Method1(IGenericAdvancedMotor device)
         {
             try
@@ -192,6 +211,7 @@ namespace KDC_Console_net_managed
             }
         }
 
+        // Same as Home_Method2, but returns extra information about the current status of the homing request
         public static void Home_Method2(IGenericAdvancedMotor device)
         {
             Console.WriteLine("Homing device");
@@ -208,6 +228,7 @@ namespace KDC_Console_net_managed
             Console.WriteLine("Device Homed");
         }
 
+        // Same as Move_Method1, but returns extra information about the current status of the move request
         public static void Move_Method2(IGenericAdvancedMotor device, decimal position)
         {
             Console.WriteLine("Moving Device to {0}", position);
