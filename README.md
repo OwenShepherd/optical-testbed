@@ -4,9 +4,10 @@ Team Website: [Team AWESoMe](https://www.colorado.edu/aerospace/current-students
 A collection of my information / attempts at working software necessary for automating different tasks of the testbed.
 
 ## Windows Documentation
-Currently, we have sucessfully interfaced with the ASI120MM via C# scripts and the ASCOM drivers.
-We are able to change exposure times and various other camera parameters.  Next, I'll try and
-tackle the motorized stages.
+Currently, we have successfully interfaced with the ASI120MM via C# scripts and the ASCOM drivers.
+We are able to change exposure times and various other camera parameters.  In addition, we can
+now interface with the SHA (WFS150-7AR) via C# scripts.  Last bit to tackle is the motor
+control.
 
 ### Installation / Setup
 The project was created using Visual Studio and thus requires visual studio for
@@ -36,6 +37,22 @@ way.  Currently, it has only been tested with the ASI, but should be able to
 easily extend to the QHY if necessary.  To use the class, follow the current
 example shown in the "program.cs" file for using the ASI120MM.
 
+### ASEN_KDC Class
+In order for the current test code for the KDC101 to work, you must do the
+following.  Currently the class is not ready as further testing needs to be
+completed.
+
+Add these references to the program (if they are not already included):
+- Thorlabs.MotionControl.KCube.DCServoCLI.dll
+- Thorlabs.MotionControl.DeviceManagerCLI.dll
+- Thorlabs.MotionControl.GenericMotorCLI.dll
+
+In addition, the following native C DLLs need to be copied to the executable folder:
+- ThorLabs.MotionControl.KCube.DCServo.dll
+- ThorLabs.MotionControl.DeviceManager.dll
+
+These DLL files may be found in the References_DLL/KDC101 folder.
+
 
 ## Filesystem Organization
 Here lies the overall planned file-structure for the experiment's software.  Follow
@@ -64,3 +81,12 @@ EXAMPLE_EXPERIMENT
 │   └── zernikes_model.csv
 └── experiment_schedule.csv
 ```
+
+## Current Issues
+### SHA
+'SHATest.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\mscorlib\v4.0_4.0.0.0__b77a5c561934e089\mscorlib.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'SHATest.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\Users\sheph\Desktop\KDCTest\SHATest\SHATest\bin\Debug\SHATest.exe'. Symbols loaded.
+An unhandled exception of type 'System.TypeInitializationException' occurred in Unknown Module.
+The type initializer for 'SHA_Control.Program' threw an exception.
+
+The program '[18412] SHATest.exe' has exited with code 0 (0x0).
