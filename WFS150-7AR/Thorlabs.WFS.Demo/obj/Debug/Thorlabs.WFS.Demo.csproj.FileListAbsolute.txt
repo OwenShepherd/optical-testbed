@@ -7,3 +7,12 @@ C:\Program Files (x86)\IVI Foundation\VISA\WinNT\WFS\Examples\CSharp\Thorlabs.WF
 C:\Program Files (x86)\IVI Foundation\VISA\WinNT\WFS\Examples\CSharp\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csproj.CoreCompileInputs.cache
 C:\Program Files (x86)\IVI Foundation\VISA\WinNT\WFS\Examples\CSharp\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.exe
 C:\Program Files (x86)\IVI Foundation\VISA\WinNT\WFS\Examples\CSharp\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.pdb
+C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Demo.exe.config
+C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Demo.exe
+C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Demo.pdb
+C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Interop.dll
+C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Interop64.dll
+C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csprojResolveAssemblyReference.cache
+C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csproj.CoreCompileInputs.cache
+C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.exe
+C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.pdb
