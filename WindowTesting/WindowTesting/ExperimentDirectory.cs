@@ -39,6 +39,19 @@ namespace WindowTesting
             }
         }
 
+        // Will propogate the state with the proper subdirectories
+        private void StateSubDirectory(string path)
+        {
+
+            string RCWS_Path = path + "\\" + "data_RCWS";
+            string SHA_Path = path + "\\" + "data_SHA";
+
+
+            DirectoryInfo RCWS = Directory.CreateDirectory(RCWS_Path);
+            DirectoryInfo SHA = Directory.CreateDirectory(SHA_Path);
+
+        }
+
         public string CreateNewState()
         {
             // Getting the current time
@@ -57,6 +70,9 @@ namespace WindowTesting
 
             // creating the directory
             DirectoryInfo state = Directory.CreateDirectory(statePath);
+
+            // Filling in the state folder with proper subdirectories
+            StateSubDirectory(statePath);
 
             return statePath;
         }
