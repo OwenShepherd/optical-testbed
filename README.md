@@ -4,10 +4,9 @@ Team Website: [Team AWESoMe](https://www.colorado.edu/aerospace/current-students
 A collection of my information / attempts at working software necessary for automating different tasks of the testbed.
 
 ## Windows Documentation
-Currently, we have successfully interfaced with the ASI120MM via C# scripts and the ASCOM drivers.
-We are able to change exposure times and various other camera parameters.  In addition, we can
-now interface with the SHA (WFS150-7AR) via C# scripts.  Last bit to tackle is the motor
-control.
+**Please download drivers as 32-bit or it may cause some compatibility issues**
+Currently we have interfacing working with the WFS150-7AR, SHA, and KDC101.  Next phase of development will attempt to wrap the
+whole thing together.
 
 ### Installation / Setup
 The project was created using Visual Studio and thus requires visual studio for
@@ -83,10 +82,6 @@ EXAMPLE_EXPERIMENT
 ```
 
 ## Current Issues
-### SHA
-'SHATest.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\WINDOWS\Microsoft.Net\assembly\GAC_32\mscorlib\v4.0_4.0.0.0__b77a5c561934e089\mscorlib.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
-'SHATest.exe' (CLR v4.0.30319: DefaultDomain): Loaded 'C:\Users\sheph\Desktop\KDCTest\SHATest\SHATest\bin\Debug\SHATest.exe'. Symbols loaded.
-An unhandled exception of type 'System.TypeInitializationException' occurred in Unknown Module.
-The type initializer for 'SHA_Control.Program' threw an exception.
-
-The program '[18412] SHATest.exe' has exited with code 0 (0x0).
+### KDC101
+Only issue with the KDC101 currently is to pay attention to how the API interprets the input "positions".  It led me astray for a while
+until I polled the motor for some position information.  For example, position 0.4669mm corresponds to an input position of 1709.9 or something.  Strange right?  Also, the velocity I find should be >3000 to move at tolerable speeds.
