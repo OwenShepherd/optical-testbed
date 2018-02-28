@@ -15,13 +15,19 @@ namespace Sales
         [STAThread]
         static void Main()
         {
-            WindowTesting.Form1 formTest = new WindowTesting.Form1();
+            WindowTesting.ExperimentDialog formTest = new WindowTesting.ExperimentDialog();
 
             formTest.ShowDialog();
 
             string userPath = formTest.getSelectedPath();
 
-            Console.WriteLine(formTest.getSelectedPath());
+            WindowTesting.GetExperiment enterTest = new WindowTesting.GetExperiment();
+
+            enterTest.ShowDialog();
+
+            string experimentName = enterTest.getEnteredExperiment();
+
+            
            
         }
     }

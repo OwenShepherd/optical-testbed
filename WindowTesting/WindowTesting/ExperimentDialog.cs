@@ -10,13 +10,13 @@ using System.Windows.Forms;
 
 namespace WindowTesting
 {
-    public partial class Form1 : Form
+    public partial class ExperimentDialog : Form
     {
 
         private string experimentPath;
         private bool isSelected;
 
-        public Form1()
+        public ExperimentDialog()
         {
             InitializeComponent();
             experimentPath = "";
