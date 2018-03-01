@@ -75,10 +75,10 @@
             // ExperimentDirectory
             // 
             this.ExperimentDirectory.AutoSize = true;
-            this.ExperimentDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ExperimentDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ExperimentDirectory.Location = new System.Drawing.Point(326, 22);
             this.ExperimentDirectory.Name = "ExperimentDirectory";
-            this.ExperimentDirectory.Size = new System.Drawing.Size(153, 29);
+            this.ExperimentDirectory.Size = new System.Drawing.Size(124, 25);
             this.ExperimentDirectory.TabIndex = 3;
             this.ExperimentDirectory.Text = "Not Selected";
             this.ExperimentDirectory.Click += new System.EventHandler(this.ExperimentDirectory_Click);
@@ -96,10 +96,10 @@
             // ScheduleDirectory
             // 
             this.ScheduleDirectory.AutoSize = true;
-            this.ScheduleDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ScheduleDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ScheduleDirectory.Location = new System.Drawing.Point(326, 86);
             this.ScheduleDirectory.Name = "ScheduleDirectory";
-            this.ScheduleDirectory.Size = new System.Drawing.Size(153, 29);
+            this.ScheduleDirectory.Size = new System.Drawing.Size(124, 25);
             this.ScheduleDirectory.TabIndex = 5;
             this.ScheduleDirectory.Text = "Not Selected";
             // 

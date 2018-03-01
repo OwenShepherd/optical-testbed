@@ -37,6 +37,11 @@ namespace WindowTesting
             return experimentName;
         }
 
+        public bool getSelected()
+        {
+            return isSelected;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog expLoc = new FolderBrowserDialog();
@@ -75,6 +80,8 @@ namespace WindowTesting
         private void Form1_Load(object sender, EventArgs e)
         {
 
+
+
         }
 
         private void Button2_Click(object sender, EventArgs e)
@@ -94,8 +101,35 @@ namespace WindowTesting
 
         private void StartButton_Click(object sender, EventArgs e)
         {
-            experimentName = ExpDialog.Text;
-            this.Close();
+            this.experimentName = ExpDialog.Text;
+            isSelected = true;
+
+            // Getting the path that the user had selected
+            string userPath = this.getSelectedPath();
+            string experimentName = this.getExperimentName();
+
+            // Getting the experiment name
+            string experimentPath = userPath + "\\" + experimentName;
+
+            WindowTesting.ExperimentDirectory initialDirectory = new WindowTesting.ExperimentDirectory(experimentPath);
+            /*
+            string newState = initialDirectory.CreateNewState();
+            string newState2 = initialDirectory.CreateNewState();
+            */
+
+            using (StreamReader sr = new StreamReader(schedulePath))
+            {
+                string currentLine;
+                // currentLine will be null when the StreamReader reaches the end of file
+                while ((currentLine = sr.ReadLine()) != null)
+                {
+                    // Search, case insensitive, if the currentLine contains the searched keyword
+                    if (currentLine.IndexOf("I/RPTGEN", StringComparison.CurrentCultureIgnoreCase) >= 0)
+                    {
+                        Console.WriteLine(currentLine);
+                    }
+                }
+            }
         }
     }
 }
