@@ -1,34 +1,39 @@
-# ASEN-4018-Automation
-Team Website: [Team AWESoMe](https://www.colorado.edu/aerospace/current-students/undergraduates/senior-design-projects/past-senior-projects/2017-2018/apparatus)  
+# AWESoMe Automation
+Team: __A__pparatus for __W__avefront __E__rror __S__ens__o__r __Me__asurement
 
-A collection of my information / attempts at working software necessary for automating different tasks of the testbed.
+Website: [AWESoMe](https://www.colorado.edu/aerospace/current-students/undergraduates/senior-design-projects/past-senior-projects/2017-2018/apparatus)  
 
-## Windows Documentation
-**Please download drivers as 32-bit or it may cause some compatibility issues**
-Currently we have interfacing working with the WFS150-7AR, SHA, and KDC101.  Next phase of development will attempt to wrap the
-whole thing together.
+![](images/awesome_logo_whitebackground.png?raw=true)
 
-### Installation / Setup
-The project was created using Visual Studio and thus requires visual studio for
-working on.  In addition, you must install the [ASI120MM Drivers](http://astronomy-imaging-camera.com/software/),
-specifically the "ASI Cameras Driver" first.  Then install the "ASCOM Platform 6.3" from [here](https://ascom-standards.org/Downloads/Index.htm).  Then go [here](https://ascom-standards.org/Downloads/PlatDevComponents.htm) and install the "ASCOM Platform Developer Components".  Finally, install the "ASI Cameras ASCOM Driver" from [here](http://astronomy-imaging-camera.com/software/).  Now you may run the visual studio "program.cs" and connect to the ASI120MM camera.  So far the camera may take an image with a set exposure, but produces an "int[*,*]" that I am not sure how to convert to an image file.  I'm getting close though...
+AWESoMe is a joint project between the South West Research Institute (SWRI) and a team of Aerospace Engineering students at Boulder.  The goal of the project is to create a testbed for comparing the performance of a [Shack-Hartmann Array](https://en.wikipedia.org/wiki/Shack%E2%80%93Hartmann_wavefront_sensor) (SHA) and a [Roddier Curvature Wavefront Sensor](http://www.soft.belastro.net/files/tmp/Wave-front_reconstruction_from_defocused_images_and_the_testing_of_ground-based_optical_telescopes.pdf) (RCWS).  
+
+This repository contains .NET programs aimed at automating as much of the testbed as possible due to the large number of tests that need to be run in a timely manner.  This mostly includes: prompting the user to load in a specifically formatted CSV for scheduling tests, and then running those tests one-by-one by adjusting the parameters of the SHA, RCWS, and motorized stages.
+
+## Getting Started
+Some third-party drivers and Visual Studio 15 need to be installed.
+
+### Pre-Requisites  
+**Please download drivers as 32-bit or it may cause some compatibility issues**  
+
+First, ensure you have at least Visual Studio 15 installed (or at least 10.0.40219.1).  Then, install the following:
+- [ASI120MM Drivers](http://astronomy-imaging-camera.com/software/)
+- [ASCOM Platform 6.3](https://ascom-standards.org/Downloads/Index.htm)
+- [ASCOM Platform Developer Components](https://ascom-standards.org/Downloads/PlatDevComponents.htm)
+- [ASI Cameras ASCOM Driver](http://astronomy-imaging-camera.com/software/)
+
+## Running the Program
+Currently, the program is unfinished, although several components have been completed.  Other than the aforementioned ASI drivers, the necessary DLL references should already be installed in the corresponding VS solutions.  Details on the each solution are as follows:
+- WFS150-7AR: Solution is capable of interfacing with the Thorlabs SHA.
+- KDC101: Solution is capable of interfacing with the Thorlabs motor controllers.
+- ASI120MM: Solution is capable of interfacing with ASI120MM image sensor, and soon the QHY as well.
+- WindowTesting: This will eventually be the complete overall program to replace the four separate solutions.  Currently it has a GUI for prompting the user for some necessary inputs.
+
+## Conceptual Information
 
 ### ASCOM References
 The two RCWS cameras (ASI120MM & QHY...) both interface with Windows using ASCOM.  Some
 references on how to use ASCOM with VS:
 - [ASCOM Standards](http://www.ascom-standards.org/Help/Developer/html/7d9253c2-fdfd-4c0d-8225-a96bddb49731.htm)
-
-In addition, the ASCOM library provides a camera object that has an instance variable "imgArray" that stores the
-pixel data.  For the ASI, the data is stored as 16bpp Grey Scale.
-
-
-## Ubuntu Documentation
-Some attempts have been made to interface with the ASI120MM via INDI, kstars, PyINDI,
-and other methods.  Some progress has been made, but connecting to the camera and
-taking photos via scripting or any GUI has not been achieved.  Other than that,
-just hours of troubleshooting....
-
-## Using the ASEN namespace
 
 ### ASEN_RCWS class
 The ASEN_RCWS class can be used to take images and save them in a very simple
@@ -53,7 +58,7 @@ In addition, the following native C DLLs need to be copied to the executable fol
 These DLL files may be found in the References_DLL/KDC101 folder.
 
 
-## Filesystem Organization
+### Filesystem Organization
 Here lies the overall planned file-structure for the experiment's software.  Follow
 whatever current convention this README has, and be aware that the file structure
 may change over time.
@@ -81,7 +86,20 @@ EXAMPLE_EXPERIMENT
 └── experiment_schedule.csv
 ```
 
-## Current Issues
-### KDC101
-Only issue with the KDC101 currently is to pay attention to how the API interprets the input "positions".  It led me astray for a while
-until I polled the motor for some position information.  For example, position 0.4669mm corresponds to an input position of 1709.9 or something.  Strange right?  Also, the velocity I find should be >3000 to move at tolerable speeds.
+## The Team
+- Robert Belter
+- Ali Colic
+- Jake Crouse
+- Lucas Droste
+- Diego Gomes
+- Ankit Hriday
+- Owen Lyke
+- Brandon Noirot
+- Owen Shepherd
+- Brandon Stetler
+
+## Acknowledgements
+- Eliot Young (SWRI)
+- Bob Woodruff (SWRI)
+- Engineering Excellence Fund (EEF)
+- NASA Glenn
