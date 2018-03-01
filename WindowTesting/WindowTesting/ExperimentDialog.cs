@@ -101,6 +101,8 @@ namespace WindowTesting
 
         private void StartButton_Click(object sender, EventArgs e)
         {
+            int csvCount = 0;
+
             this.experimentName = ExpDialog.Text;
             isSelected = true;
 
@@ -123,11 +125,23 @@ namespace WindowTesting
                 // currentLine will be null when the StreamReader reaches the end of file
                 while ((currentLine = sr.ReadLine()) != null)
                 {
-                    // Search, case insensitive, if the currentLine contains the searched keyword
-                    if (currentLine.IndexOf("I/RPTGEN", StringComparison.CurrentCultureIgnoreCase) >= 0)
+                    if (csvCount==0) { }
+                    else
                     {
-                        Console.WriteLine(currentLine);
+                        // Parsing data from the string
+                        string[] valInput = currentLine.Split(',');
+                        int[] intPut = Array.ConvertAll(valInput, int.Parse);
+                        
+
+                        // Here's where we call the other methods
+                        // ASEN_RCWS
+                        // ASEN_SHA
+                        // ASEN_MotorControl
+                        // ASEN_Environmental
                     }
+
+                    csvCount++;
+                    
                 }
             }
         }
