@@ -114,7 +114,56 @@
                 DefinePupil();
 
                 // use the autoexposure feature to find the optimal exposure time and gain
-                AdjustImageBrightness();
+                //AdjustImageBrightness();
+
+                Console.WriteLine(">> Setting Exposure <<");
+
+                double exposureTimeMin;
+                double exposureTimeMax;
+                double exposureTimeIncr;
+                double exposureTimeAct;
+
+                double masterGainMin;
+                double masterGainMax;
+                double masterGainAct;
+
+                //This function finds the maximum and minimum exposure times possible with the selected resolution. (these inputs supposedly need to be passed by reference, which seems to be what "out" does).
+                instrument.GetExposureTimeRange(out exposureTimeMin, out exposureTimeMax, out exposureTimeIncr);
+                Console.Write("Minimum Exposure (ms)       : ");
+                Console.WriteLine(exposureTimeMin);
+                Console.Write("Maximum Exposure (ms)       : ");
+                Console.WriteLine(exposureTimeMax);
+                Console.Write("Exposure Time Increment (ms): ");
+                Console.WriteLine(exposureTimeIncr);
+
+                Console.Write("\nInput the desired Exposure (ms): ");
+                string temp = Console.ReadLine();
+                double exposureTimeSet = Convert.ToDouble(temp);
+
+                //This function sets the exposure time of the camera, and returns the actual exposure time set.
+                instrument.SetExposureTime(exposureTimeSet, out exposureTimeAct);
+                Console.Write("\nActual Exposure Set: ");
+                Console.WriteLine(exposureTimeAct);
+
+
+                Console.WriteLine(">> Setting Master Gain <<");
+
+                //This function finds the max and min linear master gain values for the WFS.
+                instrument.GetMasterGainRange(out masterGainMin, out masterGainMax);
+                Console.Write("Minimum Linear Master Gain: ");
+                Console.WriteLine(masterGainMin);
+                Console.Write("Maximum Linear Master Gain: ");
+                Console.WriteLine(masterGainMax);
+
+                //Prompt the user to provide the master gain value.
+                Console.Write("\nInput the desired master Gain: ");
+                temp = Console.ReadLine();
+                double masterGainSet = Convert.ToDouble(temp);
+
+                //Set the master gain.
+                instrument.SetMasterGain(masterGainSet, out masterGainAct);
+                Console.Write("\nActual Master Gain Set: ");
+                Console.WriteLine(masterGainAct);
 
                 // the camera image can be retrieved for later display
                 GetSpotfieldImage();
