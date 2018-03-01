@@ -1,5 +1,5 @@
 # AWESoMe Automation
-Team: __A__pparatus for __W__avefront __E__rror __S__ens__o__r __Me__asurement
+Team: **A**pparatus for **W**avefront **E**rror **S**ens**o**r **Me**asurement
 
 Website: [AWESoMe](https://www.colorado.edu/aerospace/current-students/undergraduates/senior-design-projects/past-senior-projects/2017-2018/apparatus)  
 
