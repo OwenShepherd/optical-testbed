@@ -88,8 +88,9 @@ EXAMPLE_EXPERIMENT
 
 ### Schedule File Structure
 The experiment_schedule.csv file will specify all the system states that are to be tested for a given experiment. For each state specified in this file the automated test control program will create the appropriate sub-folder of the test and populate it with the data that is produced while the experiment is running. In post-processing other files can be added in the created file structure. The first row will include the header:  
+```
 RCWS EXPT (us), SHA EXPT (us), RCWS D FORE (um), RCWS D AFT (um), M2 A X (arc sec), M2 A Y (arc sec)  
-
+```
 After that line every row of data will specify those state values at which to make a wavefront measurement with both sensors.
 
 ## Authors (This Repository)
