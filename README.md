@@ -22,7 +22,7 @@ First, ensure you have at least Visual Studio 15 installed (or at least 10.0.402
 - [ASI Cameras ASCOM Driver](http://astronomy-imaging-camera.com/software/)
 
 ## Running the Program
-Currently, the program is unfinished, although several components have been completed.  Other than the aforementioned ASI drivers, the necessary DLL references should already be installed in the corresponding VS solutions.  Details on the each solution are as follows:
+Currently, the program is unfinished, although several components have been completed.  Other than the aforementioned ASI drivers, the necessary DLL references should already be installed in the corresponding VS solutions.  Details on each solution are as follows:
 - WFS150-7AR: Solution is capable of interfacing with the Thorlabs SHA.
 - KDC101: Solution is capable of interfacing with the Thorlabs motor controllers.
 - ASI120MM: Solution is capable of interfacing with ASI120MM image sensor, and soon the QHY as well.
@@ -59,9 +59,9 @@ These DLL files may be found in the References_DLL/KDC101 folder.
 
 
 ### Filesystem Organization
-Here lies the overall planned file-structure for the experiment's software.  Follow
-whatever current convention this README has, and be aware that the file structure
-may change over time.
+Here is how data will be organized.  An experiment corresponds to a collection of data
+taken during one session.  Each state corresponds to a different test (i.e. with 
+different de-focus distances, exposures, etc...).
 ```
 EXAMPLE_EXPERIMENT
 ├── 2018_02_03_13_48_41_STATE1
@@ -85,6 +85,17 @@ EXAMPLE_EXPERIMENT
 │   └── zernikes_model.csv
 └── experiment_schedule.csv
 ```
+
+### Schedule File Structure
+The experiment_schedule.csv file will specify all the system states that are to be tested for a given experiment. For each state specified in this file the automated test control program will create the appropriate sub-folder of the test and populate it with the data that is produced while the experiment is running. In post-processing other files can be added in the created file structure. The first row will include the header:  
+RCWS EXPT (us), SHA EXPT (us), RCWS D FORE (um), RCWS D AFT (um), M2 A X (arc sec), M2 A Y (arc sec)  
+
+After that line every row of data will specify those state values at which to make a wavefront measurement with both sensors.
+
+## Authors (This Repository)
+- Owen Shepherd
+- Jake Crouse
+
 
 ## The Team
 - Robert Belter
