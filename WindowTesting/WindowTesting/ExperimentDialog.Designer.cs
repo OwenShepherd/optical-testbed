@@ -35,6 +35,9 @@
             this.ScheduleTitle = new System.Windows.Forms.Label();
             this.ScheduleDirectory = new System.Windows.Forms.Label();
             this.ScheduleBrowse = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.ExpDialog = new System.Windows.Forms.TextBox();
+            this.StartButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // DirectoryBrowse
@@ -110,11 +113,41 @@
             this.ScheduleBrowse.UseVisualStyleBackColor = true;
             this.ScheduleBrowse.Click += new System.EventHandler(this.ScheduleBrowse_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(12, 147);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(265, 32);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Experiment Name:";
+            // 
+            // ExpDialog
+            // 
+            this.ExpDialog.Location = new System.Drawing.Point(331, 147);
+            this.ExpDialog.Name = "ExpDialog";
+            this.ExpDialog.Size = new System.Drawing.Size(195, 26);
+            this.ExpDialog.TabIndex = 8;
+            // 
+            // StartButton
+            // 
+            this.StartButton.Location = new System.Drawing.Point(18, 225);
+            this.StartButton.Name = "StartButton";
+            this.StartButton.Size = new System.Drawing.Size(156, 35);
+            this.StartButton.TabIndex = 9;
+            this.StartButton.Text = "Start";
+            this.StartButton.UseVisualStyleBackColor = true;
+            this.StartButton.Click += new System.EventHandler(this.StartButton_Click);
+            // 
             // ExperimentDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(978, 272);
+            this.Controls.Add(this.StartButton);
+            this.Controls.Add(this.ExpDialog);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.ScheduleBrowse);
             this.Controls.Add(this.ScheduleDirectory);
             this.Controls.Add(this.ScheduleTitle);
@@ -139,5 +172,8 @@
         private System.Windows.Forms.Label ScheduleTitle;
         private System.Windows.Forms.Label ScheduleDirectory;
         private System.Windows.Forms.Button ScheduleBrowse;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox ExpDialog;
+        private System.Windows.Forms.Button StartButton;
     }
 }

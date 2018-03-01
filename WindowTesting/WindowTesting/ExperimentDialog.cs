@@ -16,12 +16,14 @@ namespace WindowTesting
 
         private string experimentPath;
         private string schedulePath;
+        private string experimentName;
         private bool isSelected;
 
         public ExperimentDialog()
         {
             InitializeComponent();
-            experimentPath = "";
+            experimentPath = "Not Selected";
+            ScheduleDirectory.Text = "Not Selected";
             isSelected = false;
         }
 
@@ -30,9 +32,9 @@ namespace WindowTesting
             return experimentPath;
         }
 
-        public bool pathSelected()
+        public string getExperimentName()
         {
-            return isSelected;
+            return experimentName;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -90,6 +92,10 @@ namespace WindowTesting
 
         }
 
-       
+        private void StartButton_Click(object sender, EventArgs e)
+        {
+            experimentName = ExpDialog.Text;
+            this.Close();
+        }
     }
 }
