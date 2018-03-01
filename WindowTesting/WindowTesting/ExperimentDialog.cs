@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +15,7 @@ namespace WindowTesting
     {
 
         private string experimentPath;
+        private string schedulePath;
         private bool isSelected;
 
         public ExperimentDialog()
@@ -43,6 +45,27 @@ namespace WindowTesting
 
                 isSelected = true;
             }
+
+            ExperimentDirectory.Text = experimentPath;
+        }
+
+        private void ScheduleBrowse_Click(object sender, EventArgs e)
+        {
+            // Opening a dialog for the user to browse for the experiment file
+            Stream myStream = null;
+            OpenFileDialog scheduleDialog = new OpenFileDialog();
+
+            scheduleDialog.InitialDirectory = "c:\\";
+            scheduleDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+            scheduleDialog.FilterIndex = 1;
+            scheduleDialog.RestoreDirectory = true;
+
+            if (scheduleDialog.ShowDialog() == DialogResult.OK)
+            {
+                schedulePath = scheduleDialog.FileName;
+            }
+
+            ScheduleDirectory.Text = schedulePath;
         }
 
 
@@ -52,9 +75,21 @@ namespace WindowTesting
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
+        private void Label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ExperimentDirectory_Click(object sender, EventArgs e)
+        {
+
+        }
+
+       
     }
 }

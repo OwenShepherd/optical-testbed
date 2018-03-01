@@ -34,6 +34,7 @@ namespace Sales
             WindowTesting.ExperimentDirectory initialDirectory = new WindowTesting.ExperimentDirectory(experimentPath);
 
             string newState = initialDirectory.CreateNewState();
+            string newState2 = initialDirectory.CreateNewState();
            
         }
     }
