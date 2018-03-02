@@ -9,8 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace ASEN
 {
+    
     public partial class ExperimentDialog : Form
     {
 
@@ -18,13 +20,17 @@ namespace ASEN
         private string schedulePath;
         private string experimentName;
         private bool isSelected;
+        private static string QHY = "ASCOM.QHYCCD.Camera";
+        private static string ASI = "ASCOM.ASICamera2.Camera";
         private Experiment currentExperiment;
-
+        
         public ExperimentDialog()
         {
             InitializeComponent();
             experimentPath = "Not Selected";
             ScheduleDirectory.Text = "Not Selected";
+            CameraSelection.Items.Add("ASI");
+            CameraSelection.Items.Add("QHY");
             isSelected = false;
         }
 
@@ -106,6 +112,13 @@ namespace ASEN
             this.experimentName = ExpDialog.Text;
             isSelected = true;
 
+            string selectedCamera = CameraSelection.Text;
+
+            bool ISASI = selectedCamera.Equals("ASI", StringComparison.Ordinal);
+
+            if (ISASI) { selectedCamera = ASI; }
+            else { selectedCamera = QHY; }
+
             // Getting the path that the user had selected
             string userPath = this.getSelectedPath();
             string experimentName = this.getExperimentName();
@@ -118,6 +131,11 @@ namespace ASEN
             currentExperiment.StartExperiment();
 
             
+        }
+
+        private void CameraSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
