@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WindowTesting
+namespace ASEN
 {
     public partial class ExperimentDialog : Form
     {
@@ -18,6 +18,7 @@ namespace WindowTesting
         private string schedulePath;
         private string experimentName;
         private bool isSelected;
+        private Experiment currentExperiment;
 
         public ExperimentDialog()
         {
@@ -101,8 +102,7 @@ namespace WindowTesting
 
         private void StartButton_Click(object sender, EventArgs e)
         {
-            int csvCount = 0;
-
+            
             this.experimentName = ExpDialog.Text;
             isSelected = true;
 
@@ -113,37 +113,11 @@ namespace WindowTesting
             // Getting the experiment name
             string experimentPath = userPath + "\\" + experimentName;
 
-            WindowTesting.ExperimentDirectory initialDirectory = new WindowTesting.ExperimentDirectory(experimentPath);
-            /*
-            string newState = initialDirectory.CreateNewState();
-            string newState2 = initialDirectory.CreateNewState();
-            */
+            // Creating our new experiment
+            currentExperiment = new Experiment(schedulePath, experimentPath);
+            currentExperiment.StartExperiment();
 
-            using (StreamReader sr = new StreamReader(schedulePath))
-            {
-                string currentLine;
-                // currentLine will be null when the StreamReader reaches the end of file
-                while ((currentLine = sr.ReadLine()) != null)
-                {
-                    if (csvCount==0) { }
-                    else
-                    {
-                        // Parsing data from the string
-                        string[] valInput = currentLine.Split(',');
-                        int[] intPut = Array.ConvertAll(valInput, int.Parse);
-                        
-
-                        // Here's where we call the other methods
-                        // ASEN_RCWS
-                        // ASEN_SHA
-                        // ASEN_MotorControl
-                        // ASEN_Environmental
-                    }
-
-                    csvCount++;
-                    
-                }
-            }
+            
         }
     }
 }

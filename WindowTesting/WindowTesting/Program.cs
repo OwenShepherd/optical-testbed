@@ -17,7 +17,7 @@ namespace Sales
         {
 
             // This creates a form that prompts the user to select a directory
-            WindowTesting.ExperimentDialog formTest = new WindowTesting.ExperimentDialog();
+            ASEN.ExperimentDialog formTest = new ASEN.ExperimentDialog();
             Application.Run(formTest);
         }
     }
