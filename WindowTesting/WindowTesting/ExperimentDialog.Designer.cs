@@ -1,4 +1,4 @@
-﻿namespace WindowTesting
+﻿namespace ASEN
 {
     partial class ExperimentDialog
     {
@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExperimentDialog));
             this.DirectoryBrowse = new System.Windows.Forms.Button();
             this.ExitButton = new System.Windows.Forms.Button();
             this.ExperimentTitle = new System.Windows.Forms.Label();
@@ -180,6 +181,7 @@
             this.Controls.Add(this.ExperimentTitle);
             this.Controls.Add(this.ExitButton);
             this.Controls.Add(this.DirectoryBrowse);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ExperimentDialog";
             this.Text = "AWESoMe";
             this.Load += new System.EventHandler(this.Form1_Load);
