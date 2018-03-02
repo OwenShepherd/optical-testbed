@@ -38,6 +38,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.ExpDialog = new System.Windows.Forms.TextBox();
             this.StartButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.CameraSelection = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // DirectoryBrowse
@@ -52,7 +54,7 @@
             // 
             // ExitButton
             // 
-            this.ExitButton.Location = new System.Drawing.Point(810, 225);
+            this.ExitButton.Location = new System.Drawing.Point(810, 290);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(156, 35);
             this.ExitButton.TabIndex = 1;
@@ -132,7 +134,7 @@
             // 
             // StartButton
             // 
-            this.StartButton.Location = new System.Drawing.Point(18, 225);
+            this.StartButton.Location = new System.Drawing.Point(18, 290);
             this.StartButton.Name = "StartButton";
             this.StartButton.Size = new System.Drawing.Size(156, 35);
             this.StartButton.TabIndex = 9;
@@ -140,11 +142,34 @@
             this.StartButton.UseVisualStyleBackColor = true;
             this.StartButton.Click += new System.EventHandler(this.StartButton_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(12, 216);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(130, 32);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Camera:";
+            // 
+            // CameraSelection
+            // 
+            this.CameraSelection.AccessibleDescription = "";
+            this.CameraSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CameraSelection.FormattingEnabled = true;
+            this.CameraSelection.Location = new System.Drawing.Point(329, 220);
+            this.CameraSelection.Name = "CameraSelection";
+            this.CameraSelection.Size = new System.Drawing.Size(197, 28);
+            this.CameraSelection.TabIndex = 10;
+            this.CameraSelection.SelectedIndexChanged += new System.EventHandler(this.CameraSelection_SelectedIndexChanged);
+            // 
             // ExperimentDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(978, 272);
+            this.ClientSize = new System.Drawing.Size(978, 337);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.CameraSelection);
             this.Controls.Add(this.StartButton);
             this.Controls.Add(this.ExpDialog);
             this.Controls.Add(this.label1);
@@ -175,5 +200,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox ExpDialog;
         private System.Windows.Forms.Button StartButton;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox CameraSelection;
     }
 }
