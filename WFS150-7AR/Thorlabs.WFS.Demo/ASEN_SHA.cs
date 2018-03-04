@@ -39,19 +39,19 @@ namespace ASEN
         int selectedInstrId = 0; // Created to be a property of the ASEN_SHA object, so it can be used in all ASEN_SHA methods.
 
 
-        public ASEN_SHA(IntPtr Instrument_Handle) : base(IntPtr Instrument_Handle) //supposed to be the constructor. What I want to be able to create the instance of the WFS, just like done in the example code.
+
+
+    //NOTE: All below functions (excluding the helper functions) will need to specify what they're returning, as well as what inputs they will need.
+    //The current state of the functions work, but need to be altered to allow for functions to be 
+
+    public ASEN_SHA() : base(IntPtr.Zero) { } // Apparent syntax for creating the constructor
+
+
+
+
+    //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
+    public void CameraConnection()
         {
-
-        }
-
-        //NOTE: All below functions (excluding the helper functions) will need to specify what they're returning, as well as what inputs they will need.
-        //The current state of the functions work, but need to be altered to allow for functions to be 
-
-
-        //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
-        public void CameraConnection()
-        {
-
             //int selectedInstrId = 0;//I believe this is a handler index in the situation that there would be mulitple SHA's connected to the computer.
             string resourceName = default(string);//Just creating a string initially set to null.
 
