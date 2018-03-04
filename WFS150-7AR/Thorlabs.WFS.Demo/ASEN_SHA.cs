@@ -10,7 +10,36 @@ namespace ASEN
 {
     class ASEN_SHA : WFS
     {
-        public ASEN_SHA(IntPtr Instrument_Handle) : base(IntPtr Instrument_Handle)
+        //Define all the variables which will be used later on in the code.
+        private static int sampleCameraResolWfs = 2; // CAM_RES_768 = 768x768 pixels
+        private static int sampleCameraResolWfs10 = 2; // CAM_RES_WFS10_360 = 360x360 pixels
+        private static int sampleCameraResolWfs20 = 3; // CAM_RES_WFS20_512 = 512x512 pixels
+        private static int pixelFormat = 0; // PIXEL_FORMAT_MONO8 = 0
+        private static int sampleRefPlane = 0; // WFS_REF_INTERNAL = 0
+        private static double samplePupilCentroidX = 0.0; // in mm
+        private static double samplePupilCentroidY = 0.0;
+        private static double samplePupilDiameterX = 2.0; // in mm, needs to fit to selected camera resolution
+        private static double samplePupilDiameterY = 2.0;
+        private static int sampleImageReadings = 10; // trials to read a exposed spotfield image 
+        private static int sampleOptionDynNoiseCut = 1; // use dynamic noise cut features
+        private static int sampleOptionCalcSpotDias = 0; // don't calculate spot diameters
+        private static int sampleOptionCancelTilt = 1; // cancel average wavefront tip and tilt
+        private static int sampleOptionLimitToPupil = 0; // don't limit wavefront calculation to pupil interior
+        private static int sampleZernikeOrders = 3; // calculate up to 3rd Zernike order
+        private static int maxZernikeModes = 66; // allocate Zernike array of 67 because index is 1..66
+        private static int sampleOptionHighspeed = 1; // use highspeed mode (only for WFS10 and WFS20 instruments)
+        private static int sampleOptionHsAdaptCentr = 1; // adapt centroids in highspeed mode to previously measured centroids
+        private static int sampleHsNoiseLevel = 30; // cut lower 30 digits in highspeed mode
+        private static int sampleOptionHsAllowAutoexpos = 1; // allow autoexposure in highspeed mode (runs somewhat slower)
+        private static int sampleWavefrontType = 0; // WAVEFRONT_MEAS = 0
+        private static int samplePrintoutSpots = 5; // printout results for first 5 x 5 spots only
+        private static int bufferSize = 255;
+
+        private static ConsoleKeyInfo waitKey; // Created to allow the functions to access the command line whenever they wish, not necessary to define in each method.
+        int selectedInstrId = 0; // Created to be a property of the ASEN_SHA object, so it can be used in all ASEN_SHA methods.
+
+
+        public ASEN_SHA(IntPtr Instrument_Handle) : base(IntPtr Instrument_Handle) //supposed to be the constructor. What I want to be able to create the instance of the WFS, just like done in the example code.
         {
 
         }
@@ -18,16 +47,13 @@ namespace ASEN
         //NOTE: All below functions (excluding the helper functions) will need to specify what they're returning, as well as what inputs they will need.
         //The current state of the functions work, but need to be altered to allow for functions to be 
 
-        public void DriverChecks()
+
+        //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
+        public void CameraConnection()
         {
-            ConsoleKeyInfo waitKey; //This key allows one to read from the console (when user input in necessary).
 
-            int selectedInstrId = 0;//I believe this is a handler index in the situation that there would be mulitple SHA's connected to the computer.
+            //int selectedInstrId = 0;//I believe this is a handler index in the situation that there would be mulitple SHA's connected to the computer.
             string resourceName = default(string);//Just creating a string initially set to null.
-
-            Console.WriteLine("=================================================================");
-            Console.WriteLine("Jake's Attempt at Creating a SHA API to Take Images, Set Exposure");
-            Console.WriteLine("=================================================================");
 
             //These two lines are also constructors, but creating StringBuilders. They create strings up to a specified size (WFS.BufferSize, in this case).
             StringBuilder camDriverRev = new StringBuilder(WFS.BufferSize);
@@ -41,10 +67,7 @@ namespace ASEN
             Console.Write("WFS instrument driver version : ");
             Console.WriteLine(wfsDriverRev.ToString(), camDriverRev.ToString());
             Console.WriteLine();
-        }
 
-        public void CameraConnection()
-        {
             //Calls the helper function, which uses functions from the namespace find connected WFS, get information on the connected WFS, allow the user to select one.
             SelectInstrument(out selectedInstrId, out resourceName);
 
@@ -82,6 +105,8 @@ namespace ASEN
             Console.Write("Serial Number WFS      : ");
             Console.WriteLine(serialNumberWfs);
         }
+
+        //------------------------------------------------ METHOD FUNCTION 2 ------------------------------------------------
 
         public void CameraConfiguration()
         {
@@ -156,11 +181,15 @@ namespace ASEN
             Console.WriteLine(masterGainAct);
         }
 
+        //------------------------------------------------ METHOD FUNCTION 3 ------------------------------------------------
+
         public void GatherCameraData()
         {
             // the camera image can be retrieved for later display
             GetSpotfieldImage();
         }
+
+        //------------------------------------------------ METHOD FUNCTION 4 ------------------------------------------------
 
         public void ProcessCameraData()
         {
@@ -192,6 +221,8 @@ namespace ASEN
             CalcZernikes();
             Console.WriteLine("Calculating Zernikes...");
         }
+
+        //------------------------------------------------ METHOD FUNCTION 5 ------------------------------------------------
 
         public void CloseCamera()
         {

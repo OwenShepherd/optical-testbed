@@ -25,3 +25,7 @@ C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS
 C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csproj.CoreCompileInputs.cache
 C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.exe
 C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.pdb
+C:\Users\jacob\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csprojResolveAssemblyReference.cache
+C:\Users\jacob\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csproj.CoreCompileInputs.cache
+C:\Users\jacob\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.exe
+C:\Users\jacob\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.pdb
