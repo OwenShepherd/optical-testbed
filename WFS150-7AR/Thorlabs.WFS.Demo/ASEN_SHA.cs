@@ -46,11 +46,12 @@ namespace ASEN
 
     public ASEN_SHA() : base(IntPtr.Zero) { } // Apparent syntax for creating the constructor
 
+    public ASEN_SHA() : base(string.Empty, false, false) { }
 
 
 
     //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
-    public void CameraConnection()
+    public void CameraConnectionAndSetup()
         {
             //int selectedInstrId = 0;//I believe this is a handler index in the situation that there would be mulitple SHA's connected to the computer.
             string resourceName = default(string);//Just creating a string initially set to null.
@@ -84,7 +85,7 @@ namespace ASEN
             Console.WriteLine(">> Initialize Device <<");
 
             //Not totally sure what is going on here. Having trouble gaining insight into this constructor.
-            instrument = new WFS(resourceName, false, false);
+            //ASEN_SHA var = new ASEN_SHA(resourceName, false, false);
 
             //Fairly straightforward. Getting information about the selected WFS. From the ThorLabs namespace.
             Console.WriteLine(">> Get Device Info <<");
@@ -104,12 +105,7 @@ namespace ASEN
             Console.WriteLine(instrumentName);
             Console.Write("Serial Number WFS      : ");
             Console.WriteLine(serialNumberWfs);
-        }
 
-        //------------------------------------------------ METHOD FUNCTION 2 ------------------------------------------------
-
-        public void CameraConfiguration()
-        {
             //---NOTE--- This will need to be configured such that it can take in the exposure time and set this (as well as the gain) without console input (for automation).
             // select a microlens array, WFS kits can operate 2 or more MLAs
             SelectMla();
@@ -128,22 +124,26 @@ namespace ASEN
             // define pupil size and position, Zernike results are related to pupil
             DefinePupil();
 
-            // use the autoexposure feature to find the optimal exposure time and gain
-            //AdjustImageBrightness();
+        }
 
-            Console.WriteLine(">> Setting Exposure <<");
+        //------------------------------------------------ METHOD FUNCTION 2 ------------------------------------------------
 
-            double exposureTimeMin;
+        public void GatherCameraData(double exposureTimeSet)
+        {
+
+            //Console.WriteLine(">> Setting Exposure <<");
+
+            /*double exposureTimeMin;
             double exposureTimeMax;
-            double exposureTimeIncr;
+            double exposureTimeIncr;*/
             double exposureTimeAct;
 
-            double masterGainMin;
-            double masterGainMax;
+            /*double masterGainMin;
+            double masterGainMax;*/
             double masterGainAct;
 
             //This function finds the maximum and minimum exposure times possible with the selected resolution. (these inputs supposedly need to be passed by reference, which seems to be what "out" does).
-            this.GetExposureTimeRange(out exposureTimeMin, out exposureTimeMax, out exposureTimeIncr);
+            /*this.GetExposureTimeRange(out exposureTimeMin, out exposureTimeMax, out exposureTimeIncr);
             Console.Write("Minimum Exposure (ms)       : ");
             Console.WriteLine(exposureTimeMin);
             Console.Write("Maximum Exposure (ms)       : ");
@@ -153,7 +153,8 @@ namespace ASEN
 
             Console.Write("\nInput the desired Exposure (ms): ");
             string temp = Console.ReadLine();
-            double exposureTimeSet = Convert.ToDouble(temp);
+            double exposureTimeSet = Convert.ToDouble(temp);*/ //This chunk was to prompt the user for exposure time, which is no longer necessary we will set it automatically.
+
 
             //This function sets the exposure time of the camera, and returns the actual exposure time set.
             this.SetExposureTime(exposureTimeSet, out exposureTimeAct);
@@ -164,7 +165,7 @@ namespace ASEN
             Console.WriteLine(">> Setting Master Gain <<");
 
             //This function finds the max and min linear master gain values for the WFS.
-            this.GetMasterGainRange(out masterGainMin, out masterGainMax);
+            /*this.GetMasterGainRange(out masterGainMin, out masterGainMax);
             Console.Write("Minimum Linear Master Gain: ");
             Console.WriteLine(masterGainMin);
             Console.Write("Maximum Linear Master Gain: ");
@@ -173,56 +174,41 @@ namespace ASEN
             //Prompt the user to provide the master gain value.
             Console.Write("\nInput the desired master Gain: ");
             temp = Console.ReadLine();
-            double masterGainSet = Convert.ToDouble(temp);
+            double masterGainSet = Convert.ToDouble(temp);*/ //Again, this chunk allows the user to specify the gain, which we will leave at 1 for now.
 
             //Set the master gain.
+            double masterGainSet = 1.0;
             this.SetMasterGain(masterGainSet, out masterGainAct);
             Console.Write("\nActual Master Gain Set: ");
             Console.WriteLine(masterGainAct);
-        }
 
-        //------------------------------------------------ METHOD FUNCTION 3 ------------------------------------------------
-
-        public void GatherCameraData()
-        {
             // the camera image can be retrieved for later display
             GetSpotfieldImage();
         }
 
-        //------------------------------------------------ METHOD FUNCTION 4 ------------------------------------------------
+        //------------------------------------------------ METHOD FUNCTION 3 ------------------------------------------------
 
         public void ProcessCameraData()
         {
+            Console.WriteLine(">> Process Camera Data <<");
+
             //Helper function. Calculate and display the centroid positions of the spots.
             CalcSpotCentroids();
-            Console.WriteLine("Calculating Spot Centroids...");
-            //Console.WriteLine("\nPress <ANY_KEY> to proceed...");
-            //waitKey = Console.ReadKey(true);
 
-            //Calculate and display the beam parameters, derived from the centroid intensities
+            //Helper Function. Calculate and display the beam parameters, derived from the centroid intensities
             CalcBeamCentroid();
-            Console.WriteLine("Calculating Beam Centroids...");
-            //Console.WriteLine("\nPress <ANY_KEY> to proceed...");
-            //waitKey = Console.ReadKey(true);
 
-            //Calculate spot deviations to internal reference positions
+            //Helper Function. Calculate spot deviations to internal reference positions.
             CalcSpotDeviations();
-            Console.WriteLine("Calculating Spot Deviations...");
-            //Console.WriteLine("\nPress <ANY_KEY> to proceed...");
-            //waitKey = Console.ReadKey(true);
 
-            // calculate and display the wavefront
+            //Helper Function. Calculate and display the wavefront.
             CalcWavefront();
-            Console.WriteLine("Calculating Wavefront...");
-            //Console.WriteLine("\nPress <ANY_KEY> to proceed...");
-            //waitKey = Console.ReadKey(true);
 
-            // calculate and display a pre-defined number of Zernike results
+            //Helper Function. Calculate and display a pre-defined number of Zernike results.
             CalcZernikes();
-            Console.WriteLine("Calculating Zernikes...");
         }
 
-        //------------------------------------------------ METHOD FUNCTION 5 ------------------------------------------------
+        //------------------------------------------------ METHOD FUNCTION 4 ------------------------------------------------
 
         public void CloseCamera()
         {
