@@ -14,9 +14,9 @@ namespace ASEN
         public int RCWS_DAFT; // RCWS Aftward defocus distance [micro-meters]
         public int MA_X; // Mirror 2 x-displacement [arc-seconds]
         public int MA_Y; // Mirror 2 y-displacement [arc-seconds]
+        public string cameraInUse;
 
-
-        public State(int[] parameters)
+        public State(int[] parameters, string selectedCamera)
         {
             // Collecting the state parameters from the input array
             RCWS_EXPT = parameters[0];
@@ -25,6 +25,7 @@ namespace ASEN
             RCWS_DAFT = parameters[3];
             MA_X = parameters[4];
             MA_Y = parameters[5];
+            cameraInUse = selectedCamera;
         }
 
         public void RunState()

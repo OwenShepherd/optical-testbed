@@ -127,7 +127,7 @@ namespace ASEN
             string experimentPath = userPath + "\\" + experimentName;
 
             // Creating our new experiment
-            currentExperiment = new Experiment(schedulePath, experimentPath);
+            currentExperiment = new Experiment(schedulePath, experimentPath,selectedCamera);
             currentExperiment.StartExperiment();
 
             

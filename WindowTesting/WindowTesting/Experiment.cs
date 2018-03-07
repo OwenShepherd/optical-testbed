@@ -12,11 +12,13 @@ namespace ASEN
         public string csvPath; // Path to the CSV scheduler
         public string experimentPath; // Path to the experiment top-level directory
         private State currentState; // The current state
+        private string cameraInUse; // The string for the driver of whichever camera (ASI vs. QHY) is being used
 
-        public Experiment(string schedulerPath, string experimentPath)
+        public Experiment(string schedulerPath, string experimentPath, string selectedCamera)
         {
             this.csvPath = schedulerPath;
             this.experimentPath = experimentPath;
+            this.cameraInUse = selectedCamera;
         }
 
         public void StartExperiment()
@@ -43,7 +45,7 @@ namespace ASEN
                         initialDirectory.CreateNewState();
 
                         // calling the state constructor
-                        currentState = new State(intPut);
+                        currentState = new State(intPut, this.cameraInUse);
 
 
                         
