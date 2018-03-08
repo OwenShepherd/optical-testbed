@@ -16,3 +16,16 @@ C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.De
 C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csproj.CoreCompileInputs.cache
 C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.exe
 C:\Users\sheph\Documents\Arduino\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.pdb
+C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Demo.exe.config
+C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Demo.exe
+C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Demo.pdb
+C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Interop.dll
+C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\bin\Debug\Thorlabs.WFS.Interop64.dll
+C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csprojResolveAssemblyReference.cache
+C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csproj.CoreCompileInputs.cache
+C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.exe
+C:\Users\Jake's PC\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.pdb
+C:\Users\jacob\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csprojResolveAssemblyReference.cache
+C:\Users\jacob\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.csproj.CoreCompileInputs.cache
+C:\Users\jacob\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.exe
+C:\Users\jacob\Documents\GitHub\ASEN-4018-Automation\WFS150-7AR\Thorlabs.WFS.Demo\obj\Debug\Thorlabs.WFS.Demo.pdb
