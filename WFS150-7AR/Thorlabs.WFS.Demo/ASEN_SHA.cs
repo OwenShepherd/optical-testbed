@@ -10,6 +10,7 @@ namespace ASEN
 {
     class ASEN_SHA
     {
+        #region defines
         //Define all the variables which will be used later on in the code.
         private static int highestCameraResolution = 0; //Sets the camera to use 1280x1024 pixels                               -- Added by Jake
         private static int sampleCameraResolWfs10 = 2; // CAM_RES_WFS10_360 = 360x360 pixels                                    -- NOT USED, but still in the code to limit problems
@@ -35,7 +36,9 @@ namespace ASEN
         private WFS instrument;
         private static ConsoleKeyInfo waitKey; // Created to allow the functions to access the command line whenever they wish, not necessary to define in each method.
         int selectedInstrId = 0; // Created to be a property of the ASEN_SHA object, so it can be used in all ASEN_SHA methods.
+        #endregion
 
+        //------------------------------------------------ CONSTRUCTOR ------------------------------------------------
         public ASEN_SHA()
         {
             instrument = new WFS(IntPtr.Zero);
@@ -121,7 +124,6 @@ namespace ASEN
         }
 
         //------------------------------------------------ METHOD FUNCTION 2 ------------------------------------------------
-
         public byte[] GatherCameraData(double exposureTimeSet)
         {
 
@@ -151,7 +153,6 @@ namespace ASEN
         }
 
         //------------------------------------------------ METHOD FUNCTION 3 ------------------------------------------------
-
         public float[] ProcessCameraData()
         {
             Console.WriteLine(">> Process Camera Data <<");
@@ -177,7 +178,6 @@ namespace ASEN
         }
 
         //------------------------------------------------ METHOD FUNCTION 4 ------------------------------------------------
-
         public void CloseCamera()
         {
             //Console.WriteLine("\nEnd of Sample Program, press <ANY_KEY> to exit.");
@@ -191,9 +191,6 @@ namespace ASEN
 
         //--------------------------- HELPER FUNCTIONS ---------------------------
         //These helper functions shorten the above class functions, but are not expected to be called explicitly by the user.
-
-
-
 
         #region Helper Methods
         private void SelectInstrument(out int selectedInstrId, out string resourceName)
