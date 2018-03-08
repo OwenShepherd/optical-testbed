@@ -8,50 +8,41 @@ using Thorlabs.WFS.Interop;
 
 namespace ASEN
 {
-    class ASEN_SHA : WFS
+    class ASEN_SHA
     {
         //Define all the variables which will be used later on in the code.
-        private static int sampleCameraResolWfs = 2; // CAM_RES_768 = 768x768 pixels
-        private static int sampleCameraResolWfs10 = 2; // CAM_RES_WFS10_360 = 360x360 pixels
-        private static int sampleCameraResolWfs20 = 3; // CAM_RES_WFS20_512 = 512x512 pixels
-        private static int pixelFormat = 0; // PIXEL_FORMAT_MONO8 = 0
-        private static int sampleRefPlane = 0; // WFS_REF_INTERNAL = 0
-        private static double samplePupilCentroidX = 0.0; // in mm
-        private static double samplePupilCentroidY = 0.0;
-        private static double samplePupilDiameterX = 2.0; // in mm, needs to fit to selected camera resolution
-        private static double samplePupilDiameterY = 2.0;
-        private static int sampleImageReadings = 10; // trials to read a exposed spotfield image 
-        private static int sampleOptionDynNoiseCut = 1; // use dynamic noise cut features
-        private static int sampleOptionCalcSpotDias = 0; // don't calculate spot diameters
-        private static int sampleOptionCancelTilt = 1; // cancel average wavefront tip and tilt
-        private static int sampleOptionLimitToPupil = 0; // don't limit wavefront calculation to pupil interior
-        private static int sampleZernikeOrders = 3; // calculate up to 3rd Zernike order
-        private static int maxZernikeModes = 66; // allocate Zernike array of 67 because index is 1..66
-        private static int sampleOptionHighspeed = 1; // use highspeed mode (only for WFS10 and WFS20 instruments)
-        private static int sampleOptionHsAdaptCentr = 1; // adapt centroids in highspeed mode to previously measured centroids
-        private static int sampleHsNoiseLevel = 30; // cut lower 30 digits in highspeed mode
-        private static int sampleOptionHsAllowAutoexpos = 1; // allow autoexposure in highspeed mode (runs somewhat slower)
-        private static int sampleWavefrontType = 0; // WAVEFRONT_MEAS = 0
-        private static int samplePrintoutSpots = 5; // printout results for first 5 x 5 spots only
-        private static int bufferSize = 255;
+        private static int highestCameraResolution = 0; //Sets the camera to use 1280x1024 pixels                               -- Added by Jake
+        private static int sampleCameraResolWfs10 = 2; // CAM_RES_WFS10_360 = 360x360 pixels                                    -- NOT USED, but still in the code to limit problems
+        private static int sampleCameraResolWfs20 = 3; // CAM_RES_WFS20_512 = 512x512 pixels                                    -- NOT USED, but still in the code to limit problems
+        private static int pixelFormat = 0; // PIXEL_FORMAT_MONO8 = 0                                                           -- CONFIRMED IN configureCamera
+        private static int InternalRefPlane = 0; // WFS_REF_INTERNAL = 0                                                        -- CONFIRMED IN Set reference plane.
+        //private static int sampleImageReadings = 10; // trials to read a exposed spotfield image                                -- NOT USED, not using autoexposure
+        private static int sampleOptionDynNoiseCut = 1; // use dynamic noise cut features                                       -- CONFIRMED in Calculating the spot centroids
+        private static int sampleOptionCalcSpotDias = 0; // don't calculate spot diameters                                      -- CONFIRMED in Calculating spot centroids, set to not calculate diameters currently
+        private static int sampleOptionCancelTilt = 0; // cancel average wavefront tip and tilt, changed to 0 by Jake           -- CONFIRMED in Calculating the spot displacements, set to not remove tip/tilt
+        private static int sampleOptionLimitToPupil = 0; // don't limit wavefront calculation to pupil interior                 -- CONFIRMED in calculating the wavefront, currently set to use all detected spots, not just within the pupil
+        private static int sampleZernikeOrders = 3; // calculate up to 3rd Zernike order                                        -- CONFIRMED in CalcZernikes
+        private static int maxZernikeModes = 66; // allocate Zernike array of 67 because index is 1..66                         -- CONFIRMED in CalcZernikes
+        //private static int sampleOptionHighspeed = 1; // use highspeed mode (only for WFS10 and WFS20 instruments)              -- NOT USED, no highspeed for our WFS
+        //private static int sampleOptionHsAdaptCentr = 1; // adapt centroids in highspeed mode to previously measured centroids  -- NOT USED, no highspeed for our WFS
+        //private static int sampleHsNoiseLevel = 30; // cut lower 30 digits in highspeed mode                                    -- NOT USED, no highspeed for our WFS
+        //private static int sampleOptionHsAllowAutoexpos = 1; // allow autoexposure in highspeed mode (runs somewhat slower)     -- NOT USED, no highspeed for our WFS
+        private static int sampleWavefrontType = 0; // WAVEFRONT_MEAS = 0                                                       -- CONFIRMED in calculating the wavefront, currently set to calculate the measured wavefront
+        //private static int samplePrintoutSpots = 5; // printout results for first 5 x 5 spots only                              -- NOT USED, not printing any values to the console as of yet.
 
+
+        private static int bufferSize = 255;
+        private WFS instrument;
         private static ConsoleKeyInfo waitKey; // Created to allow the functions to access the command line whenever they wish, not necessary to define in each method.
         int selectedInstrId = 0; // Created to be a property of the ASEN_SHA object, so it can be used in all ASEN_SHA methods.
 
+        public ASEN_SHA()
+        {
+            instrument = new WFS(IntPtr.Zero);
+        }
 
-
-
-    //NOTE: All below functions (excluding the helper functions) will need to specify what they're returning, as well as what inputs they will need.
-    //The current state of the functions work, but need to be altered to allow for functions to be 
-
-    public ASEN_SHA() : base(IntPtr.Zero) { } // Apparent syntax for creating the constructor
-
-    public ASEN_SHA() : base(string.Empty, false, false) { }
-
-
-
-    //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
-    public void CameraConnectionAndSetup()
+        //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
+        public void CameraConnectionAndSetup()
         {
             //int selectedInstrId = 0;//I believe this is a handler index in the situation that there would be mulitple SHA's connected to the computer.
             string resourceName = default(string);//Just creating a string initially set to null.
@@ -61,7 +52,7 @@ namespace ASEN
             StringBuilder wfsDriverRev = new StringBuilder(WFS.BufferSize);
 
             //This function comes from the WFS class, which means this structure can be used in the future as a reference (of how to write the code).
-            this.revision_query(wfsDriverRev, camDriverRev);//Checks for the current revision of computer (installed) and camera (installed) drivers.
+            instrument.revision_query(wfsDriverRev, camDriverRev);//Checks for the current revision of computer (installed) and camera (installed) drivers.
 
             //This chuck writes the driver information to the console.
             Console.WriteLine("");
@@ -85,7 +76,7 @@ namespace ASEN
             Console.WriteLine(">> Initialize Device <<");
 
             //Not totally sure what is going on here. Having trouble gaining insight into this constructor.
-            //ASEN_SHA var = new ASEN_SHA(resourceName, false, false);
+            instrument = new WFS(resourceName, false, false);
 
             //Fairly straightforward. Getting information about the selected WFS. From the ThorLabs namespace.
             Console.WriteLine(">> Get Device Info <<");
@@ -95,7 +86,7 @@ namespace ASEN
             StringBuilder serialNumberCam = new StringBuilder(WFS.BufferSize);
 
             //If this line succeeds, the connection was successful, as we access unit-specific information.
-            this.GetInstrumentInfo(manufacturerName, instrumentName, serialNumberWfs, serialNumberCam);
+            instrument.GetInstrumentInfo(manufacturerName, instrumentName, serialNumberWfs, serialNumberCam);
 
             //Writing unit-specific information to the console for verification.
             Console.WriteLine(">> Opened Instrument <<");
@@ -119,76 +110,49 @@ namespace ASEN
 
             // set WFS internal reference plane
             Console.WriteLine("\nSet WFS to internal reference plane.\n");
-            this.SetReferencePlane(sampleRefPlane);
+            instrument.SetReferencePlane(InternalRefPlane); // Good. Set to use the internal reference plane to the MLA.
 
-            // define pupil size and position, Zernike results are related to pupil
-            DefinePupil();
+            //To define the pupil, I want to just use the beam width. To do this, I first need to find the beam dimensions, and then input them to DefinePupil.
+            double beamCentroidX, beamCentroidY, beamDiameterX, beamDiameterY;
+            instrument.CalcBeamCentroidDia(out beamCentroidX, out beamCentroidY, out beamDiameterX, out beamDiameterY);
+
+            instrument.SetPupil(beamCentroidX, beamCentroidY, beamDiameterX, beamDiameterY);
 
         }
 
         //------------------------------------------------ METHOD FUNCTION 2 ------------------------------------------------
 
-        public void GatherCameraData(double exposureTimeSet)
+        public byte[] GatherCameraData(double exposureTimeSet)
         {
 
-            //Console.WriteLine(">> Setting Exposure <<");
+            Console.WriteLine(">> Setting Exposure <<");
 
-            /*double exposureTimeMin;
-            double exposureTimeMax;
-            double exposureTimeIncr;*/
-            double exposureTimeAct;
-
-            /*double masterGainMin;
-            double masterGainMax;*/
-            double masterGainAct;
-
-            //This function finds the maximum and minimum exposure times possible with the selected resolution. (these inputs supposedly need to be passed by reference, which seems to be what "out" does).
-            /*this.GetExposureTimeRange(out exposureTimeMin, out exposureTimeMax, out exposureTimeIncr);
-            Console.Write("Minimum Exposure (ms)       : ");
-            Console.WriteLine(exposureTimeMin);
-            Console.Write("Maximum Exposure (ms)       : ");
-            Console.WriteLine(exposureTimeMax);
-            Console.Write("Exposure Time Increment (ms): ");
-            Console.WriteLine(exposureTimeIncr);
-
-            Console.Write("\nInput the desired Exposure (ms): ");
-            string temp = Console.ReadLine();
-            double exposureTimeSet = Convert.ToDouble(temp);*/ //This chunk was to prompt the user for exposure time, which is no longer necessary we will set it automatically.
-
+            double exposureTimeAct, masterGainAct;
 
             //This function sets the exposure time of the camera, and returns the actual exposure time set.
-            this.SetExposureTime(exposureTimeSet, out exposureTimeAct);
+            instrument.SetExposureTime(exposureTimeSet, out exposureTimeAct);
             Console.Write("\nActual Exposure Set: ");
             Console.WriteLine(exposureTimeAct);
 
-
-            Console.WriteLine(">> Setting Master Gain <<");
-
-            //This function finds the max and min linear master gain values for the WFS.
-            /*this.GetMasterGainRange(out masterGainMin, out masterGainMax);
-            Console.Write("Minimum Linear Master Gain: ");
-            Console.WriteLine(masterGainMin);
-            Console.Write("Maximum Linear Master Gain: ");
-            Console.WriteLine(masterGainMax);
-
-            //Prompt the user to provide the master gain value.
-            Console.Write("\nInput the desired master Gain: ");
-            temp = Console.ReadLine();
-            double masterGainSet = Convert.ToDouble(temp);*/ //Again, this chunk allows the user to specify the gain, which we will leave at 1 for now.
-
             //Set the master gain.
             double masterGainSet = 1.0;
-            this.SetMasterGain(masterGainSet, out masterGainAct);
+            instrument.SetMasterGain(masterGainSet, out masterGainAct);
             Console.Write("\nActual Master Gain Set: ");
             Console.WriteLine(masterGainAct);
 
-            // the camera image can be retrieved for later display
-            GetSpotfieldImage();
+
+            //Capture the spotfield image, return this byte array from the function.
+            byte[] imageBuffer = new byte[WFS.ImageBufferSize];
+            int rows;
+            int cols;
+            instrument.GetSpotfieldImage(imageBuffer, out rows, out cols);
+
+            return imageBuffer;//Need to check this -- I'm not sure that this is going to return what I expect it to. Should be a 1280x1024 array containing an 8-bit value in each entry.
         }
 
         //------------------------------------------------ METHOD FUNCTION 3 ------------------------------------------------
 
-        public void ProcessCameraData()
+        public float[] ProcessCameraData()
         {
             Console.WriteLine(">> Process Camera Data <<");
 
@@ -205,18 +169,22 @@ namespace ASEN
             CalcWavefront();
 
             //Helper Function. Calculate and display a pre-defined number of Zernike results.
-            CalcZernikes();
+            float[] zernikeCoeffs = new float[maxZernikeModes + 1];
+
+            zernikeCoeffs = CalcZernikes();
+
+            return zernikeCoeffs;//Need to check this -- I'm not sure that this is going to return what I expect it to.
         }
 
         //------------------------------------------------ METHOD FUNCTION 4 ------------------------------------------------
 
         public void CloseCamera()
         {
-            Console.WriteLine("\nEnd of Sample Program, press <ANY_KEY> to exit.");
-            waitKey = Console.ReadKey(false);
+            //Console.WriteLine("\nEnd of Sample Program, press <ANY_KEY> to exit.");
+            //waitKey = Console.ReadKey(false);
 
             // Close instrument, important to release allocated driver data!
-            this.Dispose();
+            instrument.Dispose();
         }
 
 
@@ -232,7 +200,7 @@ namespace ASEN
         {
             resourceName = null;
             int instrCount;
-            this.GetInstrumentListLen(out instrCount);
+            instrument.GetInstrumentListLen(out instrCount);
             if (0 == instrCount)
             {
                 Console.WriteLine("No Wavefront Sensor instrument found!");
@@ -251,7 +219,7 @@ namespace ASEN
 
             for (int i = 0; i < instrCount; ++i)
             {
-                this.GetInstrumentListInfo(i, out deviceID, out inUse, instrumentName, instrumentSN, resourceNameTemp);
+                instrument.GetInstrumentListInfo(i, out deviceID, out inUse, instrumentName, instrumentSN, resourceNameTemp);
                 resourceName = resourceNameTemp.ToString();
                 Console.Write(deviceID.ToString() + "  " + instrumentName.ToString() + "  " + instrumentSN.ToString() + ((0 == inUse) ? "" : "  (inUse)") + "\n\n");
             }
@@ -269,7 +237,7 @@ namespace ASEN
             int deviceIDtemp = 0;
             for (int i = 0; (i < instrCount) && (deviceIDtemp != selectedInstrId); ++i)
             {
-                this.GetInstrumentListInfo(i, out deviceID, out inUse, instrumentName, instrumentSN, resourceNameTemp);
+                instrument.GetInstrumentListInfo(i, out deviceID, out inUse, instrumentName, instrumentSN, resourceNameTemp);
                 deviceIDtemp = deviceID;
                 resourceName = resourceNameTemp.ToString();
             }
@@ -290,7 +258,7 @@ namespace ASEN
         {
             int selectedMla;
             int mlaCount;
-            this.GetMlaCount(out mlaCount);
+            instrument.GetMlaCount(out mlaCount);
 
             Console.WriteLine("\nAvailable Microlens Arrays:\n");
             StringBuilder mlaName = new StringBuilder(WFS.BufferSize);
@@ -303,7 +271,7 @@ namespace ASEN
             double grdCorr45;
             for (int i = 0; i < mlaCount; ++i)
             {
-                this.GetMlaData(i, mlaName, out camPitch, out lensletPitch, out spotOffsetX, out spotOffsetY, out lensletFum, out grdCorr0, out grdCorr45);
+                instrument.GetMlaData(i, mlaName, out camPitch, out lensletPitch, out spotOffsetX, out spotOffsetY, out lensletFum, out grdCorr0, out grdCorr45);
                 Console.Write(i.ToString() + "  " + mlaName.ToString() + "  " + camPitch.ToString() + "  " + lensletPitch.ToString() + "\n");
             }
 
@@ -322,7 +290,7 @@ namespace ASEN
                 }
                 else
                 {
-                    this.SelectMla(selectedMla);
+                    instrument.SelectMla(selectedMla);
                 }
             }
         }
@@ -338,20 +306,21 @@ namespace ASEN
             if ((0 == (selectedInstrId & WFS.DeviceOffsetWFS10)) &&
                 (0 == (selectedInstrId & WFS.DeviceOffsetWFS20)))
             {
-                Console.Write("Configure WFS camera with resolution index: " + sampleCameraResolWfs.ToString() + " (" + WFS.CamWFSXPixel[sampleCameraResolWfs].ToString() + " x " + WFS.CamWFSYPixel[sampleCameraResolWfs].ToString() + " pixels)\n");
-                this.ConfigureCam(pixelFormat, sampleCameraResolWfs, out spotsX, out spotsY);
+                //we will always want the camera resolution to be 1280x1024 (maximum resolution), index 0. So that will be set here.
+                Console.Write("Configure WFS camera with resolution index: " + highestCameraResolution.ToString() + " (" + WFS.CamWFSXPixel[highestCameraResolution].ToString() + " x " + WFS.CamWFSYPixel[highestCameraResolution].ToString() + " pixels)\n");
+                instrument.ConfigureCam(pixelFormat, highestCameraResolution, out spotsX, out spotsY);
             }
-            else
+            else // the rest of this code (in the helper method) is unused.
             {
                 if (0 != (selectedInstrId & WFS.DeviceOffsetWFS10)) // WFS10 instrument
                 {
                     Console.Write("Configure WFS10 camera with resolution index: " + sampleCameraResolWfs10.ToString() + " (" + WFS.CamWFSXPixel[sampleCameraResolWfs10].ToString() + " x " + WFS.CamWFSYPixel[sampleCameraResolWfs10].ToString() + " pixels)\n");
-                    this.ConfigureCam(pixelFormat, sampleCameraResolWfs10, out spotsX, out spotsY);
+                    instrument.ConfigureCam(pixelFormat, sampleCameraResolWfs10, out spotsX, out spotsY);
                 }
                 else // WFS20 instrument
                 {
                     Console.Write("Configure WFS20 camera with resolution index: " + sampleCameraResolWfs20.ToString() + " (" + WFS.CamWFSXPixel[sampleCameraResolWfs20].ToString() + " x " + WFS.CamWFSYPixel[sampleCameraResolWfs20].ToString() + " pixels)\n");
-                    this.ConfigureCam(pixelFormat, sampleCameraResolWfs20, out spotsX, out spotsY);
+                    instrument.ConfigureCam(pixelFormat, sampleCameraResolWfs20, out spotsX, out spotsY);
                 }
             }
             Console.WriteLine("Camera is configured to detect " + spotsX.ToString() + " x " + spotsY.ToString() + " lenslet spots.\n", spotsX, spotsY);
@@ -361,15 +330,15 @@ namespace ASEN
         /// Set the pupil to pre-defined values, the pupil needs to fit the selected camera resolution and the beam diameter
         /// Zernike results depend and relate to the pupil size!
         /// </summary>
-        private void DefinePupil()
+        /*private void DefinePupil()
         {
             Console.WriteLine("\nDefine pupil to:");
             Console.WriteLine("Centroid_x = " + samplePupilCentroidX.ToString("F3"));
             Console.WriteLine("Centroid_y = " + samplePupilCentroidY.ToString("F3"));
             Console.WriteLine("Diameter_x = " + samplePupilDiameterX.ToString("F3"));
             Console.WriteLine("Diameter_y = " + samplePupilDiameterY.ToString("F3") + "\n");
-            this.SetPupil(samplePupilCentroidX, samplePupilCentroidY, samplePupilDiameterX, samplePupilDiameterY);
-        }
+            instrument.SetPupil(samplePupilCentroidX, samplePupilCentroidY, samplePupilDiameterX, samplePupilDiameterY);
+        }*/
 
 
         /// <summary>
@@ -377,7 +346,7 @@ namespace ASEN
         /// repeate image reading in case of badly saturated image
         /// suited exposure time and gain settings are adjusted within the function TakeSpotfieldImageAutoExpos()
         /// </summary>
-        private void AdjustImageBrightness()
+        /*private void AdjustImageBrightness()
         {
             ConsoleKeyInfo waitKey;
             int status;
@@ -391,11 +360,11 @@ namespace ASEN
             for (int cnt = 0; cnt < sampleImageReadings; ++cnt)
             {
                 // take a camera image with auto exposure, note that there may several function calls required to get an optimal exposed image
-                this.TakeSpotfieldImageAutoExpos(out exposAct, out masterGainAct);
+                instrument.TakeSpotfieldImageAutoExpos(out exposAct, out masterGainAct);
                 Console.Write("    " + cnt.ToString() + "     ");
 
                 // check instrument status for non-optimal image exposure
-                this.GetStatus(out status);
+                instrument.GetStatus(out status);
 
                 if (0 != (status & WFS.StatBitHighPower))
                 {
@@ -428,11 +397,11 @@ namespace ASEN
             if (0 == expos_ok)
             {
                 Console.Write("\nSample program will be closed because of unusable image quality, press <ANY_KEY>.");
-                this.Dispose(); // required to release allocated driver data
+                instrument.Dispose(); // required to release allocated driver data
                 waitKey = Console.ReadKey(true);
                 throw new Exception("Unusable Image");
             }
-        }
+        }*///Commented out for now, although this could be necessary in the future to ensure the SHA will take images, instead of failing with over- or under-exposure since we're setting these values explicitly.
 
 
         /// <summary>
@@ -444,7 +413,7 @@ namespace ASEN
             byte[] imageBuffer = new byte[WFS.ImageBufferSize];
             int rows;
             int cols;
-            this.GetSpotfieldImage(imageBuffer, out rows, out cols);
+            instrument.GetSpotfieldImage(imageBuffer, out rows, out cols);
         }
 
 
@@ -453,15 +422,15 @@ namespace ASEN
         /// </summary>
         private void CalcSpotCentroids()
         {
-            this.CalcSpotsCentrDiaIntens(sampleOptionDynNoiseCut, sampleOptionCalcSpotDias);
+            instrument.CalcSpotsCentrDiaIntens(sampleOptionDynNoiseCut, sampleOptionCalcSpotDias);
 
             // get centroid result arrays
             float[,] centroidX = new float[WFS.MaxSpotY, WFS.MaxSpotX];
             float[,] centroidY = new float[WFS.MaxSpotY, WFS.MaxSpotX];
-            this.GetSpotCentroids(centroidX, centroidY);
+            instrument.GetSpotCentroids(centroidX, centroidY);
 
             // print out some centroid positions
-            Console.WriteLine("\nCentroid X Positions in pixels (first 5x5 elements)\n");
+            /*Console.WriteLine("\nCentroid X Positions in pixels (first 5x5 elements)\n");
             for (int i = 0; i < samplePrintoutSpots; ++i)
             {
                 for (int j = 0; j < samplePrintoutSpots; ++j)
@@ -479,7 +448,7 @@ namespace ASEN
                     Console.Write("  " + centroidY[i, j].ToString("F3"));
                 }
                 Console.WriteLine("");
-            }
+            }*/
         }
 
 
@@ -491,7 +460,7 @@ namespace ASEN
         private void CalcBeamCentroid()
         {
             double beamCentroidX, beamCentroidY, beamDiameterX, beamDiameterY;
-            this.CalcBeamCentroidDia(out beamCentroidX, out beamCentroidY, out beamDiameterX, out beamDiameterY);
+            instrument.CalcBeamCentroidDia(out beamCentroidX, out beamCentroidY, out beamDiameterX, out beamDiameterY);
 
             Console.WriteLine("\nInput beam is measured to:");
             Console.WriteLine("CentroidX = " + beamCentroidX.ToString("F3") + " mm");
@@ -506,15 +475,15 @@ namespace ASEN
         /// </summary>
         private void CalcSpotDeviations()
         {
-            this.CalcSpotToReferenceDeviations(sampleOptionCancelTilt);
+            instrument.CalcSpotToReferenceDeviations(sampleOptionCancelTilt);
 
             // get spot deviations
             float[,] deviationX = new float[WFS.MaxSpotY, WFS.MaxSpotX];
             float[,] deviationY = new float[WFS.MaxSpotY, WFS.MaxSpotX];
-            this.GetSpotDeviations(deviationX, deviationY);
+            instrument.GetSpotDeviations(deviationX, deviationY);
 
             // print out some spot deviations
-            Console.WriteLine("\nSpot Deviation X in pixels (first 5x5 elements)\n");
+            /*Console.WriteLine("\nSpot Deviation X in pixels (first 5x5 elements)\n");
             for (int i = 0; i < samplePrintoutSpots; ++i)
             {
                 for (int j = 0; j < samplePrintoutSpots; ++j)
@@ -531,7 +500,7 @@ namespace ASEN
                     Console.Write(" " + deviationY[i, j].ToString("F3"));
                 }
                 Console.WriteLine("");
-            }
+            }*/
         }
 
 
@@ -540,12 +509,12 @@ namespace ASEN
         /// </summary>
         private void CalcWavefront()
         {
-            ConsoleKeyInfo waitKey;
+            //ConsoleKeyInfo waitKey;
             float[,] wavefront = new float[WFS.MaxSpotY, WFS.MaxSpotX];
-            this.CalcWavefront(sampleWavefrontType, sampleOptionLimitToPupil, wavefront);
+            instrument.CalcWavefront(sampleWavefrontType, sampleOptionLimitToPupil, wavefront);
 
             // print out some wavefront points
-            Console.WriteLine("\nWavefront in microns (first 5x5 elements)\n");
+            /*Console.WriteLine("\nWavefront in microns (first 5x5 elements)\n");
             for (int i = 0; i < samplePrintoutSpots; ++i)
             {
                 for (int j = 0; j < samplePrintoutSpots; ++j)
@@ -553,40 +522,42 @@ namespace ASEN
                     Console.Write(" " + wavefront[i, j].ToString("F3"));
                 }
                 Console.WriteLine("");
-            }
-            Console.WriteLine("\nPress <ANY_KEY> to proceed...");
-            waitKey = Console.ReadKey(true);
+            }*/
+            //Console.WriteLine("\nPress <ANY_KEY> to proceed...");
+            //waitKey = Console.ReadKey(true);
 
             // calculate wavefront statistics within defined pupil
             double wavefrontMin, wavefrontMax, wavefrontDiff, wavefrontMean, wavefrontRms, wavefrontWeightedRms;
-            this.CalcWavefrontStatistics(out wavefrontMin, out wavefrontMax, out wavefrontDiff, out wavefrontMean, out wavefrontRms, out wavefrontWeightedRms);
-            Console.WriteLine("\nWavefront Statistics in microns:");
+            instrument.CalcWavefrontStatistics(out wavefrontMin, out wavefrontMax, out wavefrontDiff, out wavefrontMean, out wavefrontRms, out wavefrontWeightedRms);
+            /*Console.WriteLine("\nWavefront Statistics in microns:");
             Console.WriteLine("Min          : " + wavefrontMin.ToString("F3"));
             Console.WriteLine("Max          : " + wavefrontMax.ToString("F3"));
             Console.WriteLine("Diff         : " + wavefrontDiff.ToString("F3"));
             Console.WriteLine("Mean         : " + wavefrontMean.ToString("F3"));
             Console.WriteLine("RMS          : " + wavefrontRms.ToString("F3"));
-            Console.WriteLine("Weigthed RMS : " + wavefrontWeightedRms.ToString("F3"));
+            Console.WriteLine("Weigthed RMS : " + wavefrontWeightedRms.ToString("F3"));*/
         }
 
 
         /// <summary>
-        /// calculate Zernike results in microns, related to defined pupil size
+        /// calculate Zernike results in microns, related to defined pupil size. Edited this function to return the Zernikes in an array of floats.
         /// </summary>
-        private void CalcZernikes()
+        private float[] CalcZernikes()
         {
             Console.WriteLine("\nZernike fit up to order " + sampleZernikeOrders.ToString());
             int zernike_order = sampleZernikeOrders;
             float[] zernikeUm = new float[maxZernikeModes + 1];
             float[] zernikeOrdersRmsUm = new float[maxZernikeModes + 1];
             double rocMm;
-            this.ZernikeLsf(out zernike_order, zernikeUm, zernikeOrdersRmsUm, out rocMm); // also calculates deviation from centroid data for wavefront integration
+            instrument.ZernikeLsf(out zernike_order, zernikeUm, zernikeOrdersRmsUm, out rocMm); // also calculates deviation from centroid data for wavefront integration
 
-            Console.WriteLine("\nZernike Mode    Coefficient");
-            for (int i = 0; i < WFS.ZernikeModes[sampleZernikeOrders]; ++i)
-            {
-                Console.WriteLine("  " + i.ToString() + "             " + zernikeUm[i].ToString("F3"));
-            }
+            //Console.WriteLine("\nZernike Mode    Coefficient");
+            //for (int i = 0; i < WFS.ZernikeModes[sampleZernikeOrders]; ++i)
+            //{
+            //Console.WriteLine("  " + i.ToString() + "             " + zernikeUm[i].ToString("F3"));
+            //}
+            return zernikeUm;
+
         }
 
 
@@ -595,7 +566,7 @@ namespace ASEN
         /// in this mode the camera itself calculates the spot centroids
         /// this enables much faster measurements
         /// </summary>
-        private void HighspeedMode(int selectedInstrId)
+        /*private void HighspeedMode(int selectedInstrId)
         {
             ConsoleKeyInfo waitKey;
             if ((0 != (selectedInstrId & WFS.DeviceOffsetWFS10)) ||
@@ -620,12 +591,12 @@ namespace ASEN
                 if (1 == selection)
                 {
                     // set highspeed mode active, use pre-defined options, refere to WFS_SetHighspeedMode() function help
-                    this.SetHighspeedMode(sampleOptionHighspeed, sampleOptionHsAdaptCentr, sampleHsNoiseLevel, sampleOptionHsAllowAutoexpos);
+                    instrument.SetHighspeedMode(sampleOptionHighspeed, sampleOptionHsAdaptCentr, sampleHsNoiseLevel, sampleOptionHsAllowAutoexpos);
                     int hsWinCountX, hsWinCountY, hsWinSizeX, hsWinSizeY;
                     int[] hsWinStartX = new int[WFS.MaxSpotX];
                     int[] hsWinStartY = new int[WFS.MaxSpotY];
 
-                    this.GetHighspeedWindows(out hsWinCountX, out hsWinCountY, out hsWinSizeX, out hsWinSizeY, hsWinStartX, hsWinStartY);
+                    instrument.GetHighspeedWindows(out hsWinCountX, out hsWinCountY, out hsWinSizeX, out hsWinSizeY, hsWinStartX, hsWinStartY);
 
                     Console.WriteLine("\nCentroid detection windows are defined as follows:\n"); // refere to WFS_GetHighspeedWindows function help
                     Console.WriteLine("CountX = " + hsWinCountX.ToString() + ", CountY = " + hsWinCountY.ToString());
@@ -649,7 +620,7 @@ namespace ASEN
                     double exposAct;
                     double masterGainAct;
                     // take a camera image with auto exposure, this is also supported in highspeed-mode
-                    this.TakeSpotfieldImageAutoExpos(out exposAct, out masterGainAct);
+                    instrument.TakeSpotfieldImageAutoExpos(out exposAct, out masterGainAct);
                     Console.WriteLine("\nexposure = " + exposAct.ToString("F3") + " ms, gain =  " + masterGainAct.ToString("F3") + "\n");
 
                     double beamCentroidX;
@@ -657,7 +628,7 @@ namespace ASEN
                     double beamDiameterX;
                     double beamDiameterY;
                     // get centroid and diameter of the optical beam, these data are based on the detected centroids
-                    this.CalcBeamCentroidDia(out beamCentroidX, out beamCentroidY, out beamDiameterX, out beamDiameterY);
+                    instrument.CalcBeamCentroidDia(out beamCentroidX, out beamCentroidY, out beamDiameterX, out beamDiameterY);
                     Console.WriteLine("\nInput beam is measured to:\n");
                     Console.WriteLine("CentroidX = " + beamCentroidX.ToString("F3") + " mm");
                     Console.WriteLine("CentroidY = " + beamCentroidY.ToString("F3") + " mm");
@@ -672,7 +643,7 @@ namespace ASEN
                     float[,] centroidX = new float[WFS.MaxSpotY, WFS.MaxSpotX];
                     float[,] centroidY = new float[WFS.MaxSpotY, WFS.MaxSpotX];
                     // get centroid result arrays
-                    this.GetSpotCentroids(centroidX, centroidY);
+                    instrument.GetSpotCentroids(centroidX, centroidY);
 
                     // print out some centroid positions
                     Console.WriteLine("\nCentroid X Positions in pixels (first 5x5 elements)\n");
@@ -698,7 +669,7 @@ namespace ASEN
                     Console.WriteLine("\nThe following wavefront and Zernike calculations can be done identical to normal mode.\n");
                 }
             }
-        }
+        }*/
         #endregion Helper Methods
     }
 }
