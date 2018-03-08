@@ -31,7 +31,16 @@ namespace ASEN
         public void RunState()
         {
             // Here's where we call the other methods
-            // ASEN_RCWS
+            /*
+                ASEN_RCWS currentRCWS = new ASEN_RCWS(cameraInUse);
+                currentRCWS.InitializeCamera();
+
+                // Here we save the image
+                int[,] RCWSImage = new int[currentRCWS.width,currentRCWS.height];
+
+                RCWSImage = currentRCWS.Capture(RCWS_EXPT,false);
+                // currentRCWS.saveImage(); // Not implemented yet
+            */
             // ASEN_SHA
             // ASEN_MotorControl
             // ASEN_Environmental
