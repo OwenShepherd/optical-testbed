@@ -15,8 +15,11 @@ namespace ASEN
     class ASEN_MotorControl
     {
         public string serialNo;
-        public string position;
-        public string velocity;
+        public int position;
+        public int velocity;
+        private KCubeDCServo currentMotor;
+
+
 
 
 
@@ -27,19 +30,15 @@ namespace ASEN
             serialNo = Console.ReadLine();
             Console.Write("\n");
             Console.Write("Position: ");
-            position = Console.ReadLine();
+            position = Int32.Parse(Console.ReadLine());
             Console.Write("\n");
             Console.Write("Velocity: ");
-            velocity = Console.ReadLine();
+            velocity = Int32.Parse(Console.ReadLine());
             Console.Write("\n");
-
         }
 
-
-        static void Main(string[] args)
+        public void initializeMotor()
         {
-
-            
             try
             {
                 // Tell the device manager to get the list of all devices connected to the computer
@@ -55,128 +54,125 @@ namespace ASEN
 
             // get available KCube DC Servos and check our serial number is correct
             List<string> serialNumbers = DeviceManagerCLI.GetDeviceList(KCubeDCServo.DevicePrefix);
-            if (!serialNumbers.Contains(serialNo))
+            if (!serialNumbers.Contains(this.serialNo))
             {
                 // the requested serial number is not a KDC101 or is not connected
-                Console.WriteLine("{0} is not a valid serial number", serialNo);
+                Console.WriteLine("{0} is not a valid serial number", this.serialNo);
                 Console.ReadKey();
                 return;
             }
 
+            // Have to create the motor device based on the serial number (assuming the serial number is accurate)
+            this.CreateDevice();
+
+            // Have to open a connection to the device to begin using it
+            this.OpenConnection();
+
+            // Collect the motor settings to display some information
+            this.CreateConfigs();
+        }
+
+        private void CreateDevice()
+        {
             // create the device
-            KCubeDCServo device = KCubeDCServo.CreateKCubeDCServo(serialNo);
-            if (device == null)
+            this.currentMotor = KCubeDCServo.CreateKCubeDCServo(this.serialNo);
+            if (this.currentMotor == null)
             {
                 // an error occured
-                Console.WriteLine("{0} is not a KCubeDCServo", serialNo);
+                Console.WriteLine("{0} is not a KCubeDCServo", this.serialNo);
                 Console.ReadKey();
                 return;
             }
+        }
 
+        private void OpenConnection()
+        {
             // open a connection to the device.
             try
             {
-                Console.WriteLine("Opening device {0}", serialNo);
-                device.Connect(serialNo);
+                Console.WriteLine("Opening device {0}", this.serialNo);
+                this.currentMotor.Connect(this.serialNo);
             }
             catch (Exception)
             {
                 // connection failed
-                Console.WriteLine("Failed to open device {0}", serialNo);
+                Console.WriteLine("Failed to open device {0}", this.serialNo);
                 Console.ReadKey();
                 return;
             }
 
             // wait for the device settings to initialize
-            if (!device.IsSettingsInitialized())
+            if (!this.currentMotor.IsSettingsInitialized())
             {
                 try
                 {
-                    device.WaitForSettingsInitialized(5000);
+                    this.currentMotor.WaitForSettingsInitialized(5000);
                 }
                 catch (Exception)
                 {
                     Console.WriteLine("Settings failed to initialize");
                 }
             }
+        }
 
+        private void CreateConfigs()
+        {
             // start the device polling.
             // Polling requests a status update every specified number of milliseconds.
-            device.StartPolling(250);
+            this.currentMotor.StartPolling(250);
 
             // needs a delay so that the current enabled state can be obtained
             // ????
             Thread.Sleep(500);
 
             // enable the channel otherwise any move is ignored 
-            device.EnableDevice();
+            this.currentMotor.EnableDevice();
 
             // needs a delay to give time for the device to be enabled
             Thread.Sleep(500);
 
             // call GetMotorConfiguration on the device to initialize the DeviceUnitConverter object required for real world unit parameters
             // Sets up proper unit conversion for the correct device.  Only call this function ONCE
-            MotorConfiguration motorSettings = device.LoadMotorConfiguration(serialNo);
+            MotorConfiguration motorSettings = this.currentMotor.LoadMotorConfiguration(this.serialNo);
 
             // Simply retrieves the "motor device settings"
-            KCubeDCMotorSettings currentDeviceSettings = device.MotorDeviceSettings as KCubeDCMotorSettings;
+            KCubeDCMotorSettings currentDeviceSettings = this.currentMotor.MotorDeviceSettings as KCubeDCMotorSettings;
 
             // display info about device
 
             // Retrieves a device info block
-            DeviceInfo deviceInfo = device.GetDeviceInfo();
-
+            DeviceInfo deviceInfo = this.currentMotor.GetDeviceInfo();
             Console.WriteLine("Device {0} = {1}", deviceInfo.SerialNumber, deviceInfo.Name);
 
-            Home_Method1(device);
-            // or 
-            //Home_Method2(device);
+            // After the device is opened we want to save the velocity
+            // Retrieves the "velocity parameters" in real world units
+            VelocityParameters velPars = this.currentMotor.GetVelocityParams();
 
-            // This command I'm not really sure about
-            bool homed = device.Status.IsHomed;
+            // Restricts the velocity allowed to be the user-defined velocity
+            decimal dVelocity = this.velocity;
+            velPars.MaxVelocity = dVelocity;
+            this.currentMotor.SetVelocityParams(velPars);
 
-
-            // Some other stuff for testing
-            Decimal test = device.GetHomingVelocity();
-            Decimal currPos = device.Position;
-
-            // if a position is requested
-            if (position != 0)
-            {
-                // update velocity if required using real world methods
-                if (velocity != 0)
-                {
-                    // Retrieves the "velocity parameters" in real world units
-                    VelocityParameters velPars = device.GetVelocityParams();
-
-                    // Restricts the velocity allowed to be the user-defined velocity
-                    velPars.MaxVelocity = velocity;
-                    device.SetVelocityParams(velPars);
-                }
-
-                // Moves the device to the desired "real world" position
-                Move_Method1(device, position);
-                // or
-                // Move_Method2(device, position);
-
-                // Retrieves the position actually achieved by the motor
-                Decimal newPos = device.Position;
-                Console.WriteLine("Device Moved to {0}", newPos);
-            }
-
-            device.StopPolling();
-            device.Disconnect(true);
-
-            //Console.ReadKey();
         }
 
-        // Simply sets the motor to its "home" position
-        public static void Home_Method1(IGenericAdvancedMotor device)
+        private decimal ConvertToDeviceUnits(decimal position)
+        {
+            // Need to extract proper conversion from the device itself
+            DeviceUnitConverter currConverter;
+            currConverter = currentMotor.UnitConverter;
+
+            // Enuming stuff
+            
+            // Now we shall do the actual conversion
+            return currConverter.RealToDeviceUnit(position, DeviceUnitConverter.UnitType.Length);
+        }
+
+        public void HomeMotor()
         {
             try
             {
                 Console.WriteLine("Homing device");
-                device.Home(60000);
+                this.currentMotor.Home(60000);
             }
             catch (Exception)
             {
@@ -187,12 +183,14 @@ namespace ASEN
             Console.WriteLine("Device Homed");
         }
 
-        public static void Move_Method1(IGenericAdvancedMotor device, decimal position)
+        public void MoveMotor(decimal position)
         {
+            decimal devicePosition = ConvertToDeviceUnits(position);
+
             try
             {
                 Console.WriteLine("Moving Device to {0}", position);
-                device.MoveTo(position, 5000);
+                this.currentMotor.MoveTo(devicePosition, 5000);
             }
             catch (Exception)
             {
@@ -200,52 +198,14 @@ namespace ASEN
                 Console.ReadKey();
                 return;
             }
-            Console.WriteLine("Device Moved");
+            Decimal newPos = this.currentMotor.Position;
+            Console.WriteLine("Device Moved to {0}", newPos);
         }
 
-        private static bool _taskComplete;
-        private static ulong _taskID;
-
-        public static void CommandCompleteFunction(ulong taskID)
+        public void DisconnectMotor()
         {
-            if ((_taskID > 0) && (_taskID == taskID))
-            {
-                _taskComplete = true;
-            }
-        }
-
-        // Same as Home_Method2, but returns extra information about the current status of the homing request
-        public static void Home_Method2(IGenericAdvancedMotor device)
-        {
-            Console.WriteLine("Homing device");
-            _taskComplete = false;
-            _taskID = device.Home(CommandCompleteFunction);
-            while (!_taskComplete)
-            {
-                Thread.Sleep(500);
-                StatusBase status = device.Status;
-                Console.WriteLine("Device Homing {0}", status.Position);
-
-                // will need some timeout functionality;
-            }
-            Console.WriteLine("Device Homed");
-        }
-
-        // Same as Move_Method1, but returns extra information about the current status of the move request
-        public static void Move_Method2(IGenericAdvancedMotor device, decimal position)
-        {
-            Console.WriteLine("Moving Device to {0}", position);
-            _taskComplete = false;
-            _taskID = device.MoveTo(position, CommandCompleteFunction);
-            while (!_taskComplete)
-            {
-                Thread.Sleep(500);
-                StatusBase status = device.Status;
-                Console.WriteLine("Device Moving {0}", status.Position);
-
-                // will need some timeout functionality;
-            }
-            Console.WriteLine("Device Moved");
-        }
+            this.currentMotor.StopPolling();
+            this.currentMotor.Disconnect(true);
+        }       
     }
 }
