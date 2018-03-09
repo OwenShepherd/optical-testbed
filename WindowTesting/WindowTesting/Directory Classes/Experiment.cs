@@ -49,13 +49,13 @@ namespace ASEN
                     {
                         // Parsing data from the string
                         string[] valInput = currentLine.Split(',');
-                        int[] intPut = Array.ConvertAll(valInput, int.Parse);
+                        double[] inPut = Array.ConvertAll(valInput, double.Parse);
 
                         // Adding a new state to the directory
                         statePath = initialDirectory.CreateNewState();
 
                         // calling the state constructor
-                        currentState = new State(intPut, this.cameraInUse, statePath, this.serials);
+                        currentState = new State(inPut, this.cameraInUse, statePath, this.serials);
                         
                     }
 
