@@ -31,6 +31,26 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -45,8 +65,25 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Thorlabs.MotionControl.DeviceManagerCLI">
+      <HintPath>..\..\References_DLL\KDC101\Thorlabs.MotionControl.DeviceManagerCLI.dll</HintPath>
+    </Reference>
+    <Reference Include="Thorlabs.MotionControl.GenericMotorCLI">
+      <HintPath>..\..\References_DLL\KDC101\Thorlabs.MotionControl.GenericMotorCLI.dll</HintPath>
+    </Reference>
+    <Reference Include="ThorLabs.MotionControl.KCube.DCServoCLI">
+      <HintPath>..\..\References_DLL\KDC101\ThorLabs.MotionControl.KCube.DCServoCLI.dll</HintPath>
+    </Reference>
+    <Reference Include="Thorlabs.MotionControl.Tools.Common">
+      <HintPath>..\..\References_DLL\KDC101\Thorlabs.MotionControl.Tools.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Thorlabs.MotionControl.Tools.Logging">
+      <HintPath>..\..\References_DLL\KDC101\Thorlabs.MotionControl.Tools.Logging.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ASEN_ENV.cs" />
+    <Compile Include="ASEN_MotorControl.cs" />
     <Compile Include="Experiment.cs" />
     <Compile Include="ExperimentDirectory.cs" />
     <Compile Include="ExperimentDialog.cs">
