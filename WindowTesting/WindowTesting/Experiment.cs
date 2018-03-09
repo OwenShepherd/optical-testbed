@@ -35,7 +35,7 @@ namespace ASEN
         {
             // Most of what happens in the class will happen within the constructor, I think
             ASEN.ExperimentDirectory initialDirectory = new ASEN.ExperimentDirectory(experimentPath);
-
+            string statePath = "";
             int csvCount = 0;
 
             using (StreamReader sr = new StreamReader(csvPath))
@@ -52,10 +52,10 @@ namespace ASEN
                         int[] intPut = Array.ConvertAll(valInput, int.Parse);
 
                         // Adding a new state to the directory
-                        initialDirectory.CreateNewState();
+                        statePath = initialDirectory.CreateNewState();
 
                         // calling the state constructor
-                        currentState = new State(intPut, this.cameraInUse, this.experimentPath, this.serials);
+                        currentState = new State(intPut, this.cameraInUse, statePath, this.serials);
                         
                     }
 

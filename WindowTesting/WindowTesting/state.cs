@@ -14,13 +14,14 @@ namespace ASEN
         public int RCWS_DAFT; // RCWS Aftward defocus distance [micro-meters]
         public int MA_X; // Mirror 2 x-displacement [arc-seconds]
         public int MA_Y; // Mirror 2 y-displacement [arc-seconds]
+        public string path; // Path of the state root folder
         public string cameraInUse;
         private string rootPath;
         private string[] serials;
         public int velocity;
 
 
-        public State(int[] parameters, string selectedCamera, string parentPath, string[] serials)
+        public State(int[] parameters, string selectedCamera, string statePath, string[] serials)
         {
             // Collecting the state parameters from the input array
             RCWS_EXPT = parameters[0];
@@ -32,6 +33,7 @@ namespace ASEN
             cameraInUse = selectedCamera;
             this.serials = serials;
             this.velocity = 3200; // Velocity units are unknown / stupid...
+            this.path = statePath;
         }
 
         public void RunState()
@@ -64,6 +66,17 @@ namespace ASEN
             */
 
             /*
+            // ASEN_Environmental
+            ASEN_ENV teensy = new ASEN_ENV("COM3", path);
+            teensy.PrepRead();
+            teensy.BeginTeensyRead();
+            */
+
+
+
+
+
+            /*
             // ASEN_RCWS Capturing an Image
             ASEN_RCWS currentRCWS = new ASEN_RCWS(cameraInUse);
             currentRCWS.InitializeCamera();
@@ -85,7 +98,13 @@ namespace ASEN
             RCWSImageAFT = currentRCWS.Capture(RCWS_EXPT,false);
             // currentRCWS.saveImage();
             */
-            // ASEN_Environmental
+            
+            /*
+            // Turning off the teensy read
+            teensy.EndRead();
+            */
+
+
         }
 
         // Guessing that I would want to pass some file paths in here

@@ -13,6 +13,8 @@ namespace ASEN
         private bool READ;
         private FileStream saveFile;
         private SerialPort teensy;
+        private byte[] readData;
+        public string path;
 
         // Let's think of some things that we want...
         // Should be a relatively simple class
@@ -22,10 +24,13 @@ namespace ASEN
             this.teensy = new SerialPort(COMport,baud);
 
             // Appned the correct env csv path to the directory
-            string path = directory + "\\env_data.csv";
+            this.path = directory + "\\env_data.csv";
 
             // Open the file and set the handle
             this.saveFile = File.Open(path, FileMode.Open);
+
+            // Write buffer
+            
         }
 
         // I need to set read separately from everything else for parallelization
@@ -42,12 +47,15 @@ namespace ASEN
         
         public void BeginTeensyRead()
         {
+            int dataCount = 0;
+
             while (READ)
             {
-                char theByte = (char)teensy.ReadByte();
-                string theChar = theByte.ToString();
-                saveFile.Write(theChar);
-            }   
+                readData[dataCount] = (byte)teensy.ReadByte();
+                dataCount++;
+            }
+
+            File.WriteAllBytes(path, readData);
         }
     }
 }
