@@ -29,15 +29,13 @@ namespace ASEN
             Console.Write("Serial No.: ");
             serialNo = Console.ReadLine();
             Console.Write("\n");
-            Console.Write("Position: ");
-            position = Int32.Parse(Console.ReadLine());
             Console.Write("\n");
             Console.Write("Velocity: ");
             velocity = Int32.Parse(Console.ReadLine());
             Console.Write("\n");
         }
 
-        public void initializeMotor()
+        public void InitializeMotor()
         {
             try
             {

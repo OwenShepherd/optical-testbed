@@ -31,18 +31,54 @@ namespace ASEN
         public void RunState()
         {
             // Here's where we call the other methods
-            /*
-                ASEN_RCWS currentRCWS = new ASEN_RCWS(cameraInUse);
-                currentRCWS.InitializeCamera();
 
-                // Here we save the image
-                int[,] RCWSImage = new int[currentRCWS.width,currentRCWS.height];
-
-                RCWSImage = currentRCWS.Capture(RCWS_EXPT,false);
-                // currentRCWS.saveImage(); // Not implemented yet
-            */
             // ASEN_SHA
-            // ASEN_MotorControl
+
+
+            /*
+            // ASEN_MotorControl Set Up
+            ASEN_MotorControl motor1 = new ASEN_MotorControl();
+            ASEN_MotorControl motor2 = new ASEN_MotorControl();
+            ASEN_MotorControl motor3 = new ASEN_MotorControl();
+
+            // Initializing each motor one-by-one
+            motor1.InitializeMotor();
+            motor2.InitializeMotor();
+            motor3.InitializeMotor();
+
+            // Homing the motors first
+            motor1.HomeMotor();
+            motor2.HomeMotor();
+            motor3.HomeMotor();
+
+            // Now we move to whatever positon we desire
+            motor1.MoveMotor(RCWS_DFORE);
+            motor2.MoveMotor(MA_X);
+            motor3.MoveMotor(MA_Y);
+            */
+
+            /*
+            // ASEN_RCWS Capturing an Image
+            ASEN_RCWS currentRCWS = new ASEN_RCWS(cameraInUse);
+            currentRCWS.InitializeCamera();
+
+            // Here we save the image
+            int[,] RCWSImageFORE = new int[currentRCWS.width,currentRCWS.height];
+
+            RCWSImage = currentRCWS.Capture(RCWS_EXPT,false);
+            // currentRCWS.saveImage(); // Not implemented yet
+            */
+
+            /*
+            // Moving the RCWS to the aft defocus distance
+            motor1.MoveMotor(RCWS_DAFT);
+
+            // Taking the image again
+            int[,] RCWSImageAFT = new int[currentRCWS.width, currentRCWS.height];
+
+            RCWSImageAFT = currentRCWS.Capture(RCWS_EXPT,false);
+            // currentRCWS.saveImage();
+            */
             // ASEN_Environmental
         }
 

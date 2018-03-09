@@ -13,12 +13,22 @@ namespace ASEN
         public string experimentPath; // Path to the experiment top-level directory
         private State currentState; // The current state
         private string cameraInUse; // The string for the driver of whichever camera (ASI vs. QHY) is being used
+        private string serialNo1;
+        private string serialNo2;
+        private string serialNo3;
+        private string[] serials;
 
         public Experiment(string schedulerPath, string experimentPath, string selectedCamera)
         {
             this.csvPath = schedulerPath;
             this.experimentPath = experimentPath;
             this.cameraInUse = selectedCamera;
+            this.serialNo1 = "000000"; // Set to "motor 1" serial number
+            this.serialNo2 = "000000"; // Set to "motor 2" serial number
+            this.serialNo3 = "000000"; // Set to "motor 3" serial number
+            serials[0] = serialNo1;
+            serials[1] = serialNo2;
+            serials[2] = serialNo3;
         }
 
         public void StartExperiment()
@@ -46,8 +56,6 @@ namespace ASEN
 
                         // calling the state constructor
                         currentState = new State(intPut, this.cameraInUse);
-
-
                         
                     }
 
