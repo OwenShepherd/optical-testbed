@@ -45,6 +45,8 @@ namespace ASEN
             while (READ)
             {
                 char theByte = (char)teensy.ReadByte();
+                string theChar = theByte.ToString();
+                saveFile.Write(theChar);
             }   
         }
     }
