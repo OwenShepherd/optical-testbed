@@ -17,7 +17,7 @@ namespace ASEN
         private string serialNo2;
         private string serialNo3;
         private string[] serials;
-
+        
         public Experiment(string schedulerPath, string experimentPath, string selectedCamera)
         {
             this.csvPath = schedulerPath;
@@ -55,7 +55,7 @@ namespace ASEN
                         initialDirectory.CreateNewState();
 
                         // calling the state constructor
-                        currentState = new State(intPut, this.cameraInUse);
+                        currentState = new State(intPut, this.cameraInUse, this.experimentPath, this.serials);
                         
                     }
 

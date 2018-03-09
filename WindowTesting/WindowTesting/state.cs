@@ -15,8 +15,12 @@ namespace ASEN
         public int MA_X; // Mirror 2 x-displacement [arc-seconds]
         public int MA_Y; // Mirror 2 y-displacement [arc-seconds]
         public string cameraInUse;
+        private string rootPath;
+        private string[] serials;
+        public int velocity;
 
-        public State(int[] parameters, string selectedCamera)
+
+        public State(int[] parameters, string selectedCamera, string parentPath, string[] serials)
         {
             // Collecting the state parameters from the input array
             RCWS_EXPT = parameters[0];
@@ -26,6 +30,8 @@ namespace ASEN
             MA_X = parameters[4];
             MA_Y = parameters[5];
             cameraInUse = selectedCamera;
+            this.serials = serials;
+            this.velocity = 3200; // Velocity units are unknown / stupid...
         }
 
         public void RunState()
@@ -37,9 +43,9 @@ namespace ASEN
 
             /*
             // ASEN_MotorControl Set Up
-            ASEN_MotorControl motor1 = new ASEN_MotorControl();
-            ASEN_MotorControl motor2 = new ASEN_MotorControl();
-            ASEN_MotorControl motor3 = new ASEN_MotorControl();
+            ASEN_MotorControl motor1 = new ASEN_MotorControl(serials[0], this.velocity);
+            ASEN_MotorControl motor2 = new ASEN_MotorControl(serials[1], this.velocity);
+            ASEN_MotorControl motor3 = new ASEN_MotorControl(serials[2], this.velocity);
 
             // Initializing each motor one-by-one
             motor1.InitializeMotor();
