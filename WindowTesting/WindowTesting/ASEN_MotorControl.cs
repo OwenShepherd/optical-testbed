@@ -17,6 +17,10 @@ namespace ASEN
         public string serialNo;
         public string position;
         public string velocity;
+        private MotorConfigurations motorSettings;
+        private KCubeDCServo currentMotor;
+
+
 
 
 
@@ -32,14 +36,10 @@ namespace ASEN
             Console.Write("Velocity: ");
             velocity = Console.ReadLine();
             Console.Write("\n");
-
         }
 
-
-        static void Main(string[] args)
+        public void initializeMotor()
         {
-
-            
             try
             {
                 // Tell the device manager to get the list of all devices connected to the computer
@@ -55,79 +55,103 @@ namespace ASEN
 
             // get available KCube DC Servos and check our serial number is correct
             List<string> serialNumbers = DeviceManagerCLI.GetDeviceList(KCubeDCServo.DevicePrefix);
-            if (!serialNumbers.Contains(serialNo))
+            if (!serialNumbers.Contains(this.serialNo))
             {
                 // the requested serial number is not a KDC101 or is not connected
-                Console.WriteLine("{0} is not a valid serial number", serialNo);
+                Console.WriteLine("{0} is not a valid serial number", this.serialNo);
                 Console.ReadKey();
                 return;
             }
 
+            // Have to create the motor device based on the serial number (assuming the serial number is accurate)
+            this.CreateDevice();
+
+            // Have to open a connection to the device to begin using it
+            this.OpenConnection();
+
+            // Collect the motor settings to display some information
+            this.CreateConfigs();
+        }
+
+        private void CreateDevice()
+        {
             // create the device
-            KCubeDCServo device = KCubeDCServo.CreateKCubeDCServo(serialNo);
+            this.currentMotor = KCubeDCServo.CreateKCubeDCServo(this.serialNo);
             if (device == null)
             {
                 // an error occured
-                Console.WriteLine("{0} is not a KCubeDCServo", serialNo);
+                Console.WriteLine("{0} is not a KCubeDCServo", this.serialNo);
                 Console.ReadKey();
                 return;
             }
+        }
 
+        private void OpenConnection()
+        {
             // open a connection to the device.
             try
             {
-                Console.WriteLine("Opening device {0}", serialNo);
-                device.Connect(serialNo);
+                Console.WriteLine("Opening device {0}", this.serialNo);
+                this.CurrentMotor.Connect(this.serialNo);
             }
             catch (Exception)
             {
                 // connection failed
-                Console.WriteLine("Failed to open device {0}", serialNo);
+                Console.WriteLine("Failed to open device {0}", this.serialNo);
                 Console.ReadKey();
                 return;
             }
 
             // wait for the device settings to initialize
-            if (!device.IsSettingsInitialized())
+            if (!CurrentMotor.IsSettingsInitialized())
             {
                 try
                 {
-                    device.WaitForSettingsInitialized(5000);
+                    CurrentMotor.WaitForSettingsInitialized(5000);
                 }
                 catch (Exception)
                 {
                     Console.WriteLine("Settings failed to initialize");
                 }
             }
+        }
 
+        private void CreateConfigs()
+        {
             // start the device polling.
             // Polling requests a status update every specified number of milliseconds.
-            device.StartPolling(250);
+            this.currentMotor.StartPolling(250);
 
             // needs a delay so that the current enabled state can be obtained
             // ????
             Thread.Sleep(500);
 
             // enable the channel otherwise any move is ignored 
-            device.EnableDevice();
+            this.currentMotor.EnableDevice();
 
             // needs a delay to give time for the device to be enabled
             Thread.Sleep(500);
 
             // call GetMotorConfiguration on the device to initialize the DeviceUnitConverter object required for real world unit parameters
             // Sets up proper unit conversion for the correct device.  Only call this function ONCE
-            MotorConfiguration motorSettings = device.LoadMotorConfiguration(serialNo);
+            this.motorSettings = device.LoadMotorConfiguration(this.serialNo);
 
             // Simply retrieves the "motor device settings"
-            KCubeDCMotorSettings currentDeviceSettings = device.MotorDeviceSettings as KCubeDCMotorSettings;
+            KCubeDCMotorSettings currentDeviceSettings = this.currentMotor.MotorDeviceSettings as KCubeDCMotorSettings;
 
             // display info about device
 
             // Retrieves a device info block
             DeviceInfo deviceInfo = device.GetDeviceInfo();
-
             Console.WriteLine("Device {0} = {1}", deviceInfo.SerialNumber, deviceInfo.Name);
 
+        }
+
+
+        static void Main(string[] args)
+        {
+            
+            
             Home_Method1(device);
             // or 
             //Home_Method2(device);
@@ -170,6 +194,12 @@ namespace ASEN
             //Console.ReadKey();
         }
 
+
+
+
+
+
+        // ------------------------------ Helper Functions ---------------------------------------------------------
         // Simply sets the motor to its "home" position
         public static void Home_Method1(IGenericAdvancedMotor device)
         {
