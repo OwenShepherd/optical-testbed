@@ -17,7 +17,7 @@ namespace ASEN
         private string serialNo2;
         private string serialNo3;
         private string[] serials;
-
+        
         public Experiment(string schedulerPath, string experimentPath, string selectedCamera)
         {
             this.csvPath = schedulerPath;
@@ -35,7 +35,7 @@ namespace ASEN
         {
             // Most of what happens in the class will happen within the constructor, I think
             ASEN.ExperimentDirectory initialDirectory = new ASEN.ExperimentDirectory(experimentPath);
-
+            string statePath = "";
             int csvCount = 0;
 
             using (StreamReader sr = new StreamReader(csvPath))
@@ -49,13 +49,13 @@ namespace ASEN
                     {
                         // Parsing data from the string
                         string[] valInput = currentLine.Split(',');
-                        int[] intPut = Array.ConvertAll(valInput, int.Parse);
+                        double[] inPut = Array.ConvertAll(valInput, double.Parse);
 
                         // Adding a new state to the directory
-                        initialDirectory.CreateNewState();
+                        statePath = initialDirectory.CreateNewState();
 
                         // calling the state constructor
-                        currentState = new State(intPut, this.cameraInUse);
+                        currentState = new State(inPut, this.cameraInUse, statePath, this.serials);
                         
                     }
 

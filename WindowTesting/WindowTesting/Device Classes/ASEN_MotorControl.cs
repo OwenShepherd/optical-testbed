@@ -23,16 +23,11 @@ namespace ASEN
 
 
 
-        public ASEN_MotorControl()
+        public ASEN_MotorControl(string serial, int velocity)
         {
-            Console.WriteLine("Usage = KDC_Console_net_managed [serial_no] [position: optional (0 - 50)] [velocity: optional (0 - 5)]");
-            Console.Write("Serial No.: ");
-            serialNo = Console.ReadLine();
-            Console.Write("\n");
-            Console.Write("\n");
-            Console.Write("Velocity: ");
-            velocity = Int32.Parse(Console.ReadLine());
-            Console.Write("\n");
+            this.position = 0;
+            this.velocity = velocity;
+            this.serialNo = serial;
         }
 
         public void InitializeMotor()
