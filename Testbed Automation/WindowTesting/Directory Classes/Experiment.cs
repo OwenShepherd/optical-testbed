@@ -9,6 +9,7 @@ namespace ASEN
 {
     class Experiment
     {
+        public const int numData = 6;
         public string csvPath; // Path to the CSV scheduler
         public string experimentPath; // Path to the experiment top-level directory
         private State currentState; // The current state
@@ -17,7 +18,14 @@ namespace ASEN
         private string serialNo2;
         private string serialNo3;
         private string[] serials;
-        
+     
+        private struct StateOrganizer
+        {
+            public int originalState;
+            public int newState;
+        }
+
+
         public Experiment(string schedulerPath, string experimentPath, string selectedCamera)
         {
             this.csvPath = schedulerPath;
@@ -30,6 +38,26 @@ namespace ASEN
             serials[1] = serialNo2;
             serials[2] = serialNo3;
         }
+
+        private void ExperimentReader()
+        {
+            // Read the entire file at once
+            string[] allLines = File.ReadAllLines(this.csvPath);
+            string[] valInput = new string[numData];
+            double[] inputLine = new double[numData];
+            
+
+            // Let's start collecting data on which states are the same
+            // We're going to make a new array
+            for (int i = 1; i < allLines.Length; i++)
+            {
+                valInput = allLines[i].Split(',');
+                inputLine = Array.ConvertAll(valInput, double.Parse);
+            }
+
+
+        }
+
 
         public void StartExperiment()
         {

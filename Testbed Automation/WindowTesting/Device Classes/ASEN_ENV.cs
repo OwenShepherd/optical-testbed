@@ -45,17 +45,15 @@ namespace ASEN
         }
 
         
-        public void BeginTeensyRead()
+        public void BeginTeensyRead(ref int dataCount)
         {
-            int dataCount = 0;
 
-            while (READ)
-            {
-                readData[dataCount] = (byte)teensy.ReadByte();
-                dataCount++;
-            }
+            readData[dataCount] = (byte)teensy.ReadByte();
+            dataCount++;
 
             File.WriteAllBytes(path, readData);
+
+            //return dataCount;
         }
     }
 }

@@ -11,10 +11,10 @@ namespace ASEN
     {
         public double RCWS_EXPT; // Exposure time for the RCWS [microseconds]
         public double SHA_EXPT; // Exposure time for the SHA [microseconds]
-        public double RCWS_DFORE; // RCWS Foreward defocus distance [micro-meters] 
-        public double RCWS_DAFT; // RCWS Aftward defocus distance [micro-meters]
-        public double MA_X; // Mirror 2 x-displacement [arc-seconds]
-        public double MA_Y; // Mirror 2 y-displacement [arc-seconds]
+        public decimal RCWS_DFORE; // RCWS Foreward defocus distance [micro-meters] 
+        public decimal RCWS_DAFT; // RCWS Aftward defocus distance [micro-meters]
+        public decimal MA_X; // Mirror 2 x-displacement [arc-seconds]
+        public decimal MA_Y; // Mirror 2 y-displacement [arc-seconds]
         public string path; // Path of the state root folder
         public string cameraInUse;
         private string rootPath;
@@ -23,6 +23,8 @@ namespace ASEN
         private ASEN_ENV teensy; // The object that controls interactions with the teensy
         private ASEN_RCWS currentRCWS;
         private ASEN_MotorControl motor1;
+        private object teensyLock;
+        private bool READ;
         public int velocity;
 
 
@@ -31,14 +33,15 @@ namespace ASEN
             // Collecting the state parameters from the input array
             RCWS_EXPT = parameters[0];
             SHA_EXPT = parameters[1];
-            RCWS_DFORE = parameters[2];
-            RCWS_DAFT = parameters[3];
-            MA_X = parameters[4];
-            MA_Y = parameters[5];
+            RCWS_DFORE = (decimal)parameters[2];
+            RCWS_DAFT = (decimal)parameters[3];
+            MA_X = (decimal)parameters[4];
+            MA_Y = (decimal)parameters[5];
             cameraInUse = selectedCamera;
             this.serials = serials;
             this.velocity = 3200; // Velocity units are unknown / stupid...
             this.path = statePath;
+            this.teensyLock = new object();
         }
 
         public void RunState()
@@ -85,20 +88,24 @@ namespace ASEN
             
             // ASEN_Environmental
             this.teensy = new ASEN_ENV("COM3", path);
-            teensy.PrepRead();
+            this.READ = true;
             
 
             
-            Task teensyRead = Task.Factory.StartNew(() => TeensyParallel());
+            Task teensyRead = Task.Factory.StartNew(() => TeensyParallel(ref this.teensyLock));
             Task imageRead = Task.Factory.StartNew(() => ImagingParallel());
 
-            Task.WaitAll(teensyRead, imageRead);
+            Task.WaitAll(imageRead);
 
+            // After the image is done reading, we have to set READ to false.
+            // Note that we have to block access to this variable as it is also shared by teensy read
+            lock (this.teensyLock)
+            {
+                this.READ = false;
+            }
 
-            
-            
-            // Turning off the teensy read
-            teensy.EndRead();
+            Task.WaitAll(teensyRead);
+
             currentRCWS.Disconnect();
             currentSHA.CloseCamera();
             
@@ -113,9 +120,30 @@ namespace ASEN
         }
 
         // ------------------ Functions for Parallel Threads -----------------------------
-        private void TeensyParallel()
+        private void TeensyParallel(ref object teensyLock)
         {
-            teensy.BeginTeensyRead();
+
+            int dataCount = 0;
+            bool localREAD;
+
+            // Storing a local variable so that we only have to lock during the updating of the bool
+            lock (teensyLock)
+            {
+                localREAD = this.READ;
+            }
+
+            while (localREAD)
+            {
+
+                teensy.BeginTeensyRead(ref dataCount);
+
+                // Locking to see if the image read has completed
+                lock (teensyLock)
+                {
+                    localREAD = this.READ;
+                }
+
+            }
         }
 
         private void ImagingParallel()
