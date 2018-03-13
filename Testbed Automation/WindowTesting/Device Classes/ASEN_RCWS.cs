@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using ASCOM.DriverAccess;
-using Thorlabs.WFS.Interop;
-using Thorlabs.WFS.Interop64;
 
 
 namespace ASEN

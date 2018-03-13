@@ -17,6 +17,7 @@ namespace ASEN
         private string serialNo1;
         private string serialNo2;
         private string serialNo3;
+        private string COMPort;
         private string[] serials;
      
         private struct StateOrganizer
@@ -26,7 +27,7 @@ namespace ASEN
         }
 
 
-        public Experiment(string schedulerPath, string experimentPath, string selectedCamera)
+        public Experiment(string schedulerPath, string experimentPath, string selectedCamera, string teensyPort)
         {
             this.csvPath = schedulerPath;
             this.experimentPath = experimentPath;
@@ -34,6 +35,7 @@ namespace ASEN
             this.serialNo1 = "000000"; // Set to "motor 1" serial number
             this.serialNo2 = "000000"; // Set to "motor 2" serial number
             this.serialNo3 = "000000"; // Set to "motor 3" serial number
+            this.COMPort = teensyPort;
             serials[0] = serialNo1;
             serials[1] = serialNo2;
             serials[2] = serialNo3;
@@ -83,7 +85,7 @@ namespace ASEN
                         statePath = initialDirectory.CreateNewState();
 
                         // calling the state constructor
-                        currentState = new State(inPut, this.cameraInUse, statePath, this.serials);
+                        currentState = new State(inPut, this.cameraInUse, statePath, this.serials, this.COMPort);
                         
                     }
 

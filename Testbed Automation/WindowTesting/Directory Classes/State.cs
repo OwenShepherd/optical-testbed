@@ -26,9 +26,10 @@ namespace ASEN
         private object teensyLock;
         private bool READ;
         public int velocity;
+        private string teensyPort;
 
 
-        public State(double[] parameters, string selectedCamera, string statePath, string[] serials)
+        public State(double[] parameters, string selectedCamera, string statePath, string[] serials, string COMPort)
         {
             // Collecting the state parameters from the input array
             RCWS_EXPT = parameters[0];
@@ -42,6 +43,7 @@ namespace ASEN
             this.velocity = 3200; // Velocity units are unknown / stupid...
             this.path = statePath;
             this.teensyLock = new object();
+            this.teensyPort = COMPort;
         }
 
         public void RunState()
@@ -87,7 +89,7 @@ namespace ASEN
 
             
             // ASEN_Environmental
-            this.teensy = new ASEN_ENV("COM3", path);
+            this.teensy = new ASEN_ENV(this.teensyPort, path);
             this.READ = true;
             
 

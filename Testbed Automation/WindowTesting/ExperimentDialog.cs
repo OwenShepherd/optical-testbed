@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Ports;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,7 +24,8 @@ namespace ASEN
         private static string QHY = "ASCOM.QHYCCD.Camera";
         private static string ASI = "ASCOM.ASICamera2.Camera";
         private Experiment currentExperiment;
-        
+        string[] availablePorts;
+
         public ExperimentDialog()
         {
             InitializeComponent();
@@ -31,6 +33,16 @@ namespace ASEN
             ScheduleDirectory.Text = "Not Selected";
             CameraSelection.Items.Add("ASI");
             CameraSelection.Items.Add("QHY");
+
+            // Get Port names
+            this.availablePorts = SerialPort.GetPortNames();
+            // Add port names to the selection window
+            for (int i = 0; i < availablePorts.Length; i++)
+            {
+                teensySelection.Items.Add(availablePorts[i]);
+            }
+
+
             isSelected = false;
         }
 
@@ -119,6 +131,8 @@ namespace ASEN
             if (ISASI) { selectedCamera = ASI; }
             else { selectedCamera = QHY; }
 
+            string teensyPort = teensySelection.Text;
+
             // Getting the path that the user had selected
             string userPath = this.getSelectedPath();
             string experimentName = this.getExperimentName();
@@ -127,7 +141,7 @@ namespace ASEN
             string experimentPath = userPath + "\\" + experimentName;
 
             // Creating our new experiment
-            currentExperiment = new Experiment(schedulePath, experimentPath,selectedCamera);
+            currentExperiment = new Experiment(schedulePath, experimentPath,selectedCamera,teensyPort);
             currentExperiment.StartExperiment();
 
             
