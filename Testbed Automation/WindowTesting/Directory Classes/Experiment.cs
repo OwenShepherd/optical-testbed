@@ -29,16 +29,17 @@ namespace ASEN
 
         public Experiment(string schedulerPath, string experimentPath, string selectedCamera, string teensyPort)
         {
+            this.serials = new string[3];
             this.csvPath = schedulerPath;
             this.experimentPath = experimentPath;
             this.cameraInUse = selectedCamera;
-            this.serialNo1 = "000000"; // Set to "motor 1" serial number
-            this.serialNo2 = "000000"; // Set to "motor 2" serial number
-            this.serialNo3 = "000000"; // Set to "motor 3" serial number
+            this.serialNo1 = "27501994"; // Set to "motor 1" serial number
+            this.serialNo2 = "27002310"; // Set to "motor 2" serial number
+            this.serialNo3 = "27002528"; // Set to "motor 3" serial number
             this.COMPort = teensyPort;
-            serials[0] = serialNo1;
-            serials[1] = serialNo2;
-            serials[2] = serialNo3;
+            this.serials[0] = this.serialNo1;
+            this.serials[1] = this.serialNo2;
+            this.serials[2] = this.serialNo3;
         }
 
         private void ExperimentReader()
@@ -86,6 +87,7 @@ namespace ASEN
 
                         // calling the state constructor
                         currentState = new State(inPut, this.cameraInUse, statePath, this.serials, this.COMPort);
+                        currentState.RunState();
                         
                     }
 

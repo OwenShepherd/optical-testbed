@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
+
+
 namespace ASEN
 {
     class State
@@ -81,20 +83,20 @@ namespace ASEN
             currentRCWS.InitializeCamera();
             
 
-            
+            /*
             // ASEN_SHA Initializing Device
             this.currentSHA = new ASEN_SHA();
             currentSHA.CameraConnectionAndSetup();
-            
+            */
 
             
             // ASEN_Environmental
-            this.teensy = new ASEN_ENV(this.teensyPort, path);
+            //this.teensy = new ASEN_ENV(this.teensyPort, path);
             this.READ = true;
             
 
             
-            Task teensyRead = Task.Factory.StartNew(() => TeensyParallel(ref this.teensyLock));
+            //Task teensyRead = Task.Factory.StartNew(() => TeensyParallel(ref this.teensyLock));
             Task imageRead = Task.Factory.StartNew(() => ImagingParallel());
 
             Task.WaitAll(imageRead);
@@ -106,10 +108,10 @@ namespace ASEN
                 this.READ = false;
             }
 
-            Task.WaitAll(teensyRead);
-
+            //Task.WaitAll(teensyRead);
+            
             currentRCWS.Disconnect();
-            currentSHA.CloseCamera();
+            //currentSHA.CloseCamera();
             
 
 
@@ -158,8 +160,8 @@ namespace ASEN
             // currentRCWS.saveImage(); // Not implemented yet
 
             // Here we save the image from the SHA
-            byte[] byteData = currentSHA.GatherCameraData(SHA_EXPT);
-            float[] zerinkes = currentSHA.ProcessCameraData();
+            //byte[] byteData = currentSHA.GatherCameraData(SHA_EXPT);
+            //float[] zerinkes = currentSHA.ProcessCameraData();
             
 
             
@@ -173,8 +175,8 @@ namespace ASEN
             // currentRCWS.saveImage();
 
             // Here we save the image from the SHA
-            byteData = currentSHA.GatherCameraData(SHA_EXPT);
-            zerinkes = currentSHA.ProcessCameraData();
+            //byteData = currentSHA.GatherCameraData(SHA_EXPT);
+            //zerinkes = currentSHA.ProcessCameraData();
             
         }
 
