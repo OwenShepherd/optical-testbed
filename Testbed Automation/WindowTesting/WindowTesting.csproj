@@ -100,7 +100,7 @@
     <Compile Include="Device Classes\ASEN_SHA.cs" />
     <Compile Include="Directory Classes\Experiment.cs" />
     <Compile Include="Directory Classes\ExperimentDirectory.cs" />
-    <Compile Include="Directory Classes\State.cs" />
+    <Compile Include="Directory Classes\state.cs" />
     <Compile Include="ExperimentDialog.cs">
       <SubType>Form</SubType>
     </Compile>

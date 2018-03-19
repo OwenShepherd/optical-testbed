@@ -65,6 +65,16 @@ namespace ASEN
             this.CreateConfigs();
         }
 
+        private Thorlabs.MotionControl.GenericMotorCLI.Settings.MotorConfiguration getConfig()
+        {
+
+            Thorlabs.MotionControl.GenericMotorCLI.Settings.MotorConfiguration currConfig = currentMotor.GetMotorConfiguration(this.serialNo, Thorlabs.MotionControl.DeviceManagerCLI.DeviceConfiguration.DeviceSettingsUseOptionType.UseDeviceSettings);
+            DeviceSettings dSettings;
+            currentMotor.GetSettings(dSettings);
+
+
+        }
+
         private void CreateDevice()
         {
             // create the device

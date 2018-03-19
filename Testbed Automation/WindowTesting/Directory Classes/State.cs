@@ -55,48 +55,60 @@ namespace ASEN
             // ASEN_SHA
 
 
-            
+
             // ASEN_MotorControl Set Up
             this.motor1 = new ASEN_MotorControl(serials[0], this.velocity);
-            ASEN_MotorControl motor2 = new ASEN_MotorControl(serials[1], this.velocity);
-            ASEN_MotorControl motor3 = new ASEN_MotorControl(serials[2], this.velocity);
+            //ASEN_MotorControl motor2 = new ASEN_MotorControl(serials[1], this.velocity);
+            //ASEN_MotorControl motor3 = new ASEN_MotorControl(serials[2], this.velocity);
+
+            Dictionary<string, string> SettingValues = new Dictionary<string, string>();
+
+
+
+
+            Thorlabs.MotionControl.GenericMotorCLI.Settings.MotorConfiguration motorConfig = new Thorlabs.MotionControl.GenericMotorCLI.Settings.MotorConfiguration(serials[0]);
+
+            motorConfig = motor1.GetMotorConfiguration(serials[0], 1);
+
+
+
 
             // Initializing each motor one-by-one
             motor1.InitializeMotor();
-            motor2.InitializeMotor();
-            motor3.InitializeMotor();
+            //motor2.InitializeMotor();
+            //motor3.InitializeMotor();
 
             // Homing the motors first
             motor1.HomeMotor();
-            motor2.HomeMotor();
-            motor3.HomeMotor();
+            //motor2.HomeMotor();
+            //motor3.HomeMotor();
 
             // Now we move to whatever positon we desire
             motor1.MoveMotor(RCWS_DFORE);
-            motor2.MoveMotor(MA_X);
-            motor3.MoveMotor(MA_Y);
-            
+            //motor2.MoveMotor(MA_X);
+            //motor3.MoveMotor(MA_Y);
 
-            
+
+
             // ASEN_RCWS Initializing Camera
             this.currentRCWS = new ASEN_RCWS(cameraInUse);
             currentRCWS.InitializeCamera();
-            
+
 
             /*
             // ASEN_SHA Initializing Device
             this.currentSHA = new ASEN_SHA();
             currentSHA.CameraConnectionAndSetup();
-            */
+            
 
             
             // ASEN_Environmental
-            //this.teensy = new ASEN_ENV(this.teensyPort, path);
+            this.teensy = new ASEN_ENV(this.teensyPort, path);
             this.READ = true;
             
 
             
-            //Task teensyRead = Task.Factory.StartNew(() => TeensyParallel(ref this.teensyLock));
+            Task teensyRead = Task.Factory.StartNew(() => TeensyParallel(ref this.teensyLock));
             Task imageRead = Task.Factory.StartNew(() => ImagingParallel());
 
             Task.WaitAll(imageRead);
@@ -108,11 +120,11 @@ namespace ASEN
                 this.READ = false;
             }
 
-            //Task.WaitAll(teensyRead);
+            Task.WaitAll(teensyRead);
             
             currentRCWS.Disconnect();
             //currentSHA.CloseCamera();
-            
+            */
 
 
         }
@@ -152,32 +164,32 @@ namespace ASEN
 
         private void ImagingParallel()
         {
-            
-            // Here we save the image from the RCWS
-            int[,] RCWSImageFORE = new int[currentRCWS.width,currentRCWS.height];
 
-            RCWSImageFORE = currentRCWS.Capture(RCWS_EXPT,false);
+            // Here we save the image from the RCWS
+            int[,] RCWSImageFORE = new int[currentRCWS.width, currentRCWS.height];
+
+            RCWSImageFORE = currentRCWS.Capture(RCWS_EXPT, false);
             // currentRCWS.saveImage(); // Not implemented yet
 
             // Here we save the image from the SHA
             //byte[] byteData = currentSHA.GatherCameraData(SHA_EXPT);
             //float[] zerinkes = currentSHA.ProcessCameraData();
-            
 
-            
+
+
             // Moving the RCWS to the aft defocus distance
             motor1.MoveMotor(RCWS_DAFT);
 
             // Taking the image again
             int[,] RCWSImageAFT = new int[currentRCWS.width, currentRCWS.height];
 
-            RCWSImageAFT = currentRCWS.Capture(RCWS_EXPT,false);
+            RCWSImageAFT = currentRCWS.Capture(RCWS_EXPT, false);
             // currentRCWS.saveImage();
 
             // Here we save the image from the SHA
             //byteData = currentSHA.GatherCameraData(SHA_EXPT);
             //zerinkes = currentSHA.ProcessCameraData();
-            
+
         }
 
 

@@ -144,7 +144,7 @@ namespace ASEN
             currentExperiment = new Experiment(schedulePath, experimentPath,selectedCamera,teensyPort);
             currentExperiment.StartExperiment();
 
-            
+            this.Close();
         }
 
         private void CameraSelection_SelectedIndexChanged(object sender, EventArgs e)
