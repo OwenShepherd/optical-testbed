@@ -61,18 +61,6 @@ namespace ASEN
             //ASEN_MotorControl motor2 = new ASEN_MotorControl(serials[1], this.velocity);
             //ASEN_MotorControl motor3 = new ASEN_MotorControl(serials[2], this.velocity);
 
-            Dictionary<string, string> SettingValues = new Dictionary<string, string>();
-
-
-
-
-            Thorlabs.MotionControl.GenericMotorCLI.Settings.MotorConfiguration motorConfig = new Thorlabs.MotionControl.GenericMotorCLI.Settings.MotorConfiguration(serials[0]);
-
-            motorConfig = motor1.GetMotorConfiguration(serials[0], 1);
-
-
-
-
             // Initializing each motor one-by-one
             motor1.InitializeMotor();
             //motor2.InitializeMotor();

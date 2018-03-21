@@ -30,6 +30,20 @@ namespace ASEN
             this.serialNo = serial;
         }
 
+        private int MicrosToDeviceUnits(double positionMicros)
+        {
+            int dUnits; // The position in device units for the Z825B / Z812B
+
+            // One device unit corresponds to 30nm or 0.03um
+            // So here we just want a simple division operation
+            double positionTemp = positionMicros / 0.03;
+
+            dUnits = (int)positionTemp;
+
+            return dUnits;
+
+        }
+
         public void InitializeMotor()
         {
             try
@@ -64,17 +78,7 @@ namespace ASEN
             // Collect the motor settings to display some information
             this.CreateConfigs();
         }
-
-        private Thorlabs.MotionControl.GenericMotorCLI.Settings.MotorConfiguration getConfig()
-        {
-
-            Thorlabs.MotionControl.GenericMotorCLI.Settings.MotorConfiguration currConfig = currentMotor.GetMotorConfiguration(this.serialNo, Thorlabs.MotionControl.DeviceManagerCLI.DeviceConfiguration.DeviceSettingsUseOptionType.UseDeviceSettings);
-            DeviceSettings dSettings;
-            currentMotor.GetSettings(dSettings);
-
-
-        }
-
+        
         private void CreateDevice()
         {
             // create the device
@@ -158,7 +162,7 @@ namespace ASEN
 
         }
 
-        private decimal ConvertToDeviceUnits(decimal position)
+        private int ConvertToDeviceUnits(decimal position)
         {
             // Need to extract proper conversion from the device itself
             DeviceUnitConverter currConverter;
@@ -188,12 +192,12 @@ namespace ASEN
 
         public void MoveMotor(decimal position)
         {
-            decimal devicePosition = ConvertToDeviceUnits(position);
+            int devicePosition = ConvertToDeviceUnits(position);
 
             try
             {
                 Console.WriteLine("Moving Device to {0}", position);
-                this.currentMotor.MoveTo(devicePosition, 5000);
+                this.currentMotor.MoveTo_DeviceUnit(devicePosition, 5000);
             }
             catch (Exception)
             {
