@@ -26,16 +26,6 @@ namespace ASEN
 
             // Appned the correct env csv path to the directory
             this.path = directory + "\\env_data.csv";
-            /*
-            // Open the file and set the handle
-            if (!File.Exists(this.path))
-            {
-                this.saveFile = File.Create(path);
-            }
-            else { this.saveFile = File.Open(path, FileMode.Open); }
-            */
-            // Write buffer
-
         }
 
         // I need to set read separately from everything else for parallelization
@@ -49,17 +39,51 @@ namespace ASEN
             this.READ = false;
         }
 
+
+        public void StartListening()
+        {
+            // Subscribe to event and open serial port
+            this.teensy.DataReceived += new SerialDataReceivedEventHandler(Serial_DataReceived);
+            this.teensy.Open();
+        }
+
+        public void StopListening()
+        {
+            this.teensy.Close();
+        }
+
+        void Serial_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            int dataLength = this.teensy.BytesToRead;
+            byte[] data = new byte[dataLength];
+            int nbrDataRead = this.teensy.Read(data, 0, dataLength);
+            if (nbrDataRead == 0)
+                return;
+
+            File.WriteAllBytes(path, data);
+        }
+
+
         
         public void BeginTeensyRead(ref int dataCount)
         {
 
-            readData[0] = (byte)teensy.ReadChar();
-            byte quickBytes = readData[0];
-            //dataCount++;
+            this.teensy.DataReceived += (sender, e) =>
+            {
+                if (e.EventType == SerialData.Chars)
+                {
 
+                }
+            };
             File.WriteAllBytes(path, readData);
 
             //return dataCount;
         }
+
+
+        
+
+
+        
     }
 }
