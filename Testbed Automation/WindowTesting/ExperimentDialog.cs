@@ -20,6 +20,8 @@ namespace ASEN
         private string experimentPath;
         private string schedulePath;
         private string experimentName;
+        private string pythonPath;
+        private string ipythonPath;
         private bool isSelected;
         private static string QHY = "ASCOM.QHYCCD.Camera";
         private static string ASI = "ASCOM.ASICamera2.Camera";
@@ -141,7 +143,7 @@ namespace ASEN
             string experimentPath = userPath + "\\" + experimentName;
 
             // Creating our new experiment
-            currentExperiment = new Experiment(schedulePath, experimentPath,selectedCamera,teensyPort);
+            currentExperiment = new Experiment(schedulePath, experimentPath,selectedCamera,teensyPort,pythonPath,ipythonPath);
             currentExperiment.StartExperiment();
 
             this.Close();
@@ -150,6 +152,46 @@ namespace ASEN
         private void CameraSelection_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PythonEXE_Click(object sender, EventArgs e)
+        {
+            // Opening a dialog for the user to browse for the experiment file
+            Stream myStream = null;
+            OpenFileDialog scheduleDialog = new OpenFileDialog();
+
+            scheduleDialog.InitialDirectory = "c:\\";
+            scheduleDialog.Filter = "EXE files (*.exe)|*.exe|All files (*.*)|*.*";
+            scheduleDialog.FilterIndex = 1;
+            scheduleDialog.RestoreDirectory = true;
+
+            if (scheduleDialog.ShowDialog() == DialogResult.OK)
+            {
+                pythonPath = scheduleDialog.FileName;
+            }
+            
+        }
+
+        private void IPythonEXE_Click(object sender, EventArgs e)
+        {
+            // Opening a dialog for the user to browse for the experiment file
+            Stream myStream = null;
+            OpenFileDialog scheduleDialog = new OpenFileDialog();
+
+            scheduleDialog.InitialDirectory = "c:\\";
+            scheduleDialog.Filter = "EXE files (*.exe)|*.exe|All files (*.*)|*.*";
+            scheduleDialog.FilterIndex = 1;
+            scheduleDialog.RestoreDirectory = true;
+
+            if (scheduleDialog.ShowDialog() == DialogResult.OK)
+            {
+                ipythonPath = scheduleDialog.FileName;
+            }
         }
     }
 }

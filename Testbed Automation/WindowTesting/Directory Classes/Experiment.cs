@@ -19,6 +19,8 @@ namespace ASEN
         private string serialNo3;
         private string COMPort;
         private string[] serials;
+        private string ipyPath;
+        private string pyPath;
      
         private struct StateOrganizer
         {
@@ -27,7 +29,7 @@ namespace ASEN
         }
 
 
-        public Experiment(string schedulerPath, string experimentPath, string selectedCamera, string teensyPort)
+        public Experiment(string schedulerPath, string experimentPath, string selectedCamera, string teensyPort, string pythonPath, string ipythonPath)
         {
             this.serials = new string[3];
             this.csvPath = schedulerPath;
@@ -40,6 +42,8 @@ namespace ASEN
             this.serials[0] = this.serialNo1;
             this.serials[1] = this.serialNo2;
             this.serials[2] = this.serialNo3;
+            this.pyPath = pythonPath;
+            this.ipyPath = ipythonPath;
         }
 
         private void ExperimentReader()
@@ -86,7 +90,7 @@ namespace ASEN
                         statePath = initialDirectory.CreateNewState();
 
                         // calling the state constructor
-                        currentState = new State(inPut, this.cameraInUse, statePath, this.serials, this.COMPort);
+                        currentState = new State(inPut, this.cameraInUse, statePath, this.serials, this.COMPort, this.pyPath, this.ipyPath);
                         currentState.RunState();
                         
                     }

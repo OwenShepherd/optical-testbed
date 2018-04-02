@@ -29,9 +29,11 @@ namespace ASEN
         private bool READ;
         public int velocity;
         private string teensyPort;
+        private string ipyPath;
+        private string pyPath;
 
 
-        public State(double[] parameters, string selectedCamera, string statePath, string[] serials, string COMPort)
+        public State(double[] parameters, string selectedCamera, string statePath, string[] serials, string COMPort, string pythonPath, string ipythonPath)
         {
             // Collecting the state parameters from the input array
             RCWS_EXPT = parameters[0];
@@ -46,6 +48,8 @@ namespace ASEN
             this.path = statePath;
             this.teensyLock = new object();
             this.teensyPort = COMPort;
+            this.ipyPath = ipythonPath;
+            this.pyPath = pythonPath;
         }
 
         public void RunState()

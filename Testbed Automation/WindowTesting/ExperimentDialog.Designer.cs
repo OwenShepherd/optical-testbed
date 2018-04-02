@@ -43,14 +43,17 @@
             this.CameraSelection = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.teensySelection = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.PythonEXE = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.IPythonEXE = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // DirectoryBrowse
             // 
-            this.DirectoryBrowse.Location = new System.Drawing.Point(540, 8);
-            this.DirectoryBrowse.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.DirectoryBrowse.Location = new System.Drawing.Point(810, 12);
             this.DirectoryBrowse.Name = "DirectoryBrowse";
-            this.DirectoryBrowse.Size = new System.Drawing.Size(104, 23);
+            this.DirectoryBrowse.Size = new System.Drawing.Size(156, 35);
             this.DirectoryBrowse.TabIndex = 0;
             this.DirectoryBrowse.Text = "Browse";
             this.DirectoryBrowse.UseVisualStyleBackColor = true;
@@ -58,10 +61,9 @@
             // 
             // ExitButton
             // 
-            this.ExitButton.Location = new System.Drawing.Point(540, 246);
-            this.ExitButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ExitButton.Location = new System.Drawing.Point(810, 491);
             this.ExitButton.Name = "ExitButton";
-            this.ExitButton.Size = new System.Drawing.Size(104, 23);
+            this.ExitButton.Size = new System.Drawing.Size(156, 35);
             this.ExitButton.TabIndex = 1;
             this.ExitButton.Text = "Exit";
             this.ExitButton.UseVisualStyleBackColor = true;
@@ -72,10 +74,9 @@
             this.ExperimentTitle.AutoSize = true;
             this.ExperimentTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ExperimentTitle.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.ExperimentTitle.Location = new System.Drawing.Point(8, 12);
-            this.ExperimentTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.ExperimentTitle.Location = new System.Drawing.Point(12, 18);
             this.ExperimentTitle.Name = "ExperimentTitle";
-            this.ExperimentTitle.Size = new System.Drawing.Size(212, 24);
+            this.ExperimentTitle.Size = new System.Drawing.Size(308, 32);
             this.ExperimentTitle.TabIndex = 2;
             this.ExperimentTitle.Text = "Experiment Directory:";
             this.ExperimentTitle.Click += new System.EventHandler(this.Label1_Click);
@@ -84,10 +85,9 @@
             // 
             this.ExperimentDirectory.AutoSize = true;
             this.ExperimentDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ExperimentDirectory.Location = new System.Drawing.Point(217, 14);
-            this.ExperimentDirectory.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.ExperimentDirectory.Location = new System.Drawing.Point(326, 22);
             this.ExperimentDirectory.Name = "ExperimentDirectory";
-            this.ExperimentDirectory.Size = new System.Drawing.Size(89, 17);
+            this.ExperimentDirectory.Size = new System.Drawing.Size(124, 25);
             this.ExperimentDirectory.TabIndex = 3;
             this.ExperimentDirectory.Text = "Not Selected";
             this.ExperimentDirectory.Click += new System.EventHandler(this.ExperimentDirectory_Click);
@@ -96,10 +96,9 @@
             // 
             this.ScheduleTitle.AutoSize = true;
             this.ScheduleTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ScheduleTitle.Location = new System.Drawing.Point(8, 54);
-            this.ScheduleTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.ScheduleTitle.Location = new System.Drawing.Point(12, 83);
             this.ScheduleTitle.Name = "ScheduleTitle";
-            this.ScheduleTitle.Size = new System.Drawing.Size(146, 24);
+            this.ScheduleTitle.Size = new System.Drawing.Size(211, 32);
             this.ScheduleTitle.TabIndex = 4;
             this.ScheduleTitle.Text = "Schedule File:";
             // 
@@ -107,19 +106,17 @@
             // 
             this.ScheduleDirectory.AutoSize = true;
             this.ScheduleDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ScheduleDirectory.Location = new System.Drawing.Point(217, 56);
-            this.ScheduleDirectory.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.ScheduleDirectory.Location = new System.Drawing.Point(326, 86);
             this.ScheduleDirectory.Name = "ScheduleDirectory";
-            this.ScheduleDirectory.Size = new System.Drawing.Size(89, 17);
+            this.ScheduleDirectory.Size = new System.Drawing.Size(124, 25);
             this.ScheduleDirectory.TabIndex = 5;
             this.ScheduleDirectory.Text = "Not Selected";
             // 
             // ScheduleBrowse
             // 
-            this.ScheduleBrowse.Location = new System.Drawing.Point(540, 52);
-            this.ScheduleBrowse.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ScheduleBrowse.Location = new System.Drawing.Point(810, 80);
             this.ScheduleBrowse.Name = "ScheduleBrowse";
-            this.ScheduleBrowse.Size = new System.Drawing.Size(104, 23);
+            this.ScheduleBrowse.Size = new System.Drawing.Size(156, 35);
             this.ScheduleBrowse.TabIndex = 6;
             this.ScheduleBrowse.Text = "Browse";
             this.ScheduleBrowse.UseVisualStyleBackColor = true;
@@ -129,27 +126,24 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(8, 96);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(12, 148);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(184, 24);
+            this.label1.Size = new System.Drawing.Size(265, 32);
             this.label1.TabIndex = 7;
             this.label1.Text = "Experiment Name:";
             // 
             // ExpDialog
             // 
-            this.ExpDialog.Location = new System.Drawing.Point(221, 96);
-            this.ExpDialog.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ExpDialog.Location = new System.Drawing.Point(332, 148);
             this.ExpDialog.Name = "ExpDialog";
-            this.ExpDialog.Size = new System.Drawing.Size(131, 20);
+            this.ExpDialog.Size = new System.Drawing.Size(194, 26);
             this.ExpDialog.TabIndex = 8;
             // 
             // StartButton
             // 
-            this.StartButton.Location = new System.Drawing.Point(12, 246);
-            this.StartButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.StartButton.Location = new System.Drawing.Point(18, 491);
             this.StartButton.Name = "StartButton";
-            this.StartButton.Size = new System.Drawing.Size(104, 23);
+            this.StartButton.Size = new System.Drawing.Size(156, 35);
             this.StartButton.TabIndex = 9;
             this.StartButton.Text = "Start";
             this.StartButton.UseVisualStyleBackColor = true;
@@ -159,10 +153,9 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(8, 140);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(12, 215);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(88, 24);
+            this.label2.Size = new System.Drawing.Size(130, 32);
             this.label2.TabIndex = 11;
             this.label2.Text = "Camera:";
             // 
@@ -171,10 +164,9 @@
             this.CameraSelection.AccessibleDescription = "";
             this.CameraSelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CameraSelection.FormattingEnabled = true;
-            this.CameraSelection.Location = new System.Drawing.Point(219, 143);
-            this.CameraSelection.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CameraSelection.Location = new System.Drawing.Point(328, 220);
             this.CameraSelection.Name = "CameraSelection";
-            this.CameraSelection.Size = new System.Drawing.Size(133, 21);
+            this.CameraSelection.Size = new System.Drawing.Size(198, 28);
             this.CameraSelection.TabIndex = 10;
             this.CameraSelection.SelectedIndexChanged += new System.EventHandler(this.CameraSelection_SelectedIndexChanged);
             // 
@@ -182,9 +174,10 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(8, 193);
+            this.label3.Location = new System.Drawing.Point(12, 297);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(138, 24);
+            this.label3.Size = new System.Drawing.Size(206, 33);
             this.label3.TabIndex = 12;
             this.label3.Text = "Teensy COM:";
             // 
@@ -192,16 +185,62 @@
             // 
             this.teensySelection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.teensySelection.FormattingEnabled = true;
-            this.teensySelection.Location = new System.Drawing.Point(219, 193);
+            this.teensySelection.Location = new System.Drawing.Point(328, 297);
+            this.teensySelection.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.teensySelection.Name = "teensySelection";
-            this.teensySelection.Size = new System.Drawing.Size(133, 21);
+            this.teensySelection.Size = new System.Drawing.Size(198, 28);
             this.teensySelection.TabIndex = 13;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(12, 364);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(187, 32);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Python EXE:";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
+            // 
+            // PythonEXE
+            // 
+            this.PythonEXE.Location = new System.Drawing.Point(328, 361);
+            this.PythonEXE.Name = "PythonEXE";
+            this.PythonEXE.Size = new System.Drawing.Size(156, 35);
+            this.PythonEXE.TabIndex = 15;
+            this.PythonEXE.Text = "Browse";
+            this.PythonEXE.UseVisualStyleBackColor = true;
+            this.PythonEXE.Click += new System.EventHandler(this.PythonEXE_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(14, 428);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(239, 32);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "IronPython EXE:";
+            // 
+            // IPythonEXE
+            // 
+            this.IPythonEXE.Location = new System.Drawing.Point(328, 425);
+            this.IPythonEXE.Name = "IPythonEXE";
+            this.IPythonEXE.Size = new System.Drawing.Size(156, 35);
+            this.IPythonEXE.TabIndex = 17;
+            this.IPythonEXE.Text = "Browse";
+            this.IPythonEXE.UseVisualStyleBackColor = true;
+            this.IPythonEXE.Click += new System.EventHandler(this.IPythonEXE_Click);
             // 
             // ExperimentDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(652, 280);
+            this.ClientSize = new System.Drawing.Size(978, 538);
+            this.Controls.Add(this.IPythonEXE);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.PythonEXE);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.teensySelection);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -217,7 +256,6 @@
             this.Controls.Add(this.ExitButton);
             this.Controls.Add(this.DirectoryBrowse);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "ExperimentDialog";
             this.Text = "AWESoMe";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -242,5 +280,9 @@
         private System.Windows.Forms.ComboBox CameraSelection;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox teensySelection;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button PythonEXE;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button IPythonEXE;
     }
 }
