@@ -24,7 +24,7 @@ with open(fileName,"w+") as f:
         while True:
             bytesToRead = ser.inWaiting()
             startLatency = time.time()
-            x = ser.read(100)
+            x = ser.read(bytesToRead)
             endLatency = time.time()
             currTime = endLatency-startLatency
             if (currTime > maxLatency):
