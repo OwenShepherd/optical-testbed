@@ -11,7 +11,7 @@ Port = sys.argv[2] # USB port ID that the Teensy is plugged in to
 # Directory to store the file and the filename are defined here, change for your
 # own filesystem
 directory = sys.argv[1]
-fname = "env_data.csv"
+fname = "\\env_data.csv"
 maxLatency = 0
 
 fileName = directory + fname
@@ -21,16 +21,17 @@ byteCounter = 0
 # Here we read the serial port in 1000 byte blocks and writes to the above specified file
 with open(fileName,"w+") as f:
     with serial.Serial(Port, Baud) as ser:
-        bytesToRead = ser.inWaiting()
-        startLatency = time.time()
-        x = ser.read(100)
-        endLatency = time.time()
-        currTime = endLatency-startLatency
-        if (currTime > maxLatency):
-            maxLatency = currTime
-        f.write(x.decode("utf-8"))
-        byteCounter = byteCounter+100
-        end = time.time()
+        while True:
+            bytesToRead = ser.inWaiting()
+            startLatency = time.time()
+            x = ser.read(100)
+            endLatency = time.time()
+            currTime = endLatency-startLatency
+            if (currTime > maxLatency):
+                maxLatency = currTime
+            f.write(x.decode("utf-8"))
+            byteCounter = byteCounter+100
+            end = time.time()
 
 
 

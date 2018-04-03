@@ -162,16 +162,11 @@ namespace ASEN
 
         }
 
-        private int ConvertToDeviceUnits(decimal position)
+        private int ConvertToDeviceUnits(double position)
         {
-            // Need to extract proper conversion from the device itself
-            DeviceUnitConverter currConverter;
-            currConverter = currentMotor.UnitConverter;
+            int newposition = Convert.ToInt32(position / 0.00003);
 
-            // Enuming stuff
-            
-            // Now we shall do the actual conversion
-            return currConverter.RealToDeviceUnit(position, DeviceUnitConverter.UnitType.Length);
+            return newposition;
         }
 
         public void HomeMotor()
@@ -190,7 +185,7 @@ namespace ASEN
             Console.WriteLine("Device Homed");
         }
 
-        public void MoveMotor(decimal position)
+        public void MoveMotor(double position)
         {
             int devicePosition = ConvertToDeviceUnits(position);
 

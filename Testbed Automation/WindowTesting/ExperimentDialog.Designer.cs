@@ -45,8 +45,6 @@
             this.teensySelection = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.PythonEXE = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.IPythonEXE = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // DirectoryBrowse
@@ -61,7 +59,7 @@
             // 
             // ExitButton
             // 
-            this.ExitButton.Location = new System.Drawing.Point(810, 491);
+            this.ExitButton.Location = new System.Drawing.Point(810, 424);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(156, 35);
             this.ExitButton.TabIndex = 1;
@@ -141,7 +139,7 @@
             // 
             // StartButton
             // 
-            this.StartButton.Location = new System.Drawing.Point(18, 491);
+            this.StartButton.Location = new System.Drawing.Point(18, 424);
             this.StartButton.Name = "StartButton";
             this.StartButton.Size = new System.Drawing.Size(156, 35);
             this.StartButton.TabIndex = 9;
@@ -212,33 +210,11 @@
             this.PythonEXE.UseVisualStyleBackColor = true;
             this.PythonEXE.Click += new System.EventHandler(this.PythonEXE_Click);
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(14, 428);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(239, 32);
-            this.label5.TabIndex = 16;
-            this.label5.Text = "IronPython EXE:";
-            // 
-            // IPythonEXE
-            // 
-            this.IPythonEXE.Location = new System.Drawing.Point(328, 425);
-            this.IPythonEXE.Name = "IPythonEXE";
-            this.IPythonEXE.Size = new System.Drawing.Size(156, 35);
-            this.IPythonEXE.TabIndex = 17;
-            this.IPythonEXE.Text = "Browse";
-            this.IPythonEXE.UseVisualStyleBackColor = true;
-            this.IPythonEXE.Click += new System.EventHandler(this.IPythonEXE_Click);
-            // 
             // ExperimentDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(978, 538);
-            this.Controls.Add(this.IPythonEXE);
-            this.Controls.Add(this.label5);
+            this.ClientSize = new System.Drawing.Size(978, 475);
             this.Controls.Add(this.PythonEXE);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.teensySelection);
@@ -282,7 +258,5 @@
         private System.Windows.Forms.ComboBox teensySelection;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button PythonEXE;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button IPythonEXE;
     }
 }
