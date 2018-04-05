@@ -35,6 +35,7 @@ namespace ASEN
         private int columns;
         private string wavePath;
         private string spotPath;
+        private string zernikePath;
 
         private static int bufferSize = 255;
         private WFS instrument;
@@ -46,7 +47,7 @@ namespace ASEN
         public ASEN_SHA(string SHAPath)
         {
             instrument = new WFS(IntPtr.Zero);
-            path = SHAPath; // Should be the path to the SHA folder
+            
         }
 
         //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
@@ -139,7 +140,7 @@ namespace ASEN
         }
 
         //------------------------------------------------ METHOD FUNCTION 2 ------------------------------------------------
-        public byte[] GatherCameraData(double exposureTimeSet)
+        public byte[] GatherCameraData(double exposureTimeSet, string imagePath)
         {
 
             Console.WriteLine(">> Setting Exposure <<");
@@ -164,12 +165,36 @@ namespace ASEN
             
             instrument.GetSpotfieldImage(imageBuffer, out this.rows, out this.columns);
 
+            // "Should be a 1280 x 1024 array" hopefully
+            int columnCount = 0;
+            int numColumns = 1280;
+            using (StreamWriter outFile = new StreamWriter(imagePath))
+            {
+                string content = "";
+                for (int i = 0; i < WFS.ImageBufferSize; i++)
+                {
+                    columnCount++;
+
+                    content += imageBuffer[i] + ",";
+
+                    if (columnCount == numColumns)
+                    {
+                        outFile.WriteLine(content);
+                        content = "";
+                    }
+                }
+            }
+
             return imageBuffer;//Need to check this -- I'm not sure that this is going to return what I expect it to. Should be a 1280x1024 array containing an 8-bit value in each entry.
         }
 
         //------------------------------------------------ METHOD FUNCTION 3 ------------------------------------------------
-        public float[] ProcessCameraData()
+        public float[] ProcessCameraData(string waveFile, string spotFile, string zernikeFile)
         {
+            this.wavePath = waveFile;
+            this.spotPath = spotFile;
+            this.zernikePath = zernikeFile;
+
             Console.WriteLine(">> Process Camera Data <<");
 
             //Helper function. Calculate and display the centroid positions of the spots.
@@ -499,14 +524,22 @@ namespace ASEN
             {
                 using (StreamWriter devYFile = new StreamWriter(spotPath + "\\_Y.csv"))
                 {
-                    string content = "";
+                    string contentX;
+                    string contentY;
 
                     for (int i = 0; i < WFS.MaxSpotX; i++)
                     {
+                        contentX = "";
+                        contentY = "";
+
                         for (int j = 0; j < WFS.MaxSpotY; j++)
                         {
-
+                            contentX += Convert.ToString(deviationX[j, i]) + ",";
+                            contentY += Convert.ToString(deviationX[j, i]) + ",";
                         }
+
+                        devXFile.WriteLine(contentX);
+                        devYFile.WriteLine(contentY);
                     }
                 }
             }
@@ -605,7 +638,19 @@ namespace ASEN
             //{
             //Console.WriteLine("  " + i.ToString() + "             " + zernikeUm[i].ToString("F3"));
             //}
-            return zernikeUm;
+
+            using (StreamWriter zernFile = new StreamWriter(zernikePath))
+            {
+                zernFile.WriteLine("Zernike Mode Coefficient");
+
+                for (int i = 0; i < WFS.ZernikeModes[sampleZernikeOrders]; ++i)
+                {
+                    zernFile.WriteLine(i.ToString() + "    " + zernikeUm[i].ToString("F3"));
+                }
+            }
+
+
+                return zernikeUm;
 
         }
 
