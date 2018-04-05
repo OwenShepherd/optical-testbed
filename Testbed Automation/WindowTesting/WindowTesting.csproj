@@ -107,6 +107,7 @@
   <ItemGroup>
     <Compile Include="Device Classes\ASEN_ENV.cs" />
     <Compile Include="Device Classes\ASEN_MotorControl.cs" />
+    <Compile Include="Device Classes\ASEN_QHY.cs" />
     <Compile Include="Device Classes\ASEN_RCWS.cs" />
     <Compile Include="Device Classes\ASEN_SHA.cs" />
     <Compile Include="Directory Classes\Experiment.cs" />
@@ -156,6 +157,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="deploy\ASCOM.py" />
+    <Content Include="qhyccd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="SerialReader.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
