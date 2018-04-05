@@ -22,10 +22,11 @@ namespace WindowTesting.Device_Classes
         private uint h;
         private uint bpp;
         private uint c;
+        public string fileName;
 
 
 
-        public ASEN_QHY()
+        public ASEN_QHY(string fileName)
         {
             // Initializing some variables, including some to be used as pointers
             QHYCCD_SUCCESS = 0;
@@ -39,6 +40,8 @@ namespace WindowTesting.Device_Classes
             h = 0;
             bpp = 0;
             c = 0;
+
+            this.fileName = fileName;
 
 
 
@@ -133,7 +136,18 @@ namespace WindowTesting.Device_Classes
             ASCOM.QHYCCD.libqhyccd.SetQHYCCDBitsMode(camhandle, 16);
         }
 
-        public void Capture(int exposure)
+        public void Capture(int exposureTime)
+        {
+            // The memory created while interacting with the camera has to be discarded before doing more work
+            // so want to separate the creation of the camera memory into a separate "capture image" function
+            CaptureImage(exposureTime);
+
+            // Re-writes the raw QHY image data
+            FileParser();
+
+        }
+
+        private void CaptureImage(int exposureTime)
         {
             uint ret;
             // User input exposure
@@ -146,9 +160,72 @@ namespace WindowTesting.Device_Classes
                 return;
             }
 
+            ASCOM.QHYCCD.libqhyccd.InitQHYCCD(camhandle);
 
+            // Getting the maximum number of bytes returned by the camera
+            int length = (int)ASCOM.QHYCCD.libqhyccd.GetQHYCCDMemLength(camhandle);
+
+            byte[] rawArray = new byte[length];
+
+            ret = 1;
+
+            try
+            {
+                while (ret != 0)
+                {
+                    ret = ASCOM.QHYCCD.libqhyccd.GetQHYCCDSingleFrame(camhandle, ref x, ref h, ref bpp, ref c, rawArray);
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Marshaling Error.");
+                Console.ReadLine();
+            }
+
+            ASCOM.QHYCCD.libqhyccd.CloseQHYCCD(camhandle);
+
+            File.WriteAllBytes(fileName, rawArray);
 
         }
+
+        // There's something wrong with the dll, so I want all the memory from messing with the camera freed
+        // before messing around with the image data.
+        private void FileParser()
+        {
+            byte[] imgArray = File.ReadAllBytes(fileName);
+
+            using (StreamWriter outFile = new StreamWriter(fileName))
+            {
+                int rowCounter = 0;
+                string content = "";
+                short combinedBits;
+
+                for (int i = 0; i < length; i+=2)
+                {
+                    rowCounter++;
+
+                    // The pixels are organized so that the first element for a pixel is the LSB, then the MSB
+                    combinedBits = (short)(imgArray[i] + (imgArray[i + 1] << 8));
+
+                    // Want the x resolution number of bits in each line
+                    if (rowCounter == x)
+                    {
+                        content += Convert.ToString(combinedBits);
+                        outFile.WriteLine(content);
+                        content = "";
+                    }
+                    else
+                    {
+                        content = "" + Convert.ToString(combinedBits) + ", ";
+                    }
+                    
+                }
+
+            }
+        }
+
+
+        
     }
 }
 
