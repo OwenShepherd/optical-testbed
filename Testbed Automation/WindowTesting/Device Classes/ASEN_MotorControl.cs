@@ -162,25 +162,35 @@ namespace ASEN
 
         }
 
-        private int ConvertToDeviceUnits(double position)
+        public int ConvertLinearToDeviceUnits(double position)
         {
             int newposition = Convert.ToInt32(position / 0.00003);
 
             return newposition;
         }
 
-        private int ConvertPitchToDeviceUnits(double position)
+        public int ConvertPitchToDeviceUnits(double position)
         {
             int newposition = Convert.ToInt32(position / 7.13);  // Spec sheet indicated 7.13 arcseconds for pitch 
 
             return newposition;
         }
 
-        private int ConvertYawToDeviceUnits(double position)
+        public int ConvertYawToDeviceUnits(double position)
         {
             int newposition = Convert.ToInt32(position / 15.71); // spec sheet again: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=9632
 
             return newposition;
+        }
+
+        public void MoveMotorPitch()
+        {
+
+        }
+
+        public void MoveMotorYaw()
+        {
+
         }
 
         public void HomeMotor()
@@ -199,9 +209,9 @@ namespace ASEN
             Console.WriteLine("Device Homed");
         }
 
-        public void MoveMotor(double position)
+        public void MoveMotorLinear(double position)
         {
-            int devicePosition = ConvertToDeviceUnits(position);
+            int devicePosition = ConvertLinearToDeviceUnits(position);
 
             try
             {
