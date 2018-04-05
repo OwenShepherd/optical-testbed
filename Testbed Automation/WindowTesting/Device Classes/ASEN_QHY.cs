@@ -194,6 +194,10 @@ namespace WindowTesting.Device_Classes
         {
             byte[] imgArray = File.ReadAllBytes(fileName);
 
+            File.Delete(fileName);
+
+            fileName += fileName + ".csv";
+
             using (StreamWriter outFile = new StreamWriter(fileName))
             {
                 int rowCounter = 0;
@@ -222,6 +226,8 @@ namespace WindowTesting.Device_Classes
                 }
 
             }
+
+            
         }
 
 
