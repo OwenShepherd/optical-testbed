@@ -109,10 +109,13 @@ namespace ASEN
             // ASEN_SHA Initializing Device
             currentSHA = new ASEN_SHA();
             currentSHA.CameraConnectionAndSetup();
-            
+
+            // Running the correct camera process depending on which camera was selected in the GUI
+            if (ISASI) { ASICamera(RCWSForePath, RCWSAftPath); }
+            else { QHYCamera(RCWSForePath, RCWSAftPath); }
 
             
-            //currentSHA.CloseCamera();
+            currentSHA.CloseCamera();
             
 
 
@@ -133,12 +136,21 @@ namespace ASEN
             currCamera.Capture(RCWS_EXPT, true);
             currCamera.SaveImage(foreFile + ".csv");
 
+            // Taking a caputre with the SHA at the fore distance
+            byte[] spotFieldFore = currentSHA.GatherCameraData(SHA_EXPT);
+            float[] zernikesFore = currentSHA.ProcessCameraData();
+
             // Moving the RCWS motor to the aft location
             motor1.MoveMotorLinear(RCWS_DAFT);
 
             // Taking a capture of the image at the aft distance
             currCamera.Capture(RCWS_EXPT, true);
             currCamera.SaveImage(aftFile + ".csv");
+
+            // Taking a capture with the SHA at the aft distance
+            byte[] spotFieldAft = currentSHA.GatherCameraData(SHA_EXPT);
+            float[] zernikesAft = currentSHA.ProcessCameraData();
+
 
             // Ending the env. sensors process
             envProcess.StandardInput.Close();
@@ -157,11 +169,19 @@ namespace ASEN
             // Taking a capture with the QHY and saving the image file at the fore distance
             currCamera.Capture((int)RCWS_EXPT, foreFile);
 
+            // Taking a caputre with the SHA
+            byte[] spotFieldFore = currentSHA.GatherCameraData(SHA_EXPT);
+            float[] zernikesFore = currentSHA.ProcessCameraData();
+
             // Moving the motors to the aft distance
             motor1.MoveMotorLinear(RCWS_DAFT);
 
             // Taking a QHY capture at the aft distance
             currCamera.Capture((int)RCWS_EXPT, aftFile);
+
+            // Taking a capture with the SHA
+            byte[] spotFieldAft = currentSHA.GatherCameraData(SHA_EXPT);
+            float[] zernikesAft = currentSHA.ProcessCameraData();
 
             // Ending the env. sensors process, which saves the file with its readings to this point
             // Works by sending a keybaord interrupt to the python script (ctrl+c)
