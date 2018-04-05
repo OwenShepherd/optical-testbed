@@ -22,11 +22,10 @@ namespace WindowTesting.Device_Classes
         private uint h;
         private uint bpp;
         private uint c;
-        public string fileName;
+        
 
 
-
-        public ASEN_QHY(string fileName)
+        public ASEN_QHY()
         {
             // Initializing some variables, including some to be used as pointers
             QHYCCD_SUCCESS = 0;
@@ -41,8 +40,7 @@ namespace WindowTesting.Device_Classes
             bpp = 0;
             c = 0;
 
-            this.fileName = fileName;
-
+            
 
 
             // Collecting the number of cameras connected
@@ -136,18 +134,18 @@ namespace WindowTesting.Device_Classes
             ASCOM.QHYCCD.libqhyccd.SetQHYCCDBitsMode(camhandle, 16);
         }
 
-        public void Capture(int exposureTime)
+        public void Capture(int exposureTime, string fileName)
         {
             // The memory created while interacting with the camera has to be discarded before doing more work
             // so want to separate the creation of the camera memory into a separate "capture image" function
-            CaptureImage(exposureTime);
+            CaptureImage(exposureTime, fileName);
 
             // Re-writes the raw QHY image data
-            FileParser();
+            FileParser(fileName);
 
         }
 
-        private void CaptureImage(int exposureTime)
+        private void CaptureImage(int exposureTime, string fileName)
         {
             uint ret;
             // User input exposure
@@ -190,7 +188,7 @@ namespace WindowTesting.Device_Classes
 
         // There's something wrong with the dll, so I want all the memory from messing with the camera freed
         // before messing around with the image data.
-        private void FileParser()
+        private void FileParser(string fileName)
         {
             byte[] imgArray = File.ReadAllBytes(fileName);
 

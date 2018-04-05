@@ -35,9 +35,10 @@ namespace ASEN
         private string pyPath;
         private string RCWSPath;
         private string SHAPath;
+        private bool ISASI;
 
 
-        public State(double[] parameters, string selectedCamera, string statePath, string[] serials, string COMPort, string pythonPath, string ipythonPath)
+        public State(double[] parameters, bool selectedCamera, string statePath, string[] serials, string COMPort, string pythonPath, string ipythonPath)
         {
             // Collecting the state parameters from the input array
             RCWS_EXPT = parameters[0];
@@ -46,7 +47,8 @@ namespace ASEN
             RCWS_DAFT = parameters[3];
             MA_X = (decimal)parameters[4];
             MA_Y = (decimal)parameters[5];
-            cameraInUse = selectedCamera;
+            //cameraInUse = selectedCamera;
+            ISASI = selectedCamera;
             this.serials = serials;
             this.velocity = 3200; // Velocity units are unknown / stupid...
             this.path = statePath;
@@ -64,13 +66,25 @@ namespace ASEN
 
         public void RunState()
         {
-            ASEN_RCWS currCamera = new ASEN_RCWS(cameraInUse);
-            currCamera.InitializeCamera();
-            
+            ASEN_RCWS currCamera;
+            WindowTesting.Device_Classes.ASEN_QHY currQHY;
+
+            // Initializing the Cameras
+            if (ISASI)
+            {
+                cameraInUse = "ASCOM.ASICamera2.Camera";
+                currCamera = new ASEN_RCWS(cameraInUse);
+                currCamera.InitializeCamera();
+            }
+            else
+            {
+                currQHY = new WindowTesting.Device_Classes.ASEN_QHY();
+            }
 
 
-            string RCWSForePath = this.RCWSPath + "\\img_RCWS_fore.csv";
-            string RCWSAftPath = this.RCWSPath + "\\img_RCWS_aft.csv";
+            // Setting paths names (sans extension for now)
+            string RCWSForePath = this.RCWSPath + "\\img_RCWS_fore";
+            string RCWSAftPath = this.RCWSPath + "\\img_RCWS_aft";
             
             // Here's where we call the other methods
             ProcessStartInfo Py = new ProcessStartInfo();
@@ -107,8 +121,12 @@ namespace ASEN
 
             
             var envProcess = Process.Start(Py);
-            currCamera.Capture(RCWS_EXPT, true);
-            currCamera.SaveImage(RCWSForePath);
+
+            if (ISASI)
+            {
+                currCamera.Capture(RCWS_EXPT, true);
+                currCamera.SaveImage(RCWSForePath + ".csv");
+            }
 
             //motor1.MoveMotor(RCWS_DAFT);
             currCamera.Capture(RCWS_EXPT, true);
@@ -135,6 +153,18 @@ namespace ASEN
             //currentSHA.CloseCamera();
             */
 
+
+        }
+
+        // Process with methods to be called when using the ASI camera
+        private void ASICamera()
+        {
+
+        }
+
+        // Process with methods to be called when using the QHY camera
+        private void QHYCamera()
+        {
 
         }
 

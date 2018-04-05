@@ -13,7 +13,7 @@ namespace ASEN
         public string csvPath; // Path to the CSV scheduler
         public string experimentPath; // Path to the experiment top-level directory
         private State currentState; // The current state
-        private string cameraInUse; // The string for the driver of whichever camera (ASI vs. QHY) is being used
+        //private string cameraInUse; // The string for the driver of whichever camera (ASI vs. QHY) is being used
         private string serialNo1;
         private string serialNo2;
         private string serialNo3;
@@ -21,6 +21,7 @@ namespace ASEN
         private string[] serials;
         private string ipyPath;
         private string pyPath;
+        public bool ISASI;
      
         private struct StateOrganizer
         {
@@ -29,12 +30,12 @@ namespace ASEN
         }
 
 
-        public Experiment(string schedulerPath, string experimentPath, string selectedCamera, string teensyPort, string pythonPath, string ipythonPath)
+        public Experiment(string schedulerPath, string experimentPath, bool selectedCamera, string teensyPort, string pythonPath, string ipythonPath)
         {
             this.serials = new string[3];
             this.csvPath = schedulerPath;
             this.experimentPath = experimentPath;
-            this.cameraInUse = selectedCamera;
+            //this.cameraInUse = selectedCamera;
             this.serialNo3 = "27501994"; // Set to "motor 1" serial number
             this.serialNo2 = "27002310"; // Set to "motor 2" serial number
             this.serialNo1 = "27002528"; // Set to "motor 3" serial number
@@ -44,6 +45,7 @@ namespace ASEN
             this.serials[2] = this.serialNo3;
             this.pyPath = pythonPath;
             this.ipyPath = ipythonPath;
+            ISASI = selectedCamera;
         }
 
         private void ExperimentReader()
@@ -90,7 +92,7 @@ namespace ASEN
                         statePath = initialDirectory.CreateNewState();
 
                         // calling the state constructor
-                        currentState = new State(inPut, this.cameraInUse, statePath, this.serials, this.COMPort, this.pyPath, this.ipyPath);
+                        currentState = new State(inPut, ISASI, statePath, this.serials, this.COMPort, this.pyPath, this.ipyPath);
                         currentState.RunState();
                         
                     }

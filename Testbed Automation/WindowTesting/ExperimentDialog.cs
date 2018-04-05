@@ -143,7 +143,7 @@ namespace ASEN
             string experimentPath = userPath + "\\" + experimentName;
 
             // Creating our new experiment
-            currentExperiment = new Experiment(schedulePath, experimentPath,selectedCamera,teensyPort,pythonPath,ipythonPath);
+            currentExperiment = new Experiment(schedulePath, experimentPath,ISASI,teensyPort,pythonPath,ipythonPath);
             currentExperiment.StartExperiment();
 
             this.Close();
