@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,11 @@ namespace ASEN
         //private static int sampleOptionHsAllowAutoexpos = 1; // allow autoexposure in highspeed mode (runs somewhat slower)     -- NOT USED, no highspeed for our WFS
         private static int sampleWavefrontType = 0; // WAVEFRONT_MEAS = 0                                                       -- CONFIRMED in calculating the wavefront, currently set to calculate the measured wavefront
         //private static int samplePrintoutSpots = 5; // printout results for first 5 x 5 spots only                              -- NOT USED, not printing any values to the console as of yet.
-
+        private int rows;
+        private int columns;
+        private string wavePath;
+        private string spotPath;
+        private string zernikePath;
 
         private static int bufferSize = 255;
         private WFS instrument;
@@ -42,6 +47,7 @@ namespace ASEN
         public ASEN_SHA()
         {
             instrument = new WFS(IntPtr.Zero);
+            
         }
 
         //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
@@ -122,14 +128,25 @@ namespace ASEN
             instrument.SetPupil(beamCentroidX, beamCentroidY, beamDiameterX, beamDiameterY);
 
         }
+        
+        // Should be run after a run of "GatherCameraData"
+        public byte[] TakeSpotFieldImage()
+        {
+            byte[] spotFieldRaw = new byte[WFS.BufferSize];
+
+            instrument.GetSpotfieldImage(spotFieldRaw, out this.rows, out this.columns);
+
+            return spotFieldRaw;
+        }
 
         //------------------------------------------------ METHOD FUNCTION 2 ------------------------------------------------
-        public byte[] GatherCameraData(double exposureTimeSet)
+        public byte[] GatherCameraData(double exposureTimeSet, string imagePath)
         {
 
             Console.WriteLine(">> Setting Exposure <<");
 
-            double exposureTimeAct, masterGainAct;
+            double exposureTimeAct;
+            double masterGainAct;
 
             //This function sets the exposure time of the camera, and returns the actual exposure time set.
             instrument.SetExposureTime(exposureTimeSet, out exposureTimeAct);
@@ -145,16 +162,39 @@ namespace ASEN
 
             //Capture the spotfield image, return this byte array from the function.
             byte[] imageBuffer = new byte[WFS.ImageBufferSize];
-            int rows;
-            int cols;
-            instrument.GetSpotfieldImage(imageBuffer, out rows, out cols);
+            
+            instrument.GetSpotfieldImage(imageBuffer, out this.rows, out this.columns);
+
+            // "Should be a 1280 x 1024 array" hopefully
+            int columnCount = 0;
+            int numColumns = 1280;
+            using (StreamWriter outFile = new StreamWriter(imagePath))
+            {
+                string content = "";
+                for (int i = 0; i < WFS.ImageBufferSize; i++)
+                {
+                    columnCount++;
+
+                    content += imageBuffer[i] + ",";
+
+                    if (columnCount == numColumns)
+                    {
+                        outFile.WriteLine(content);
+                        content = "";
+                    }
+                }
+            }
 
             return imageBuffer;//Need to check this -- I'm not sure that this is going to return what I expect it to. Should be a 1280x1024 array containing an 8-bit value in each entry.
         }
 
         //------------------------------------------------ METHOD FUNCTION 3 ------------------------------------------------
-        public float[] ProcessCameraData()
+        public float[] ProcessCameraData(string waveFile, string spotFile, string zernikeFile)
         {
+            this.wavePath = waveFile;
+            this.spotPath = spotFile;
+            this.zernikePath = zernikeFile;
+
             Console.WriteLine(">> Process Camera Data <<");
 
             //Helper function. Calculate and display the centroid positions of the spots.
@@ -479,6 +519,31 @@ namespace ASEN
             float[,] deviationY = new float[WFS.MaxSpotY, WFS.MaxSpotX];
             instrument.GetSpotDeviations(deviationX, deviationY);
 
+            // Saving the spot deviations to their respective files
+            using (StreamWriter devXFile = new StreamWriter(spotPath + "\\_X.csv"))
+            {
+                using (StreamWriter devYFile = new StreamWriter(spotPath + "\\_Y.csv"))
+                {
+                    string contentX;
+                    string contentY;
+
+                    for (int i = 0; i < WFS.MaxSpotX; i++)
+                    {
+                        contentX = "";
+                        contentY = "";
+
+                        for (int j = 0; j < WFS.MaxSpotY; j++)
+                        {
+                            contentX += Convert.ToString(deviationX[j, i]) + ",";
+                            contentY += Convert.ToString(deviationX[j, i]) + ",";
+                        }
+
+                        devXFile.WriteLine(contentX);
+                        devYFile.WriteLine(contentY);
+                    }
+                }
+            }
+
             // print out some spot deviations
             /*Console.WriteLine("\nSpot Deviation X in pixels (first 5x5 elements)\n");
             for (int i = 0; i < samplePrintoutSpots; ++i)
@@ -506,9 +571,29 @@ namespace ASEN
         /// </summary>
         private void CalcWavefront()
         {
+            
             //ConsoleKeyInfo waitKey;
             float[,] wavefront = new float[WFS.MaxSpotY, WFS.MaxSpotX];
             instrument.CalcWavefront(sampleWavefrontType, sampleOptionLimitToPupil, wavefront);
+
+            // Saving the wavefront to a csv
+            using (StreamWriter outFile = new StreamWriter(wavePath))
+            {
+                string content;
+
+                for (int i = 0; i < WFS.MaxSpotX; i++)
+                {
+                    content = "";
+
+                    for (int j = 0; j < WFS.MaxSpotY; j++)
+                    {
+                        content += Convert.ToString(wavefront[j, i]) + ", ";
+                    }
+
+                    outFile.WriteLine(content);
+                }
+            }
+            
 
             // print out some wavefront points
             /*Console.WriteLine("\nWavefront in microns (first 5x5 elements)\n");
@@ -553,7 +638,19 @@ namespace ASEN
             //{
             //Console.WriteLine("  " + i.ToString() + "             " + zernikeUm[i].ToString("F3"));
             //}
-            return zernikeUm;
+
+            using (StreamWriter zernFile = new StreamWriter(zernikePath))
+            {
+                zernFile.WriteLine("Zernike Mode Coefficient");
+
+                for (int i = 0; i < WFS.ZernikeModes[sampleZernikeOrders]; ++i)
+                {
+                    zernFile.WriteLine(i.ToString() + "    " + zernikeUm[i].ToString("F3"));
+                }
+            }
+
+
+                return zernikeUm;
 
         }
 

@@ -134,6 +134,11 @@ namespace WindowTesting.Device_Classes
             ASCOM.QHYCCD.libqhyccd.SetQHYCCDBitsMode(camhandle, 16);
         }
 
+        public void Close()
+        {
+            ASCOM.QHYCCD.libqhyccd.ReleaseQHYCCDResource();
+        }
+
         public void Capture(int exposureTime, string fileName)
         {
             // The memory created while interacting with the camera has to be discarded before doing more work
@@ -194,7 +199,7 @@ namespace WindowTesting.Device_Classes
 
             File.Delete(fileName);
 
-            fileName += fileName + ".csv";
+            fileName += ".csv";
 
             using (StreamWriter outFile = new StreamWriter(fileName))
             {

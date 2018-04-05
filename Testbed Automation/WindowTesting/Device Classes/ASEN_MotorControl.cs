@@ -162,7 +162,7 @@ namespace ASEN
 
         }
 
-        private int ConvertToDeviceUnits(double position)
+        private int ConvertLinearToDeviceUnits(double position)
         {
             int newposition = Convert.ToInt32(position / 0.00003);
 
@@ -183,6 +183,46 @@ namespace ASEN
             return newposition;
         }
 
+        public void MoveMotorPitch(double position)
+        {
+            int devicePosition = ConvertPitchToDeviceUnits(position);
+
+            try
+            {
+                Console.WriteLine("Moving Device to {0}", position);
+                this.currentMotor.MoveTo_DeviceUnit(devicePosition, 5000);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed to move to position");
+                Console.ReadKey();
+                return;
+            }
+            Decimal newPos = this.currentMotor.Position;
+            Console.WriteLine("Device Moved to {0}", newPos);
+
+        }
+
+        public void MoveMotorYaw(double position)
+        {
+            int devicePosition = ConvertYawToDeviceUnits(position);
+
+            try
+            {
+                Console.WriteLine("Moving Device to {0}", position);
+                this.currentMotor.MoveTo_DeviceUnit(devicePosition, 5000);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed to move to position");
+                Console.ReadKey();
+                return;
+            }
+            Decimal newPos = this.currentMotor.Position;
+            Console.WriteLine("Device Moved to {0}", newPos);
+
+        }
+
         public void HomeMotor()
         {
             try
@@ -199,9 +239,9 @@ namespace ASEN
             Console.WriteLine("Device Homed");
         }
 
-        public void MoveMotor(double position)
+        public void MoveMotorLinear(double position)
         {
-            int devicePosition = ConvertToDeviceUnits(position);
+            int devicePosition = ConvertLinearToDeviceUnits(position);
 
             try
             {
