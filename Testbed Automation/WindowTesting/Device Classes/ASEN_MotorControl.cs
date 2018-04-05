@@ -162,34 +162,64 @@ namespace ASEN
 
         }
 
-        public int ConvertLinearToDeviceUnits(double position)
+        private int ConvertLinearToDeviceUnits(double position)
         {
             int newposition = Convert.ToInt32(position / 0.00003);
 
             return newposition;
         }
 
-        public int ConvertPitchToDeviceUnits(double position)
+        private int ConvertPitchToDeviceUnits(double position)
         {
             int newposition = Convert.ToInt32(position / 7.13);  // Spec sheet indicated 7.13 arcseconds for pitch 
 
             return newposition;
         }
 
-        public int ConvertYawToDeviceUnits(double position)
+        private int ConvertYawToDeviceUnits(double position)
         {
             int newposition = Convert.ToInt32(position / 15.71); // spec sheet again: https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=9632
 
             return newposition;
         }
 
-        public void MoveMotorPitch()
+        public void MoveMotorPitch(double position)
         {
+            int devicePosition = ConvertPitchToDeviceUnits(position);
+
+            try
+            {
+                Console.WriteLine("Moving Device to {0}", position);
+                this.currentMotor.MoveTo_DeviceUnit(devicePosition, 5000);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed to move to position");
+                Console.ReadKey();
+                return;
+            }
+            Decimal newPos = this.currentMotor.Position;
+            Console.WriteLine("Device Moved to {0}", newPos);
 
         }
 
-        public void MoveMotorYaw()
+        public void MoveMotorYaw(double position)
         {
+            int devicePosition = ConvertYawToDeviceUnits(position);
+
+            try
+            {
+                Console.WriteLine("Moving Device to {0}", position);
+                this.currentMotor.MoveTo_DeviceUnit(devicePosition, 5000);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed to move to position");
+                Console.ReadKey();
+                return;
+            }
+            Decimal newPos = this.currentMotor.Position;
+            Console.WriteLine("Device Moved to {0}", newPos);
 
         }
 

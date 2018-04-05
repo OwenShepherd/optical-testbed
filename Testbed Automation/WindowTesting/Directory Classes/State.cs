@@ -17,8 +17,8 @@ namespace ASEN
         public double SHA_EXPT; // Exposure time for the SHA [microseconds]
         public double RCWS_DFORE; // RCWS Foreward defocus distance [micro-meters] 
         public double RCWS_DAFT; // RCWS Aftward defocus distance [micro-meters]
-        public decimal MA_X; // Mirror 2 x-displacement [arc-seconds]
-        public decimal MA_Y; // Mirror 2 y-displacement [arc-seconds]
+        public double MA_X; // Mirror 2 x-displacement [arc-seconds]
+        public double MA_Y; // Mirror 2 y-displacement [arc-seconds]
         public string path; // Path of the state root folder
         public string cameraInUse;
         private string rootPath;
@@ -48,8 +48,8 @@ namespace ASEN
             SHA_EXPT = parameters[1];
             RCWS_DFORE = parameters[2];
             RCWS_DAFT = parameters[3];
-            MA_X = (decimal)parameters[4];
-            MA_Y = (decimal)parameters[5];
+            MA_X = parameters[4];
+            MA_Y = parameters[5];
             //cameraInUse = selectedCamera;
             ISASI = selectedCamera;
             this.serials = serials;
@@ -99,75 +99,73 @@ namespace ASEN
             motor2.HomeMotor();
             motor3.HomeMotor();
 
-
-            ASEN_RCWS currCamera;
-            WindowTesting.Device_Classes.ASEN_QHY currQHY;
+            // Now we move the motors to their initial position.
+            // This means the tilt-tip stage is moved to its proper position, while the linear
+            // stage is moved to the RCWS's specified fore defocus position
+            motor1.MoveMotorLinear(RCWS_DFORE);
+            motor2.MoveMotorPitch(MA_X);
+            motor3.MoveMotorYaw(MA_Y);
             
-            // Initializing the Cameras
-            if (ISASI)
-            {
-                cameraInUse = "ASCOM.ASICamera2.Camera";
-                currCamera = new ASEN_RCWS(cameraInUse);
-                currCamera.InitializeCamera();
-            }
-            else
-            {
-                currQHY = new WindowTesting.Device_Classes.ASEN_QHY();
-            }
-            
-            // Now we move to whatever positon we desire
-            //motor1.MoveMotorLinear(RCWS_DFORE);
-            //motor2.MoveMotorPitch(MA_X);
-            //motor3.MoveMotorYaw(MA_Y);
-
-
-            
-            var envProcess = Process.Start(Py);
-
-            if (ISASI)
-            {
-                currCamera.Capture(RCWS_EXPT, true);
-                currCamera.SaveImage(RCWSForePath + ".csv");
-            }
-
-            //motor1.MoveMotor(RCWS_DAFT);
-            currCamera.Capture(RCWS_EXPT, true);
-            currCamera.SaveImage(RCWSAftPath);
-
-
-            envProcess.StandardInput.Close();
-
-
-
-            /*
             // ASEN_SHA Initializing Device
-            this.currentSHA = new ASEN_SHA();
+            currentSHA = new ASEN_SHA();
             currentSHA.CameraConnectionAndSetup();
             
 
             
             //currentSHA.CloseCamera();
-            */
+            
 
 
         }
 
         // Process with methods to be called when using the ASI camera
-        private void ASICamera()
+        private void ASICamera(string foreFile, string aftFile)
         {
             // Name of the ASCOM driver for the ASI
             cameraInUse = "ASCOM.ASICamera2.Camera";
             ASEN_RCWS currCamera = new ASEN_RCWS(cameraInUse);
             currCamera.InitializeCamera();
 
+            // Starting the environmental sensors process
+            var envProcess = Process.Start(this.Py);
 
-            // 
+            // Take a capture of the image at the fore distance
+            currCamera.Capture(RCWS_EXPT, true);
+            currCamera.SaveImage(foreFile + ".csv");
 
+            // Moving the RCWS motor to the aft location
+            motor1.MoveMotorLinear(RCWS_DAFT);
+
+            // Taking a capture of the image at the aft distance
+            currCamera.Capture(RCWS_EXPT, true);
+            currCamera.SaveImage(aftFile + ".csv");
+
+            // Ending the env. sensors process
+            envProcess.StandardInput.Close();
         }
 
         // Process with methods to be called when using the QHY camera
-        private void QHYCamera()
+        private void QHYCamera(string foreFile, string aftFile)
         {
+            // Initializing QHY object
+            WindowTesting.Device_Classes.ASEN_QHY currCamera = new WindowTesting.Device_Classes.ASEN_QHY();
+            currCamera.Initialize();
+
+            // Starting the environmental sensors process
+            var envProcess = Process.Start(this.Py);
+
+            // Taking a capture with the QHY and saving the image file at the fore distance
+            currCamera.Capture((int)RCWS_EXPT, foreFile);
+
+            // Moving the motors to the aft distance
+            motor1.MoveMotorLinear(RCWS_DAFT);
+
+            // Taking a QHY capture at the aft distance
+            currCamera.Capture((int)RCWS_EXPT, aftFile);
+
+            // Ending the env. sensors process, which saves the file with its readings to this point
+            // Works by sending a keybaord interrupt to the python script (ctrl+c)
+            envProcess.StandardInput.Close();
 
         }
 

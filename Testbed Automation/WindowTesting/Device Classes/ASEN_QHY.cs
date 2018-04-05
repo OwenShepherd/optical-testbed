@@ -194,7 +194,7 @@ namespace WindowTesting.Device_Classes
 
             File.Delete(fileName);
 
-            fileName += fileName + ".csv";
+            fileName += ".csv";
 
             using (StreamWriter outFile = new StreamWriter(fileName))
             {
