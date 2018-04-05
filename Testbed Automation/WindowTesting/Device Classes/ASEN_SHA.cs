@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,6 +33,8 @@ namespace ASEN
         //private static int samplePrintoutSpots = 5; // printout results for first 5 x 5 spots only                              -- NOT USED, not printing any values to the console as of yet.
         private int rows;
         private int columns;
+        private string wavePath;
+        private string spotPath;
 
         private static int bufferSize = 255;
         private WFS instrument;
@@ -40,9 +43,10 @@ namespace ASEN
         #endregion
 
         //------------------------------------------------ CONSTRUCTOR ------------------------------------------------
-        public ASEN_SHA()
+        public ASEN_SHA(string SHAPath)
         {
             instrument = new WFS(IntPtr.Zero);
+            path = SHAPath; // Should be the path to the SHA folder
         }
 
         //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
@@ -490,6 +494,23 @@ namespace ASEN
             float[,] deviationY = new float[WFS.MaxSpotY, WFS.MaxSpotX];
             instrument.GetSpotDeviations(deviationX, deviationY);
 
+            // Saving the spot deviations to their respective files
+            using (StreamWriter devXFile = new StreamWriter(spotPath + "\\_X.csv"))
+            {
+                using (StreamWriter devYFile = new StreamWriter(spotPath + "\\_Y.csv"))
+                {
+                    string content = "";
+
+                    for (int i = 0; i < WFS.MaxSpotX; i++)
+                    {
+                        for (int j = 0; j < WFS.MaxSpotY; j++)
+                        {
+
+                        }
+                    }
+                }
+            }
+
             // print out some spot deviations
             /*Console.WriteLine("\nSpot Deviation X in pixels (first 5x5 elements)\n");
             for (int i = 0; i < samplePrintoutSpots; ++i)
@@ -517,9 +538,29 @@ namespace ASEN
         /// </summary>
         private void CalcWavefront()
         {
+            
             //ConsoleKeyInfo waitKey;
             float[,] wavefront = new float[WFS.MaxSpotY, WFS.MaxSpotX];
             instrument.CalcWavefront(sampleWavefrontType, sampleOptionLimitToPupil, wavefront);
+
+            // Saving the wavefront to a csv
+            using (StreamWriter outFile = new StreamWriter(wavePath))
+            {
+                string content;
+
+                for (int i = 0; i < WFS.MaxSpotX; i++)
+                {
+                    content = "";
+
+                    for (int j = 0; j < WFS.MaxSpotY; j++)
+                    {
+                        content += Convert.ToString(wavefront[j, i]) + ", ";
+                    }
+
+                    outFile.WriteLine(content);
+                }
+            }
+            
 
             // print out some wavefront points
             /*Console.WriteLine("\nWavefront in microns (first 5x5 elements)\n");
