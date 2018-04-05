@@ -30,7 +30,8 @@ namespace ASEN
         //private static int sampleOptionHsAllowAutoexpos = 1; // allow autoexposure in highspeed mode (runs somewhat slower)     -- NOT USED, no highspeed for our WFS
         private static int sampleWavefrontType = 0; // WAVEFRONT_MEAS = 0                                                       -- CONFIRMED in calculating the wavefront, currently set to calculate the measured wavefront
         //private static int samplePrintoutSpots = 5; // printout results for first 5 x 5 spots only                              -- NOT USED, not printing any values to the console as of yet.
-
+        private int rows;
+        private int columns;
 
         private static int bufferSize = 255;
         private WFS instrument;
@@ -122,6 +123,16 @@ namespace ASEN
             instrument.SetPupil(beamCentroidX, beamCentroidY, beamDiameterX, beamDiameterY);
 
         }
+        
+        // Should be run after a run of "GatherCameraData"
+        public byte[] TakeSpotFieldImage()
+        {
+            byte[] spotFieldRaw = new byte[WFS.BufferSize];
+
+            instrument.GetSpotfieldImage(spotFieldRaw, out this.rows, out this.columns);
+
+            return spotFieldRaw;
+        }
 
         //------------------------------------------------ METHOD FUNCTION 2 ------------------------------------------------
         public byte[] GatherCameraData(double exposureTimeSet)
@@ -129,7 +140,8 @@ namespace ASEN
 
             Console.WriteLine(">> Setting Exposure <<");
 
-            double exposureTimeAct, masterGainAct;
+            double exposureTimeAct;
+            double masterGainAct;
 
             //This function sets the exposure time of the camera, and returns the actual exposure time set.
             instrument.SetExposureTime(exposureTimeSet, out exposureTimeAct);
@@ -145,9 +157,8 @@ namespace ASEN
 
             //Capture the spotfield image, return this byte array from the function.
             byte[] imageBuffer = new byte[WFS.ImageBufferSize];
-            int rows;
-            int cols;
-            instrument.GetSpotfieldImage(imageBuffer, out rows, out cols);
+            
+            instrument.GetSpotfieldImage(imageBuffer, out this.rows, out this.columns);
 
             return imageBuffer;//Need to check this -- I'm not sure that this is going to return what I expect it to. Should be a 1280x1024 array containing an 8-bit value in each entry.
         }
