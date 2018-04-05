@@ -116,6 +116,9 @@ namespace ASEN
 
             
             currentSHA.CloseCamera();
+            motor1.DisconnectMotor();
+            motor2.DisconnectMotor();
+            motor3.DisconnectMotor();
             
 
 
@@ -137,8 +140,8 @@ namespace ASEN
             currCamera.SaveImage(foreFile + ".csv");
 
             // Taking a caputre with the SHA at the fore distance
-            byte[] spotFieldFore = currentSHA.GatherCameraData(SHA_EXPT);
-            float[] zernikesFore = currentSHA.ProcessCameraData();
+            byte[] spotFieldFore = currentSHA.GatherCameraData(SHA_EXPT, SHAPath + "\\img_fore.csv");
+            float[] zernikesFore = currentSHA.ProcessCameraData(SHAPath + "\\wft_fore.csv", SHAPath + "\\spt_fore", SHAPath + "\\zernikes_fore.csv");
 
             // Moving the RCWS motor to the aft location
             motor1.MoveMotorLinear(RCWS_DAFT);
@@ -148,12 +151,15 @@ namespace ASEN
             currCamera.SaveImage(aftFile + ".csv");
 
             // Taking a capture with the SHA at the aft distance
-            byte[] spotFieldAft = currentSHA.GatherCameraData(SHA_EXPT);
-            float[] zernikesAft = currentSHA.ProcessCameraData();
+            byte[] spotFieldAft = currentSHA.GatherCameraData(SHA_EXPT, SHAPath + "\\img_aft.csv");
+            float[] zernikesAft = currentSHA.ProcessCameraData(SHAPath + "\\wft_aft.csv", SHAPath + "\\spt_aft", SHAPath + "\\zernikes_aft.csv");
 
 
             // Ending the env. sensors process
             envProcess.StandardInput.Close();
+
+            // Disconnecting from the ASI
+            currCamera.Disconnect();
         }
 
         // Process with methods to be called when using the QHY camera
@@ -169,9 +175,9 @@ namespace ASEN
             // Taking a capture with the QHY and saving the image file at the fore distance
             currCamera.Capture((int)RCWS_EXPT, foreFile);
 
-            // Taking a caputre with the SHA
-            byte[] spotFieldFore = currentSHA.GatherCameraData(SHA_EXPT);
-            float[] zernikesFore = currentSHA.ProcessCameraData();
+            // Taking a caputre with the SHA at the fore distance
+            byte[] spotFieldFore = currentSHA.GatherCameraData(SHA_EXPT, SHAPath + "\\img_fore.csv");
+            float[] zernikesFore = currentSHA.ProcessCameraData(SHAPath + "\\wft_fore.csv", SHAPath + "\\spt_fore", SHAPath + "\\zernikes_fore.csv");
 
             // Moving the motors to the aft distance
             motor1.MoveMotorLinear(RCWS_DAFT);
@@ -179,17 +185,21 @@ namespace ASEN
             // Taking a QHY capture at the aft distance
             currCamera.Capture((int)RCWS_EXPT, aftFile);
 
-            // Taking a capture with the SHA
-            byte[] spotFieldAft = currentSHA.GatherCameraData(SHA_EXPT);
-            float[] zernikesAft = currentSHA.ProcessCameraData();
+            // Taking a capture with the SHA at the aft distance
+            byte[] spotFieldAft = currentSHA.GatherCameraData(SHA_EXPT, SHAPath + "\\img_aft.csv");
+            float[] zernikesAft = currentSHA.ProcessCameraData(SHAPath + "\\wft_aft.csv", SHAPath + "\\spt_aft", SHAPath + "\\zernikes_aft.csv");
 
             // Ending the env. sensors process, which saves the file with its readings to this point
             // Works by sending a keybaord interrupt to the python script (ctrl+c)
             envProcess.StandardInput.Close();
 
+            // Disconnecting from the QHY
+            currCamera.Close();
+
         }
 
         // ------------------ Functions for Parallel Threads -----------------------------
+        /*
         private void TeensyParallel(ref object teensyLock)
         {
 
@@ -245,6 +255,7 @@ namespace ASEN
             //zerinkes = currentSHA.ProcessCameraData();
 
         }
+        */
 
 
     }

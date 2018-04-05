@@ -44,7 +44,7 @@ namespace ASEN
         #endregion
 
         //------------------------------------------------ CONSTRUCTOR ------------------------------------------------
-        public ASEN_SHA(string SHAPath)
+        public ASEN_SHA()
         {
             instrument = new WFS(IntPtr.Zero);
             
