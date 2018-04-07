@@ -520,9 +520,9 @@ namespace ASEN
             instrument.GetSpotDeviations(deviationX, deviationY);
 
             // Saving the spot deviations to their respective files
-            using (StreamWriter devXFile = new StreamWriter(spotPath + "\\_X.csv"))
+            using (StreamWriter devXFile = new StreamWriter(spotPath + "_X.csv"))
             {
-                using (StreamWriter devYFile = new StreamWriter(spotPath + "\\_Y.csv"))
+                using (StreamWriter devYFile = new StreamWriter(spotPath + "_Y.csv"))
                 {
                     string contentX;
                     string contentY;

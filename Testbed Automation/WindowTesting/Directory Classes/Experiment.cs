@@ -36,9 +36,9 @@ namespace ASEN
             this.csvPath = schedulerPath;
             this.experimentPath = experimentPath;
             //this.cameraInUse = selectedCamera;
-            this.serialNo3 = "27501994"; // Set to "motor 1" serial number
+            this.serialNo1 = "27501994"; // Set to "motor 1" serial number
             this.serialNo2 = "27002310"; // Set to "motor 2" serial number
-            this.serialNo1 = "27002528"; // Set to "motor 3" serial number
+            this.serialNo3 = "27002528"; // Set to "motor 3" serial number
             this.COMPort = teensyPort;
             this.serials[0] = this.serialNo1;
             this.serials[1] = this.serialNo2;
