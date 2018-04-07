@@ -167,7 +167,8 @@ namespace WindowTesting.Device_Classes
 
             // Getting the maximum number of bytes returned by the camera
             int length = (int)ASCOM.QHYCCD.libqhyccd.GetQHYCCDMemLength(camhandle);
-
+            length = length * 3; // It's maybe, MAYBE possible that the example did this to avoid heap corruption
+                                 // could it be this simple?
             byte[] rawArray = new byte[length];
 
             ret = 1;
