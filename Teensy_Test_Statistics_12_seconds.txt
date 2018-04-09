@@ -1,2 +1,0 @@
-Time Elapsed,Bytes Read,Data Rate,Filename,Flags,Char Count
-12.0003204346,994400,82.8644539470,Teensy_Test_12_seconds.txt,0,2730,

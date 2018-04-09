@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CEB77D64-5642-4B28-A4CB-43AC9983C6AB}</ProjectGuid>
+    <ProjectGuid>{5084638E-4FB4-40EA-8AB0-DE4C9076A616}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>WindowTesting</RootNamespace>
-    <AssemblyName>WindowTesting</AssemblyName>
+    <RootNamespace>TestBed_Automation_Final</RootNamespace>
+    <AssemblyName>TestBed_Automation_Final</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -22,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,27 +30,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ASCOM.DeviceInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL">
@@ -71,17 +48,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\ASCOM\Platform 6 Developer Components\Components\Platform6\ASCOM.Utilities.dll</HintPath>
     </Reference>
-    <Reference Include="IronPython, Version=2.7.7.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\References_DLL\IronPython\IronPython.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Scripting, Version=1.1.2.22, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\References_DLL\IronPython\Microsoft.Scripting.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -90,84 +60,58 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="Thorlabs.MotionControl.DeviceManagerCLI">
-      <HintPath>..\..\References_DLL\KDC101\Thorlabs.MotionControl.DeviceManagerCLI.dll</HintPath>
+      <HintPath>.\Thorlabs.MotionControl.DeviceManagerCLI.dll</HintPath>
     </Reference>
     <Reference Include="Thorlabs.MotionControl.GenericMotorCLI">
-      <HintPath>..\..\References_DLL\KDC101\Thorlabs.MotionControl.GenericMotorCLI.dll</HintPath>
+      <HintPath>.\Thorlabs.MotionControl.GenericMotorCLI.dll</HintPath>
     </Reference>
     <Reference Include="ThorLabs.MotionControl.KCube.DCServoCLI">
-      <HintPath>..\..\References_DLL\KDC101\ThorLabs.MotionControl.KCube.DCServoCLI.dll</HintPath>
+      <HintPath>.\ThorLabs.MotionControl.KCube.DCServoCLI.dll</HintPath>
     </Reference>
     <Reference Include="Thorlabs.MotionControl.Tools.Common">
-      <HintPath>..\..\References_DLL\KDC101\Thorlabs.MotionControl.Tools.Common.dll</HintPath>
+      <HintPath>.\Thorlabs.MotionControl.Tools.Common.dll</HintPath>
     </Reference>
     <Reference Include="Thorlabs.MotionControl.Tools.Logging">
-      <HintPath>..\..\References_DLL\KDC101\Thorlabs.MotionControl.Tools.Logging.dll</HintPath>
+      <HintPath>.\Thorlabs.MotionControl.Tools.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Thorlabs.WFS.Interop">
-      <HintPath>..\..\References_DLL\WFS\Thorlabs.WFS.Interop.dll</HintPath>
+    <Reference Include="Thorlabs.WFS.Interop, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Thorlabs.WFS.Interop.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Device Classes\ASEN_ENV.cs" />
-    <Compile Include="Device Classes\ASEN_MotorControl.cs" />
-    <Compile Include="Device Classes\ASEN_RCWS.cs" />
-    <Compile Include="Device Classes\ASEN_SHA.cs" />
-    <Compile Include="Directory Classes\Experiment.cs" />
-    <Compile Include="Directory Classes\ExperimentDirectory.cs" />
-    <Compile Include="Directory Classes\state.cs" />
+    <Compile Include="DeviceClasses\ASEN_MotorControl.cs" />
+    <Compile Include="DeviceClasses\ASEN_RCWS.cs" />
+    <Compile Include="DeviceClasses\ASEN_SHA.cs" />
+    <Compile Include="DirectoryClasses\Experiment.cs" />
+    <Compile Include="DirectoryClasses\ExperimentDirectory.cs" />
+    <Compile Include="DirectoryClasses\State.cs" />
     <Compile Include="ExperimentDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ExperimentDialog.Designer.cs">
       <DependentUpon>ExperimentDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="GetExperiment.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GetExperiment.Designer.cs">
-      <DependentUpon>GetExperiment.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="stdole">
-      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ExperimentDialog.resx">
       <DependentUpon>ExperimentDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GetExperiment.resx">
-      <DependentUpon>GetExperiment.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="ASCOM.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="deploy\ASCOM.py" />
     <Content Include="SerialReader.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Thorlabs.MotionControl.DeviceManager.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Thorlabs.MotionControl.KCube.DCServo.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -24,7 +24,7 @@ namespace ASEN
         private string rootPath;
         private string[] serials;
         private ASEN_SHA currentSHA; // The object that controls interactions with the SHA
-        private ASEN_ENV teensy; // The object that controls interactions with the teensy
+        //private ASEN_ENV teensy; // The object that controls interactions with the teensy
         private ASEN_RCWS currentRCWS;
         private ASEN_MotorControl motor1;
         private ASEN_MotorControl motor2;
@@ -37,11 +37,11 @@ namespace ASEN
         private string pyPath;
         private string RCWSPath;
         private string SHAPath;
-        private bool ISASI;
+        private string ISASI;
         private ProcessStartInfo Py;
 
 
-        public State(double[] parameters, bool selectedCamera, string statePath, string[] serials, string COMPort, string pythonPath, string ipythonPath)
+        public State(double[] parameters, string selectedCamera, string statePath, string[] serials, string COMPort, string pythonPath, string ipythonPath)
         {
             // Collecting the state parameters from the input array
             RCWS_EXPT = parameters[0];
@@ -50,8 +50,8 @@ namespace ASEN
             RCWS_DAFT = parameters[3];
             MA_X = parameters[4];
             MA_Y = parameters[5];
-            //cameraInUse = selectedCamera;
-            ISASI = selectedCamera;
+            cameraInUse = selectedCamera;
+            //ISASI = selectedCamera;
             this.serials = serials;
             this.velocity = 3200; // Velocity units are unknown / stupid...
             this.path = statePath;
@@ -72,7 +72,7 @@ namespace ASEN
             // Want to create the filenames sans-extensions
             string RCWSForePath = this.RCWSPath + "\\img_RCWS_fore";
             string RCWSAftPath = this.RCWSPath + "\\img_RCWS_aft";
-            /*
+            
             // Motor Control Setup
             this.motor1 = new ASEN_MotorControl(serials[0], this.velocity);
             this.motor2 = new ASEN_MotorControl(serials[1], this.velocity);
@@ -110,30 +110,20 @@ namespace ASEN
             currentSHA = new ASEN_SHA();
             currentSHA.CameraConnectionAndSetup();
 
-            // Running the correct camera process depending on which camera was selected in the GUI
-            if (ISASI) { ASICamera(RCWSForePath, RCWSAftPath); }
-            else { QHYCamera(RCWSForePath, RCWSAftPath); }
-
+            ASICamera(RCWSForePath, RCWSAftPath);
             
             currentSHA.CloseCamera();
             motor1.DisconnectMotor();
             motor2.DisconnectMotor();
             motor3.DisconnectMotor();
-            */
-            ASEN_RCWS camera = new ASEN_RCWS("ASCOM.QHYCCD.Camera");
-            camera.InitializeCamera();
-            camera.Capture(0.05, true);
-            camera.SaveImage(@"C:\Users\sheph\Desktop\QHYASOMTestFile.csv");
-            camera.Disconnect();
-
-
+            
+         
         }
 
         // Process with methods to be called when using the ASI camera
         private void ASICamera(string foreFile, string aftFile)
         {
             // Name of the ASCOM driver for the ASI
-            cameraInUse = "ASCOM.ASICamera2.Camera";
             ASEN_RCWS currCamera = new ASEN_RCWS(cameraInUse);
             currCamera.InitializeCamera();
 

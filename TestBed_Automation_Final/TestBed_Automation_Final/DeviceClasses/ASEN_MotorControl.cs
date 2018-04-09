@@ -30,6 +30,18 @@ namespace ASEN
             this.serialNo = serial;
         }
 
+
+        private void SetMotorAbsolute(int position)
+        {
+            this.currentMotor.SetMoveAbsolutePosition_DeviceUnit(position);
+        }
+
+        public void MoveMotorAbsolute(int position)
+        {
+            SetMotorAbsolute(position);
+            this.currentMotor.MoveAbsolute(10000);
+        }
+
         private int MicrosToDeviceUnits(double positionMicros)
         {
             int dUnits; // The position in device units for the Z825B / Z812B
@@ -78,7 +90,7 @@ namespace ASEN
             // Collect the motor settings to display some information
             this.CreateConfigs();
         }
-        
+
         private void CreateDevice()
         {
             // create the device
@@ -108,8 +120,7 @@ namespace ASEN
                 return;
             }
 
-            this.currentMotor.ResetStageToDefaults();
-
+            
             // wait for the device settings to initialize
             if (!this.currentMotor.IsSettingsInitialized())
             {
@@ -122,6 +133,15 @@ namespace ASEN
                     Console.WriteLine("Settings failed to initialize");
                 }
             }
+
+            MotorConfiguration configuration = this.currentMotor.LoadMotorConfiguration(this.serialNo);
+            if (configuration != null)
+            {
+                string settingName = configuration.DeviceSettingsName;
+                Console.WriteLine(settingName);
+            }
+
+
         }
 
         private void CreateConfigs()
@@ -153,20 +173,24 @@ namespace ASEN
             DeviceInfo deviceInfo = this.currentMotor.GetDeviceInfo();
             Console.WriteLine("Device {0} = {1}", deviceInfo.SerialNumber, deviceInfo.Name);
 
+            // Getting the homing velocity
+            uint homeVel = currentMotor.GetHomingVelocity_DeviceUnit();
+
+
             // After the device is opened we want to save the velocity
             // Retrieves the "velocity parameters" in real world units
-            VelocityParameters velPars = this.currentMotor.GetVelocityParams();
+            VelocityParameters_DeviceUnit velPars = this.currentMotor.GetVelocityParams_DeviceUnit();
 
             // Restricts the velocity allowed to be the user-defined velocity
             decimal dVelocity = this.velocity;
-            velPars.MaxVelocity = dVelocity;
-            this.currentMotor.SetVelocityParams(velPars);
+            velPars.MaxVelocity = (int)(homeVel/2);
+            this.currentMotor.SetVelocityParams_DeviceUnit(velPars);
 
         }
 
         private int ConvertLinearToDeviceUnits(double position)
         {
-            int newposition = Convert.ToInt32(position / 0.00003);
+            int newposition = Convert.ToInt32(position / 0.000029);
 
             return newposition;
         }
@@ -187,12 +211,15 @@ namespace ASEN
 
         public void MoveMotorPitch(double position)
         {
-            int devicePosition = ConvertPitchToDeviceUnits(position);
+            //int devicePosition = ConvertPitchToDeviceUnits(position);
+            decimal conPos = (decimal)position;
+            conPos = conPos / 3600;
+
 
             try
             {
                 Console.WriteLine("Moving Device to {0}", position);
-                this.currentMotor.MoveTo_DeviceUnit(devicePosition, 5000);
+                this.currentMotor.MoveTo(conPos, 30000);
             }
             catch (Exception)
             {
@@ -207,12 +234,15 @@ namespace ASEN
 
         public void MoveMotorYaw(double position)
         {
-            int devicePosition = ConvertYawToDeviceUnits(position);
+            //int devicePosition = ConvertYawToDeviceUnits(position);
+            decimal conPos = (decimal)position;
+            conPos = conPos / 3600;
+
 
             try
             {
                 Console.WriteLine("Moving Device to {0}", position);
-                this.currentMotor.MoveTo_DeviceUnit(devicePosition, 5000);
+                this.currentMotor.MoveTo(conPos, 30000);
             }
             catch (Exception)
             {
@@ -227,6 +257,7 @@ namespace ASEN
 
         public void HomeMotor()
         {
+            Console.WriteLine("Current Position: " + Convert.ToString(currentMotor.Position));
             try
             {
                 Console.WriteLine("Homing device");
@@ -243,12 +274,12 @@ namespace ASEN
 
         public void MoveMotorLinear(double position)
         {
-            int devicePosition = ConvertLinearToDeviceUnits(position);
-
+            //int devicePosition = ConvertLinearToDeviceUnits(position);
+            decimal conPos = (decimal)position;
             try
             {
                 Console.WriteLine("Moving Device to {0}", position);
-                this.currentMotor.MoveTo_DeviceUnit(devicePosition, 5000);
+                this.currentMotor.MoveTo(conPos, 30000);
             }
             catch (Exception)
             {
@@ -264,6 +295,6 @@ namespace ASEN
         {
             this.currentMotor.StopPolling();
             this.currentMotor.Disconnect(true);
-        }       
+        }
     }
 }

@@ -10,13 +10,14 @@ namespace ASEN
         public string ID;
         public int width;
         public int height;
-        
-        public ASEN_RCWS(string driverID) : base(driverID) {
+
+        public ASEN_RCWS(string driverID) : base(driverID)
+        {
 
             // Using the API to create an instance of the camera class
             // And setting instance variable "ID" to the user-supplied camera ID
             this.ID = driverID;
-            
+
         }
 
         public void Capture(double exposureTime, bool IS_LIGHT_IMAGE)
@@ -26,7 +27,7 @@ namespace ASEN
 
             bool wait = true;
 
-            while(wait)
+            while (wait)
             {
                 if (this.ImageReady)
                 {
@@ -35,7 +36,7 @@ namespace ASEN
             }
 
             Console.WriteLine("Exposure Complete.");
-            
+
         }
 
         public void InitializeCamera()
@@ -45,8 +46,6 @@ namespace ASEN
 
             this.width = this.CameraXSize;
             this.height = this.CameraYSize;
-
-
         }
 
         // Saving to CSV
@@ -70,7 +69,7 @@ namespace ASEN
                 }
             }
         }
-        
+
 
         public void Disconnect()
         {
