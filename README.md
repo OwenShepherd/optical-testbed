@@ -15,18 +15,109 @@ Some third-party drivers and Visual Studio 15 need to be installed.
 ### Pre-Requisites  
 **Please download drivers as 32-bit or it may cause some compatibility issues**  
 
-First, ensure you have at least Visual Studio 15 installed (or at least 10.0.40219.1).  Then, install the following:
+First, ensure you have at least Visual Studio 15 installed (or at least 10.0.40219.1).  Then, install the following drivers in the listed order:
 - [ASI120MM Drivers](http://astronomy-imaging-camera.com/software/)
 - [ASCOM Platform 6.3](https://ascom-standards.org/Downloads/Index.htm)
 - [ASCOM Platform Developer Components](https://ascom-standards.org/Downloads/PlatDevComponents.htm)
 - [ASI Cameras ASCOM Driver](http://astronomy-imaging-camera.com/software/)
+- [QHY Camera Driver](http://www.qhyccd.com/QHY5-III-Camera.html)
+- [QHY ASCOM Driver (Capture Version)](www.qhyccd.com/ASCOM-Camera.html)
+
+Next, in order to use the complete version of the program, the most recent version of Python (At least Python version 3.6) must be installed:
+- [Python Downloads](https://www.python.org/downloads/)
+
+Then, install pyserial for Python 3 in any fashion (reccomended to use pip); just ensure that pyserial can be called from a Python 3 program:
+- [Pyserial](https://pypi.python.org/pypi/pyserial)
 
 ## Running the Program
-Currently, the program is unfinished, although several components have been completed.  Other than the aforementioned ASI drivers, the necessary DLL references should already be installed in the corresponding VS solutions.  Details on each solution are as follows:
-- WFS150-7AR: Solution is capable of interfacing with the Thorlabs SHA.
-- KDC101: Solution is capable of interfacing with the Thorlabs motor controllers.
-- ASI120MM: Solution is capable of interfacing with ASI120MM image sensor, and soon the QHY as well.
-- WindowTesting: This will eventually be the complete overall program to replace the four separate solutions.  Currently it has a GUI for prompting the user for some necessary inputs.
+As of now, the program has been tested with all components of the testbed and is working in its designed fashion for data collection.  The most recent working version of the program is contained in the "TestBed_Automation_Final" Visual Studio Project.
+
+### Using the Executable
+The Visual Studio Project will automatically add the required files for the executable to the appropriate directory.  But, when running the executable outside of visual studio, ensure that the following are in the same directory as the EXE:
+- ASCOM.DeviceInterfaces.dll
+- ASCOM.DriverAccess.dll
+- ASCOM.Exceptions.dll
+- ASCOM.Utilities.dll
+- SerialReader.py
+- Thorlabs.MotionControl.DeviceManager.dll
+- Thorlabs.MotionControl.DeviceManagerCLI.dll
+- Thorlabs.MotionControl.GenericMotorCLI.dll
+- Thorlabs.MotionControl.KCube.DCServo.dll
+- Thorlabs.MotionControl.KCube.DCServoCLI.dll
+- Thorlabs.MotionControl.Tools.Common.dll
+- Thorlabs.MotionControl.Tools.Logging.dll
+- Throlabs.WFS.Interop.dll
+
+An official "release" hasn't been made yet for this program, although running the program in Visual Studio will achieve the desired results.
+
+## Data Organization
+This is how data is organized by the program.
+
+### Filesystem Organization
+Here is how data will be organized.  An experiment corresponds to a collection of data
+taken during one session.  Each state corresponds to a different test (i.e. with
+different de-focus distances, exposures, etc...).
+```
+EXAMPLE_EXPERIMENT
+├── 2018_02_03_13_48_41_STATE1
+├── 2018_02_03_13_50_55_STATE2
+├── 2018_02_03_13_52_13_STATE3
+├── 2018_02_03_13_54_32_STATE4
+│   ├── data_RCWS
+│   │   ├── img_RCWS_aft.png
+│   │   ├── img_RCWS_fore.png
+│   │   └── zernikes_RCWS.csv
+│   ├── data_SHA
+│   │   ├── img_SHA_aft.png
+│   │   ├── img_SHA_fore.png
+│   │   ├── spt_SHA_aft.png
+│   │   ├── spt_SHA_fore.png
+│   │   ├── wft_SHA_aft.png
+│   │   ├── wft_SHA_fore.png
+│   │   └── zernikes_SHA.csv
+│   ├── env_data.csv
+│   ├── state_parameters.csv
+│   └── zernikes_model.csv
+└── experiment_schedule.csv
+```
+The automation program will automatically create the experiment directory (as named off user input), and will automatically create the state folders based on the number of tests in the schedule file.  Each state folder will be filled with the appropriate data shown above as the tests are run.
+
+### Schedule File Structure
+The experiment_schedule.csv file will specify all the system states that are to be tested for a given experiment. For each state specified in this file the automated test control program will create the appropriate sub-folder of the test and populate it with the data that is produced while the experiment is running. In post-processing other files can be added in the created file structure. The first row will include the header:  
+```
+RCWS EXPT (us), SHA EXPT (us), RCWS D FORE (um), RCWS D AFT (um), M2 A X (arc sec), M2 A Y (arc sec)  
+```
+After that line every row of data will specify those state values at which to make a wavefront measurement with both sensors.
+
+### Environmental Sensor Data
+Data is collected from the environmental sensors and sent in an organized way to the computer.  Each set of data sent contains at most: 3-Dimensional readings from 6 accelerometers, and temperature readings from 6 IC temperature sensors.
+```
+| 0xA0 | 0xA1 | RT | SN | {PL} | SH | SL | MH | ML | UH | UL | CS | 0x0D | 0x0A |
+```
+These bytes / sets of bytes contain the following data:
+- RT: (0 or 1) indicates whether the payload contains accelerometer or temperature data.
+- SN: Indicates the sensor number / sensor ID
+- PL: The actual sensor data; details below
+- SH: MSB for seconds elapsed
+- SL: LSB for seconds elapsed
+- MH: MSB for milliseconds elapsed
+- ML: LSB for milliseconds elapsed
+- UH: MSB for microseconds elapsed
+- UL: LSB for microseconds elapsed
+- CS: Result of taking XOR of all payload and timestamp bytes.  AKA: A rudimentary checksum.
+
+**Payload Organization**:  
+Temperature Sensor:
+```
+| Temperature High Byte | Temperature Low Byte |
+```
+
+Accelerometer:
+```
+| Acc. Axis 1 H | Acc. Axis 1 L | Acc. Axis 2 H | Acc. Axis 2 L | Acc. Axis 3 H | Acc. Axis 3 L |
+```
+
+
 
 ## Conceptual Information
 
@@ -58,40 +149,6 @@ In addition, the following native C DLLs need to be copied to the executable fol
 These DLL files may be found in the References_DLL/KDC101 folder.
 
 
-### Filesystem Organization
-Here is how data will be organized.  An experiment corresponds to a collection of data
-taken during one session.  Each state corresponds to a different test (i.e. with 
-different de-focus distances, exposures, etc...).
-```
-EXAMPLE_EXPERIMENT
-├── 2018_02_03_13_48_41_STATE1
-├── 2018_02_03_13_50_55_STATE2
-├── 2018_02_03_13_52_13_STATE3
-├── 2018_02_03_13_54_32_STATE4
-│   ├── data_RCWS
-│   │   ├── img_RCWS_aft.png
-│   │   ├── img_RCWS_fore.png
-│   │   └── zernikes_RCWS.csv
-│   ├── data_SHA
-│   │   ├── img_SHA_aft.png
-│   │   ├── img_SHA_fore.png
-│   │   ├── spt_SHA_aft.png
-│   │   ├── spt_SHA_fore.png
-│   │   ├── wft_SHA_aft.png
-│   │   ├── wft_SHA_fore.png
-│   │   └── zernikes_SHA.csv
-│   ├── env_data.csv
-│   ├── state_parameters.csv
-│   └── zernikes_model.csv
-└── experiment_schedule.csv
-```
-
-### Schedule File Structure
-The experiment_schedule.csv file will specify all the system states that are to be tested for a given experiment. For each state specified in this file the automated test control program will create the appropriate sub-folder of the test and populate it with the data that is produced while the experiment is running. In post-processing other files can be added in the created file structure. The first row will include the header:  
-```
-RCWS EXPT (us), SHA EXPT (us), RCWS D FORE (um), RCWS D AFT (um), M2 A X (arc sec), M2 A Y (arc sec)  
-```
-After that line every row of data will specify those state values at which to make a wavefront measurement with both sensors.
 
 ## Authors (This Repository)
 - Owen Shepherd
