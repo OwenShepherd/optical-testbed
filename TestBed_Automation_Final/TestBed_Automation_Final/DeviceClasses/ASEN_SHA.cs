@@ -13,6 +13,7 @@ namespace ASEN
     {
         #region defines
         //Define all the variables which will be used later on in the code.
+        private short gain;
         private static int highestCameraResolution = 0; //Sets the camera to use 1280x1024 pixels                               -- Added by Jake
         private static int sampleCameraResolWfs10 = 2; // CAM_RES_WFS10_360 = 360x360 pixels                                    -- NOT USED, but still in the code to limit problems
         private static int sampleCameraResolWfs20 = 3; // CAM_RES_WFS20_512 = 512x512 pixels                                    -- NOT USED, but still in the code to limit problems
@@ -44,14 +45,14 @@ namespace ASEN
         #endregion
 
         //------------------------------------------------ CONSTRUCTOR ------------------------------------------------
-        public ASEN_SHA()
+        public ASEN_SHA(short inputGain)
         {
             instrument = new WFS(IntPtr.Zero);
-
+            gain = inputGain;
         }
 
         //------------------------------------------------ METHOD FUNCTION 1 ------------------------------------------------
-        public void CameraConnectionAndSetup()
+        public void CameraConnectionAndSetup(double exposure)
         {
             //int selectedInstrId = 0;//I believe this is a handler index in the situation that there would be mulitple SHA's connected to the computer.
             string resourceName = default(string);//Just creating a string initially set to null.
@@ -117,10 +118,13 @@ namespace ASEN
             // set camera exposure time and gain if you don't want to use auto exposure
             // use functions GetExposureTimeRange, SetExposureTime, GetMasterGainRange, SetMasterGain
 
+            double actualGain = 0;
             // set WFS internal reference plane
             Console.WriteLine("\nSet WFS to internal reference plane.\n");
             instrument.SetReferencePlane(InternalRefPlane); // Good. Set to use the internal reference plane to the MLA.
-
+            instrument.SetMasterGain(gain, out actualGain);
+            
+            Console.WriteLine("Actual Gain Set to SHA: " + Convert.ToString(actualGain));
             //To define the pupil, I want to just use the beam width. To do this, I first need to find the beam dimensions, and then input them to DefinePupil.
             double beamCentroidX, beamCentroidY, beamDiameterX, beamDiameterY;
             instrument.CalcBeamCentroidDia(out beamCentroidX, out beamCentroidY, out beamDiameterX, out beamDiameterY);

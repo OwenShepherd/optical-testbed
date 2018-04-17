@@ -142,8 +142,11 @@ namespace ASEN
             // Getting the experiment name
             string experimentPath = userPath + "\\" + experimentName;
 
+            string inputGain = GainBox.Text;
+            int gain = Int32.Parse(inputGain);
+
             // Creating our new experiment
-            currentExperiment = new Experiment(schedulePath, experimentPath,selectedCamera,teensyPort,pythonPath,ipythonPath);
+            currentExperiment = new Experiment(schedulePath, experimentPath,selectedCamera,teensyPort,pythonPath,ipythonPath, gain);
             currentExperiment.StartExperiment();
 
             this.Close();
@@ -192,6 +195,16 @@ namespace ASEN
             {
                 ipythonPath = scheduleDialog.FileName;
             }
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

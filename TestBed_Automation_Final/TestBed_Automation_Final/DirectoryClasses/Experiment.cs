@@ -21,6 +21,7 @@ namespace ASEN
         private string[] serials;
         private string ipyPath;
         private string pyPath;
+        private int gain;
         public bool ISASI;
 
         private struct StateOrganizer
@@ -30,7 +31,7 @@ namespace ASEN
         }
 
 
-        public Experiment(string schedulerPath, string experimentPath, string selectedCamera, string teensyPort, string pythonPath, string ipythonPath)
+        public Experiment(string schedulerPath, string experimentPath, string selectedCamera, string teensyPort, string pythonPath, string ipythonPath,int inputGain)
         {
             this.serials = new string[3];
             this.csvPath = schedulerPath;
@@ -47,6 +48,7 @@ namespace ASEN
             this.ipyPath = ipythonPath;
             //ISASI = selectedCamera;
             this.cameraInUse = selectedCamera;
+            this.gain = inputGain;
         }
 
         private void ExperimentReader()
@@ -75,6 +77,8 @@ namespace ASEN
             ASEN.ExperimentDirectory initialDirectory = new ASEN.ExperimentDirectory(experimentPath);
             string statePath = "";
             int csvCount = 0;
+            double prevMX = -1;
+            double prevMY = -1;
 
             using (StreamReader sr = new StreamReader(csvPath))
             {
@@ -93,8 +97,10 @@ namespace ASEN
                         statePath = initialDirectory.CreateNewState();
 
                         // calling the state constructor
-                        currentState = new State(inPut, cameraInUse, statePath, this.serials, this.COMPort, this.pyPath, this.ipyPath);
+                        currentState = new State(inPut, cameraInUse, statePath, this.serials, this.COMPort, this.pyPath, this.ipyPath,gain, prevMX, prevMY);
                         currentState.RunState();
+                        prevMX = inPut[4];
+                        prevMY = inPut[5];
 
                     }
 

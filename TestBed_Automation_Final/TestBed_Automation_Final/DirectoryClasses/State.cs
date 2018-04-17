@@ -38,10 +38,14 @@ namespace ASEN
         private string RCWSPath;
         private string SHAPath;
         private string ISASI;
+        private double focusDistance;
+        private double prevMX;
+        private double prevMY;
+        private int gain;
         private ProcessStartInfo Py;
 
 
-        public State(double[] parameters, string selectedCamera, string statePath, string[] serials, string COMPort, string pythonPath, string ipythonPath)
+        public State(double[] parameters, string selectedCamera, string statePath, string[] serials, string COMPort, string pythonPath, string ipythonPath,int inputGain, double pMX, double pMY)
         {
             // Collecting the state parameters from the input array
             RCWS_EXPT = parameters[0];
@@ -52,6 +56,11 @@ namespace ASEN
             MA_Y = parameters[5];
             cameraInUse = selectedCamera;
             //ISASI = selectedCamera;
+            this.focusDistance = 12.22785;
+            this.RCWS_DFORE = RCWS_DFORE * 0.001;
+            this.RCWS_DAFT = RCWS_DAFT * 0.001;
+            RCWS_DFORE = focusDistance - RCWS_DFORE;
+            RCWS_DAFT = focusDistance + RCWS_DAFT;
             this.serials = serials;
             this.velocity = 3200; // Velocity units are unknown / stupid...
             this.path = statePath;
@@ -62,6 +71,12 @@ namespace ASEN
 
             this.RCWSPath = this.path + "\\data_RCWS";
             this.SHAPath = this.path + "\\data_SHA";
+            this.gain = inputGain;
+
+            this.prevMX = pMX;
+            this.prevMY = pMY;
+            this.RCWS_EXPT = RCWS_EXPT * Math.Pow(10, -6);
+            this.SHA_EXPT = SHA_EXPT * 0.001;
 
             DirectoryInfo rcws = Directory.CreateDirectory(RCWSPath);
             DirectoryInfo sha = Directory.CreateDirectory(SHAPath);
@@ -95,20 +110,43 @@ namespace ASEN
             Py.RedirectStandardError = true; // Any error in standard output will be redirected back (for example exceptions)
 
             // Initial homing of the motors
-            motor1.HomeMotor();
-            motor2.HomeMotor();
-            motor3.HomeMotor();
+            var list = new List<Task>();
+            Task homing1 = Task.Factory.StartNew(() => motor1.HomeMotor());
+            list.Add(homing1);
+            if (prevMY != MA_Y)
+            {
+                Task homing2 = Task.Factory.StartNew(() => motor2.HomeMotor());
+                list.Add(homing2);
+            }
+            if (prevMX != MA_X)
+            {
+                Task homing3 = Task.Factory.StartNew(() => motor3.HomeMotor());
+                list.Add(homing3);
+            }
+
+            Task.WaitAll(list.ToArray());
 
             // Now we move the motors to their initial position.
             // This means the tilt-tip stage is moved to its proper position, while the linear
             // stage is moved to the RCWS's specified fore defocus position
-            motor1.MoveMotorLinear(RCWS_DFORE);
-            motor2.MoveMotorPitch(MA_X);
-            motor3.MoveMotorYaw(MA_Y);
-            
+            var moveList = new List<Task>();
+            Task moving1 = Task.Factory.StartNew(() => motor1.MoveMotorLinear(RCWS_DFORE));
+            moveList.Add(moving1);
+            if (prevMY != MA_Y)
+            {
+                Task moving2 = Task.Factory.StartNew(() => motor2.MoveMotorPitch(MA_Y));
+                moveList.Add(moving2);
+            }
+            if (prevMX != MA_X)
+            {
+                Task moving3 = Task.Factory.StartNew(() => motor3.MoveMotorYaw(MA_X));
+                moveList.Add(moving3);
+            }
+
+            Task.WaitAll(moveList.ToArray());
             // ASEN_SHA Initializing Device
-            currentSHA = new ASEN_SHA();
-            currentSHA.CameraConnectionAndSetup();
+            currentSHA = new ASEN_SHA((short)gain);
+            currentSHA.CameraConnectionAndSetup(SHA_EXPT);
 
             ASICamera(RCWSForePath, RCWSAftPath);
             
@@ -126,9 +164,10 @@ namespace ASEN
             // Name of the ASCOM driver for the ASI
             ASEN_RCWS currCamera = new ASEN_RCWS(cameraInUse);
             currCamera.InitializeCamera();
+            currCamera.Gain = (short)gain;
 
             // Starting the environmental sensors process
-            var envProcess = Process.Start(this.Py);
+            //var envProcess = Process.Start(this.Py);
 
             // Take a capture of the image at the fore distance
             currCamera.Capture(RCWS_EXPT, true);
@@ -151,7 +190,7 @@ namespace ASEN
 
 
             // Ending the env. sensors process
-            envProcess.StandardInput.Close();
+            //envProcess.StandardInput.Close();
 
             // Disconnecting from the ASI
             currCamera.Disconnect();
