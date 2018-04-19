@@ -37,6 +37,7 @@ namespace ASEN
         private string wavePath;
         private string spotPath;
         private string zernikePath;
+        private int deviceStatus;
 
         private static int bufferSize = 255;
         private WFS instrument;
@@ -163,11 +164,13 @@ namespace ASEN
             Console.Write("\nActual Master Gain Set: ");
             Console.WriteLine(masterGainAct);
 
-
+            int status;
             //Capture the spotfield image, return this byte array from the function.
             byte[] imageBuffer = new byte[WFS.ImageBufferSize];
-            instrument.TakeSpotfieldImage();
+            status = instrument.TakeSpotfieldImage();
+            string hexStatus = status.ToString("X");
             instrument.GetSpotfieldImage(imageBuffer, out this.rows, out this.columns);
+            Console.WriteLine("Take-image status: " + hexStatus);
             
             File.WriteAllBytes(imagePath, imageBuffer);
 

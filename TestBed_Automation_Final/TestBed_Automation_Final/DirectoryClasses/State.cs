@@ -167,7 +167,7 @@ namespace ASEN
             currCamera.Gain = (short)gain;
 
             // Starting the environmental sensors process
-            //var envProcess = Process.Start(this.Py);
+            var envProcess = Process.Start(this.Py);
 
             // Take a capture of the image at the fore distance
             currCamera.Capture(RCWS_EXPT, true);
@@ -190,7 +190,7 @@ namespace ASEN
 
 
             // Ending the env. sensors process
-            //envProcess.StandardInput.Close();
+            envProcess.StandardInput.Close();
 
             // Disconnecting from the ASI
             currCamera.Disconnect();

@@ -183,7 +183,7 @@ namespace ASEN
 
             // Restricts the velocity allowed to be the user-defined velocity
             decimal dVelocity = this.velocity;
-            velPars.MaxVelocity = (int)(homeVel/2);
+            velPars.MaxVelocity = (int)(homeVel);
             this.currentMotor.SetVelocityParams_DeviceUnit(velPars);
 
         }

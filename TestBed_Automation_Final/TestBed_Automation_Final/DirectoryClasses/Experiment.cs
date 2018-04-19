@@ -79,6 +79,7 @@ namespace ASEN
             int csvCount = 0;
             double prevMX = -1;
             double prevMY = -1;
+            int stateNum = 0;
 
             using (StreamReader sr = new StreamReader(csvPath))
             {
@@ -89,13 +90,14 @@ namespace ASEN
                     if (csvCount == 0) { }
                     else
                     {
+                        stateNum++;
                         // Parsing data from the string
                         string[] valInput = currentLine.Split(',');
                         double[] inPut = Array.ConvertAll(valInput, double.Parse);
 
                         // Adding a new state to the directory
                         statePath = initialDirectory.CreateNewState();
-
+                        Console.WriteLine("\nTrial Number: " + Convert.ToString(stateNum) + "\n");
                         // calling the state constructor
                         currentState = new State(inPut, cameraInUse, statePath, this.serials, this.COMPort, this.pyPath, this.ipyPath,gain, prevMX, prevMY);
                         currentState.RunState();
