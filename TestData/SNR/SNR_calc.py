@@ -30,9 +30,12 @@ def csv2png(file_in, saving=True):
     return holder.transpose()
 
 if __name__ == '__main__':
+    testData = [[0 for x in range(0,6)] for y in range(0,8)]
     # Retrieve image file locations from RCWS
     dirs0 = ['SNR_LightOn','SNR_LightOff','SNR_LightOn2','SNR_LightOff2']
+    stateDirs = ['STATE1','STATE2','STATE3','STATE4','STATE5','STATE6','STATE7','STATE8']
     files = []
+    print(os.getcwd())
     for dir0 in dirs0:
         dirs1 = glob('.\\' + dir0 + '\\*')
         # print('dirs1 = ',dirs1)
@@ -44,10 +47,17 @@ if __name__ == '__main__':
             files.append(holder)
     # Conglomerate the image data into a list
     imgs_array = []
-    sum = 0
-    counter = 0
+    localData = [[0 for x in range(2)] for y in range(8)]
+    fileIter = 0
     for file in files:
         print(file)
+        input()
+        dirCounter = 0
+        for dirs in stateDirs:
+            currString = file[0]
+            if (currString.find(dirs) != -1):
+                fileIter = dirCounter
+            dirCounter = dirCounter + 1
         data = list(csv.reader(open(file[0])))
         numrow = len(data)
         numcol = len(data[0])
@@ -55,16 +65,30 @@ if __name__ == '__main__':
             reader = csv.reader(f)
             header = next(reader)
 
-        print(header)
-        input()
+
+        localData[fileIter][0] = header[0]
+        sum = 0
+        tempData = []
+        tempR = []
+        tempC = []
         for r in range(0,numrow):
             for c in range(0,numcol):
                 if (data[r][c] == ''):
                     sum = sum + 0
                 else:
                     sum = sum + int(data[r][c])
-        print(sum)
-        input()
+                    if (int(data[r][c]) > 4000):
+                        tempData.append(int(data[r][c]))
+                        tempR.append(r)
+                        tempC.append(c)
+
+        z = list(zip(tempData,tempR,tempC))
+        counter = 0
+        for dirs in dirs0:
+            if (file[0].find(dirs) != -1):
+                testData[fileIter][counter + 1] = sum
+            counter = counter + 1
+
         # holder = cv2.imread(file[1],-1)
         # holder = csv2png(file[1])
         # imgs_array.append(holder)
@@ -72,6 +96,13 @@ if __name__ == '__main__':
         # holder = csv2png(file[0])
         # imgs_array.append(holder)
     # Present each image
+
+    with open(os.getcwd() + "\\Counts.csv","w+") as my_csv:
+        csvWriter = csv.writer(my_csv,delimiter=',')
+        csvWriter.writerows(testData)
+
+    input()
+
     ii = 0
     jj = 0
     for image_out in imgs_array:
