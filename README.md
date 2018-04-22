@@ -21,13 +21,19 @@ First, ensure you have at least Visual Studio 15 installed (or at least 10.0.402
 - [ASCOM Platform Developer Components](https://ascom-standards.org/Downloads/PlatDevComponents.htm)
 - [ASI Cameras ASCOM Driver](http://astronomy-imaging-camera.com/software/)
 - [QHY Camera Driver](http://www.qhyccd.com/QHY5-III-Camera.html)
-- [QHY ASCOM Driver (Capture Version)](www.qhyccd.com/ASCOM-Camera.html)
+- [QHY ASCOM Driver (Capture Version V0131)](http://www.qhyccd.com/ASCOM-Camera.html)
 
 Next, in order to use the complete version of the program, the most recent version of Python (At least Python version 3.6) must be installed:
 - [Python Downloads](https://www.python.org/downloads/)
 
 Then, install pyserial for Python 3 in any fashion (reccomended to use pip); just ensure that pyserial can be called from a Python 3 program:
 - [Pyserial](https://pypi.python.org/pypi/pyserial)
+
+Next, the program requires extra DLLs in order to run properly.  These must be acquired by also installing the following software:
+- [Thorlabs Kinesis (32-bit for 32-bit or 32-bit for 64-bit](https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=Motion_Control&viewtab=0)
+- [Thorlabs WFS](https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=WFS)
+
+Lastly, it is possible that the software will initially have issues connecting to the QHY due to a defect in the driver.  In this event, it is required to use sharpcap to connect to the QHY via ASCOM, and simply set the gain to, say, 1, and click accept.  It is possible that some error warnings will pop up, but ignore these.  Try running your experiment again and see if an error still pops up about some camera connection issues.
 
 ## Running the Program
 As of now, the program has been tested with all components of the testbed and is working in its designed fashion for data collection.  The most recent working version of the program is contained in the "TestBed_Automation_Final" Visual Studio Project.
