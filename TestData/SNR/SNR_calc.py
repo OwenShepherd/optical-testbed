@@ -37,19 +37,40 @@ if __name__ == '__main__':
         dirs1 = glob('.\\' + dir0 + '\\*')
         # print('dirs1 = ',dirs1)
         for dir1 in dirs1:
-            holder = glob(dir1 + '\\data_RCWS\\*.png')
-            # print(holder)
+            holder = glob(dir1 + '\\data_RCWS\\*.csv')
+            holder2 = glob(dir1 + '\\*.csv')
+            #print(holder)
+            holder.append(holder2[1])
             files.append(holder)
     # Conglomerate the image data into a list
     imgs_array = []
+    sum = 0
+    counter = 0
     for file in files:
         print(file)
-        holder = cv2.imread(file[1],-1)
+        data = list(csv.reader(open(file[0])))
+        numrow = len(data)
+        numcol = len(data[0])
+        with open(file[2]) as f:
+            reader = csv.reader(f)
+            header = next(reader)
+
+        print(header)
+        input()
+        for r in range(0,numrow):
+            for c in range(0,numcol):
+                if (data[r][c] == ''):
+                    sum = sum + 0
+                else:
+                    sum = sum + int(data[r][c])
+        print(sum)
+        input()
+        # holder = cv2.imread(file[1],-1)
         # holder = csv2png(file[1])
-        imgs_array.append(holder)
-        holder = cv2.imread(file[0],-1)
+        # imgs_array.append(holder)
+        # holder = cv2.imread(file[0],-1)
         # holder = csv2png(file[0])
-        imgs_array.append(holder)
+        # imgs_array.append(holder)
     # Present each image
     ii = 0
     jj = 0
@@ -78,6 +99,7 @@ if __name__ == '__main__':
         # hist,bins = np.histogram(image_out.ravel(), 2**16-1, [0, 2**16-1])
         """
         counter = 0
+        imageSum = 0
         newHist = []
         newX = []
         for entry in hist:
@@ -89,14 +111,17 @@ if __name__ == '__main__':
             counter = counter + 1
 
         #plt.bar(newX,newHist,align = 'center')
+        """
         print(newHist)
         print(newX)
-        plt.plot(hist)
-        plt.xlim([0,2**16])
+        plt.plot(newX,newHist)
+        plt.xlim([0,len(newX)-1])
         plt.xlabel("Bins")
         plt.ylabel("Frequency")
         plt.show()
         # hist,bins = np.histogram(image_out.ravel(), 2**16-1, [0, 2**16-1])
+        """
+
         """
         plt.plot(hist)
         plt.grid(b=True, which='major')
