@@ -13,6 +13,8 @@ import numpy as np
 import cv2
 import csv
 import os
+import time
+import itertools
 
 def csv2png(file_in, saving=True):
     f = open(file_in,'r')
@@ -30,136 +32,148 @@ def csv2png(file_in, saving=True):
     return holder.transpose()
 
 if __name__ == '__main__':
-    testData = [[0 for x in range(0,6)] for y in range(0,8)]
-    # Retrieve image file locations from RCWS
-    dirs0 = ['SNR_LightOn','SNR_LightOff','SNR_LightOn2','SNR_LightOff2']
-    stateDirs = ['STATE1','STATE2','STATE3','STATE4','STATE5','STATE6','STATE7','STATE8']
-    files = []
-    print(os.getcwd())
-    for dir0 in dirs0:
-        dirs1 = glob('.\\' + dir0 + '\\*')
-        # print('dirs1 = ',dirs1)
-        for dir1 in dirs1:
-            holder = glob(dir1 + '\\data_RCWS\\*.csv')
-            holder2 = glob(dir1 + '\\*.csv')
-            #print(holder)
-            holder.append(holder2[1])
-            files.append(holder)
-    # Conglomerate the image data into a list
-    imgs_array = []
-    localData = [[0 for x in range(2)] for y in range(8)]
-    fileIter = 0
-    for file in files:
-        print(file)
-        input()
-        dirCounter = 0
-        for dirs in stateDirs:
-            currString = file[0]
-            if (currString.find(dirs) != -1):
-                fileIter = dirCounter
-            dirCounter = dirCounter + 1
-        data = list(csv.reader(open(file[0])))
-        numrow = len(data)
-        numcol = len(data[0])
-        with open(file[2]) as f:
+    # image threshold
+    threshold = 2048
+    numStates = 8
+    numRows = 0
+    numCols = 0
+
+    # Directories containing light dat
+    lightDirs = [os.getcwd()] * 4
+    lightDirs[0] += '\\SNR_LightOn'
+    lightDirs[1] += '\\SNR_LightOff'
+    lightDirs[2] += '\\SNR_LightOn2'
+    lightDirs[3] += '\\SNR_LightOff2'
+
+    # Creating an array to hold the test data
+    testData = [[[0 for x in range(2)] for y in range(8)] for z in range(4)]
+    countData = [[0 for y in range(7)] for x in range(8)]
+    countDataFore = [[0 for y in range(7)] for x in range(8)]
+
+    # Looping through every piece of test data
+    for i in range(len(lightDirs)):
+        # Collects all the state directories and the fore / aft files locations
+        holder = glob(lightDirs[i] + "\\*\\data_RCWS\\*.csv")
+
+        # Going to loop through the holder names.
+        # Everything will be stored in the testData 3d array
+        for j in range(0,len(holder),2):
+            state = int(j/2)
+            aftData = list(csv.reader(open(holder[j])))
+            foreData = list(csv.reader(open(holder[j+1])))
+            testData[i][state][0] = aftData
+            numRows = len(aftData)
+            numCols = len(aftData[0])
+            testData[i][state][1] = foreData
+
+    # Looping through the states to collect the exposure times
+    header = []
+    holder = glob(lightDirs[0] + "\\*\\parameters.csv")
+    for i in range(len(holder)):
+        fileName = holder[i]
+        with open(fileName) as f:
             reader = csv.reader(f)
             header = next(reader)
+            countData[i][0] = header[0]
+            countDataFore[i][0] = header[0]
+
+    # Now we've collected the test data as desired
+    # want to get the count data to hopefully back out the SNR
+    lightOn = []
+    lightOn2 = []
+    lightOnFore = []
+    lightOnFore2 = []
+    for i in range(len(lightDirs)):
+        # Loop through the stages
+        for state in range(numStates):
+            # Collecting the fore and aft data
+            aftData = testData[i][state][0]
+            foreData = testData[i][state][1]
+
+            # If the light is on
+            if (i == 0 or i == 2):
+                # Loop through the image
+                for r in range(numRows):
+                    for c in range(numCols):
+                        # Ignore empty cells
+                        if (aftData[r][c] != ''):
+                            data = int(aftData[r][c])
+                            dataFore = int(foreData[r][c])
+                            # If the pixel is more intense than the threshold
+                            if (i == 0 and data > threshold):
+                                lightOn.append((r,c,data))
+                            # If the pixel is more intense than the threshold
+                            elif (i == 2 and (data > threshold)):
+                                lightOn2.append((r,c,data))
+
+                            elif (i == 0 and (dataFore > threshold)):
+                                lightOnFore.append((r,c,dataFore))
+
+                            elif (i == 2 and (dataFore > threshold)):
+                                lightOnFore2.append((r,c,dataFore))
 
 
-        localData[fileIter][0] = header[0]
-        sum = 0
-        tempData = []
-        tempR = []
-        tempC = []
-        for r in range(0,numrow):
-            for c in range(0,numcol):
-                if (data[r][c] == ''):
-                    sum = sum + 0
-                else:
-                    sum = sum + int(data[r][c])
-                    if (int(data[r][c]) > 4000):
-                        tempData.append(int(data[r][c]))
-                        tempR.append(r)
-                        tempC.append(c)
+                            countData[state][i+1] += data
+                            countDataFore[state][i+1] += dataFore
 
-        z = list(zip(tempData,tempR,tempC))
-        counter = 0
-        for dirs in dirs0:
-            if (file[0].find(dirs) != -1):
-                testData[fileIter][counter + 1] = sum
-            counter = counter + 1
+            # If
+            elif (i == 1):
+                for item in lightOn:
+                    (r,c,data) = item
+                    countData[state][i+1] += int(aftData[r][c])
 
-        # holder = cv2.imread(file[1],-1)
-        # holder = csv2png(file[1])
-        # imgs_array.append(holder)
-        # holder = cv2.imread(file[0],-1)
-        # holder = csv2png(file[0])
-        # imgs_array.append(holder)
-    # Present each image
+                for item in lightOnFore:
+                    (r,c,data) = item
+                    countDataFore[state][i+1] += int(foreData[r][c])
 
-    with open(os.getcwd() + "\\Counts.csv","w+") as my_csv:
-        csvWriter = csv.writer(my_csv,delimiter=',')
-        csvWriter.writerows(testData)
+            else:
+                for item in lightOn2:
+                    (r,c,data) = item
+                    countData[state][i+1] += int(aftData[r][c])
 
+                for item in lightOnFore2:
+                    (r,c,data) = item
+                    countDataFore[state][i+1] += int(foreData[r][c])
+
+    exposures = []
+    aftSNR = []
+    aftSNR2 = []
+    foreSNR = []
+    foreSNR2 = []
+    for i in range(numStates):
+        exposures.append(float(countData[i][0]))
+
+    print("SNR Results:")
+    print("Aft Data:")
+    for i in range(numStates):
+        countData[i][5] = countData[i][1]/countData[i][2]
+        countData[i][6] = countData[i][3]/countData[i][4]
+        aftSNR.append(float(countData[i][5]))
+        aftSNR2.append(float(countData[i][6]))
+        print("Exposure Time: " + str(countData[i][0]) + "; SNR_1: " + str(countData[i][5]) + "; SNR_2: " + str(countData[i][6]))
+
+    print("Fore Data:")
+    for i in range(numStates):
+        countDataFore[i][5] = countDataFore[i][1]/countDataFore[i][2]
+        countDataFore[i][6] = countDataFore[i][3]/countDataFore[i][4]
+        foreSNR.append(float(countDataFore[i][5]))
+        foreSNR2.append(float(countDataFore[i][6]))
+        print("Exposure Time: " + str(countDataFore[i][0]) + "; SNR_1: " + str(countDataFore[i][5]) + "; SNR_2: " + str(countDataFore[i][6]))
+
+
+    print(type(exposures))
+    print(type(aftSNR))
     input()
 
-    ii = 0
-    jj = 0
-    for image_out in imgs_array:
-        """
-        plt.figure(figsize=[16,10])
-        plt.imshow(image_out,cmap='gray')
-        if ii % 2 == 0:
-            plt.title(files[jj][1])
-        else:
-            plt.title(files[jj][0])
-            jj += 1
-        plt.show()
-        ii += 1
-        plt.figure(figsize=[6,4])
-        """
 
 
-        hist = cv2.calcHist([image_out], [0], None, [2**16], [0.0, 2**16-1])
-        x = list(range(2**16))
-        """
-        plt.bar(tuple(x),tuple(hist),align = 'center')
-        plt.xlabel("Bins")
-        plot.ylabel("Frequency")
-        plt.show()
-        # hist,bins = np.histogram(image_out.ravel(), 2**16-1, [0, 2**16-1])
-        """
-        counter = 0
-        imageSum = 0
-        newHist = []
-        newX = []
-        for entry in hist:
-            if (entry != 0):
-                newHist.append(int(entry))
-                newX.append(counter)
-                #plt.bar(counter,entry,align='center')
-
-            counter = counter + 1
-
-        #plt.bar(newX,newHist,align = 'center')
-        """
-        print(newHist)
-        print(newX)
-        plt.plot(newX,newHist)
-        plt.xlim([0,len(newX)-1])
-        plt.xlabel("Bins")
-        plt.ylabel("Frequency")
-        plt.show()
-        # hist,bins = np.histogram(image_out.ravel(), 2**16-1, [0, 2**16-1])
-        """
-
-        """
-        plt.plot(hist)
-        plt.grid(b=True, which='major')
-        plt.xlim([0.0, 2**16-1])
-        plt.yscale('log')
-        plt.xlabel('Bin (16-bit)')
-        plt.ylabel('Frequency')
-        plt.title('QHY174M'+'\n'+'Resolution: 1920x1200')
-        plt.show()
-        """
+    fig = plt.figure()
+    line1 = plt.plot(exposures,aftSNR, label='Aft Results - Test 1')
+    line2 = plt.plot(exposures,aftSNR2, label='Aft Results - Test 2')
+    line3 = plt.plot(exposures,foreSNR, label='Fore Results - Test 2')
+    line4 = plt.plot(exposures,foreSNR2, label='Fore Results - Test 2')
+    plt.legend()
+    plt.xlabel("Exposure Time [us]")
+    plt.ylabel("Signal-To-Noise Ratio")
+    # plt.title("Results From Signal-To-Noise Ratio Testing")
+    plt.savefig('SNR_Results.png')
