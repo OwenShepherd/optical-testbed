@@ -9,10 +9,8 @@ from glob import glob
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as img
-import numpy as np
 import cv2
 import csv
-import os
 
 def csv2png(file_in, saving=True):
     f = open(file_in,'r')
@@ -23,7 +21,6 @@ def csv2png(file_in, saving=True):
     empties = np.where(holder == '')
     holder[empties] = '0'
     holder = holder.astype(np.uint16)
-    holder = holder[:,0:-1]
     if saving:
         print(file_in[0:-3]+'png')
         cv2.imwrite(file_in[0:-3]+'png',holder.transpose())
@@ -44,17 +41,16 @@ if __name__ == '__main__':
     imgs_array = []
     for file in files:
         print(file)
-        holder = cv2.imread(file[1],-1)
+        holder = cv2.imread(file[1],0)
         # holder = csv2png(file[1])
         imgs_array.append(holder)
-        holder = cv2.imread(file[0],-1)
+        holder = cv2.imread(file[0],0)
         # holder = csv2png(file[0])
         imgs_array.append(holder)
     # Present each image
     ii = 0
     jj = 0
     for image_out in imgs_array:
-        """
         plt.figure(figsize=[16,10])
         plt.imshow(image_out,cmap='gray')
         if ii % 2 == 0:
@@ -64,46 +60,12 @@ if __name__ == '__main__':
             jj += 1
         plt.show()
         ii += 1
-        plt.figure(figsize=[6,4])
-        """
-
-
-        hist = cv2.calcHist([image_out], [0], None, [2**16], [0.0, 2**16-1])
-        x = list(range(2**16))
-        """
-        plt.bar(tuple(x),tuple(hist),align = 'center')
-        plt.xlabel("Bins")
-        plot.ylabel("Frequency")
-        plt.show()
-        # hist,bins = np.histogram(image_out.ravel(), 2**16-1, [0, 2**16-1])
-        """
-        counter = 0
-        newHist = []
-        newX = []
-        for entry in hist:
-            if (entry != 0):
-                newHist.append(int(entry))
-                newX.append(counter)
-                #plt.bar(counter,entry,align='center')
-
-            counter = counter + 1
-
-        #plt.bar(newX,newHist,align = 'center')
-        print(newHist)
-        print(newX)
-        plt.plot(hist)
-        plt.xlim([0,2**16])
-        plt.xlabel("Bins")
-        plt.ylabel("Frequency")
-        plt.show()
-        # hist,bins = np.histogram(image_out.ravel(), 2**16-1, [0, 2**16-1])
-        """
-        plt.plot(hist)
-        plt.grid(b=True, which='major')
-        plt.xlim([0.0, 2**16-1])
-        plt.yscale('log')
-        plt.xlabel('Bin (16-bit)')
-        plt.ylabel('Frequency')
-        plt.title('QHY174M'+'\n'+'Resolution: 1920x1200')
-        plt.show()
-        """
+        # plt.figure(figsize=[6,4])
+        # plt.hist(image_out.ravel(), bins=2**8, range=(0.0, 2**16-1))
+        # plt.grid(b=True,which='major')
+        # plt.xlim([0.0, 2**16-1])
+        # plt.yscale('log')
+        # plt.xlabel('Bin (16-bit)')
+        # plt.ylabel('Frequency')
+        # plt.title('QHY174M'+'\n'+'Resolution: 1920x1200')
+        # plt.show()
