@@ -34,6 +34,7 @@ Next, the program requires extra DLLs in order to run properly.  These must be a
 - [Thorlabs WFS](https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=WFS)
 
 Lastly, it is possible that the software will initially have issues connecting to the QHY due to a defect in the driver.  In this event, it is required to use sharpcap to connect to the QHY via ASCOM, and simply set the gain to, say, 1, and click accept.  It is possible that some error warnings will pop up, but ignore these.  Try running your experiment again and see if an error still pops up about some camera connection issues.
+- [Sharpcap](https://www.sharpcap.co.uk/sharpcap/downloads)
 
 ## Running the Program
 As of now, the program has been tested with all components of the testbed and is working in its designed fashion for data collection.  The most recent working version of the program is contained in the "TestBed_Automation_Final" Visual Studio Project.
