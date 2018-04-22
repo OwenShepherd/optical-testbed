@@ -13,6 +13,7 @@ import numpy as np
 import cv2
 import csv
 import os
+import time
 
 def csv2png(file_in, saving=True):
     f = open(file_in,'r')
@@ -45,7 +46,7 @@ if __name__ == '__main__':
 
     # Creating an array to hold the test data
     testData = [[[0 for x in range(2)] for y in range(8)] for z in range(4)]
-    countData = [[0 for y in range(5)] for x in range(8)]
+    countData = [[0 for y in range(7)] for x in range(8)]
 
     # Looping through every piece of test data
     for i in range(len(lightDirs)):
@@ -58,7 +59,6 @@ if __name__ == '__main__':
             state = int(j/2)
             aftData = list(csv.reader(open(holder[j])))
             foreData = list(csv.reader(open(holder[j+1])))
-            print("i: " + str(i) + "state: " + str(state))
             testData[i][state][0] = aftData
             numRows = len(aftData)
             numCols = len(aftData[0])
@@ -66,7 +66,6 @@ if __name__ == '__main__':
 
     # Looping through the states to collect the exposure times
     header = []
-    print("Done")
     holder = glob(lightDirs[0] + "\\*\\parameters.csv")
     for i in range(len(holder)):
         fileName = holder[i]
@@ -81,9 +80,8 @@ if __name__ == '__main__':
     lightOn2 = []
     for i in range(len(lightDirs)):
         # If we're dealing with a light on
-        print("Light #: " + str(i))
+        stateint = time.time()
         for state in range(numStates):
-            print("   State #: " + str(state))
             aftData = testData[i][state][0]
             foreData = testData[i][state][1]
             if (i == 0 or i == 2):
@@ -91,9 +89,9 @@ if __name__ == '__main__':
                     for c in range(numCols):
                         if (aftData[r][c] != ''):
                             data = int(aftData[r][c])
-                            if (i == 0):
+                            if (i == 0 and data > threshold):
                                 lightOn.append((r,c,data))
-                            else:
+                            elif (i == 2 and (data > threshold)):
                                 lightOn2.append((r,c,data))
                             countData[state][i+1] += data
 
@@ -107,4 +105,10 @@ if __name__ == '__main__':
                     (r,c,data) = item
                     countData[state][i+1] += int(aftData[r][c])
 
-    print(countData)
+            stateend = time.time()
+
+    print("SNR Results:")
+    for i in range(numStates):
+        countData[i][5] = countData[i][1]/countData[i][2]
+        countData[i][6] = countData[i][3]/countData[i][4]
+        print("Exposure Time: " + str(countData[i][0]) + "; SNR_1: " + str(countData[i][5]) + "; SNR_2: " + str(countData[i][6]))
