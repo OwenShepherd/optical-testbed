@@ -37,7 +37,7 @@ Lastly, it is possible that the software will initially have issues connecting t
 - [Sharpcap](https://www.sharpcap.co.uk/sharpcap/downloads)
 
 ## Running the Program
-As of now, the program has been tested with all components of the testbed and is working in its designed fashion for data collection.  The most recent working version of the program is contained in the "TestBed_Automation_Final" Visual Studio Project.
+As of now, the program has been tested with all components of the testbed and is working in its designed fashion for data collection.  The most recent working version of the program is contained in the "TestBed_Automation_Final" Visual Studio Project.  The installer for the project builds may be found at [this link](https://drive.google.com/open?id=1Bk6WBR5vOVbcDDSYLsn6n1ccp4iNH_cr) (NOTE: Only CU Boulder Accounts may access this link).
 
 ### Using the Executable
 The Visual Studio Project will automatically add the required files for the executable to the appropriate directory.  But, when running the executable outside of visual studio, ensure that the following are in the same directory as the EXE:

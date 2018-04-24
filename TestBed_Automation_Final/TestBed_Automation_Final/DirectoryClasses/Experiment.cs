@@ -97,6 +97,8 @@ namespace ASEN
 
                         // Adding a new state to the directory
                         statePath = initialDirectory.CreateNewState();
+                        string parameterPath = statePath + "\\parameters.csv";
+                        File.WriteAllText(parameterPath, currentLine);
                         Console.WriteLine("\nTrial Number: " + Convert.ToString(stateNum) + "\n");
                         // calling the state constructor
                         currentState = new State(inPut, cameraInUse, statePath, this.serials, this.COMPort, this.pyPath, this.ipyPath,gain, prevMX, prevMY);
