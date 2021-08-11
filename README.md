@@ -185,6 +185,8 @@ These DLL files may be found in the References_DLL/KDC101 folder.
 This code was used to test the following devices and conduct experiments with
 the following software as well as accelerometers and thermometers.
 
+The code is located in root/env_sensors.
+
 ### Software Used
 * Arduino IDE 1.8.5
 * SDFat Version 1.0.3
