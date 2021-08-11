@@ -180,8 +180,10 @@ These DLL files may be found in the References_DLL/KDC101 folder.
 - Engineering Excellence Fund (EEF)
 - NASA Glenn
 
-# ASEN 4018 - Senior Projects Environmental Sensors Code
-## Team: AWESoMe (SWRI)
+
+## ASEN 4018 - Senior Projects Environmental Sensors Code
+This code was used to test the following devices and conduct experiments with
+the following software as well as accelerometers and thermometers.
 
 ### Software Used
 * Arduino IDE 1.8.5
